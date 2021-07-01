@@ -2,36 +2,39 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-static glm::mat4 CalculateView( const glm::vec3 &v3Pos, float fRotation )
-{
-    return glm::inverse( glm::translate( glm::mat4( 1.f ), v3Pos ) * glm::rotate( glm::mat4( 1.f ), glm::radians( fRotation ), glm::vec3( .0f, .0f, 1.f ) ) );
-}
-
-static glm::mat4 CalculateProjection( const glm::vec2 &v2Scale )
-{
-    glm::mat4 proj = glm::ortho( 0.0f, glm::ceil( v2Scale.x ), glm::ceil( v2Scale.y ), .0f, 0.1f, 1000.f );
-    return proj;
-}
-
-Camera::Camera( const glm::vec3 &v3Pos, const glm::vec2 &v2Scale ) : m_v3Pos( v3Pos ), m_v2Scale( v2Scale )
+Camera::Camera( const glm::vec3 &v3Pos, const glm::vec3 &v3Up, const glm::vec2 &v2Size, float fFOV, float fZNear, float fZFar ) :
+    m_v3Pos( v3Pos ), m_v3WorldUp( v3Up ), m_v2Size( v2Size ), m_fFOV( fFOV ), m_fZNear( fZNear ), m_fZFar( fZFar ), m_v3Angle( { 0, -90, 0 } ),
+    m_fAspect( v2Size.x / v2Size.y )
 {
     CalculateMetrices();
 }
 
 void Camera::CalculateMetrices()
 {
-    m_m4Projection = CalculateProjection( m_v2Scale );
-    m_m4View = CalculateView( m_v3Pos, m_fRotation );
+    float pitch = glm::radians( m_v3Angle.x );
+    float yaw = glm::radians( m_v3Angle.y );
+    auto direction = glm::vec3{
+        cos( pitch ) * cos( yaw ),
+        sin( pitch ),
+        cos( pitch ) * sin( yaw ),
+    };
+
+    m_v3Front = glm::normalize( direction );
+    m_v3Right = glm::normalize( glm::cross( m_v3Front, m_v3WorldUp ) );
+    m_v3Up = glm::normalize( glm::cross( m_v3Right, m_v3Front ) );
+
+    m_m4Projection = glm::perspective( glm::radians( m_fFOV ), m_fAspect, m_fZNear, m_fZFar );
+    m_m4View = glm::lookAt( m_v3Pos, m_v3Pos + m_v3Front, m_v3Up );
 }
 
 void Camera::SetPosition( const glm::vec3 &v3Pos )
 {
     m_v3Pos = v3Pos;
-    m_m4View = CalculateView( m_v3Pos, m_fRotation );
+    CalculateMetrices();
 }
 
-void Camera::SetScale( const glm::vec2 &v2Scale )
+void Camera::SetScale( const glm::vec2 &v2Size )
 {
-    m_v2Scale = v2Scale;
-    m_m4Projection = CalculateProjection( m_v2Scale );
+    m_v2Size = v2Size;
+    CalculateMetrices();
 }

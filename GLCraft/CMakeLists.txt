@@ -2,6 +2,7 @@ set(GAME_LIBS
     glad
     glfw
     glm
+    lw
 )
 
 file(GLOB_RECURSE GAME_SOURCES
