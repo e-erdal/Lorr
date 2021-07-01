@@ -12,18 +12,18 @@ void Shader::Load( const std::string &sPath )
     std::string vcode;
     std::string fcode;
 
-    std::ifstream vstream( sPath + "v.glsl", std::ios::in );
-    std::ifstream fstream( sPath + "f.glsl", std::ios::in );
+    std::ifstream vstream( sPath + ".v.glsl", std::ios::in );
+    std::ifstream fstream( sPath + ".f.glsl", std::ios::in );
 
     if ( !vstream.is_open() )
     {
-        printf( "vertex shader path not found.\n" );
+        printf( "Unable to open vertex shader.\n" );
         return;
     }
 
     if ( !fstream.is_open() )
     {
-        printf( "fragment shader path not found.\n" );
+        printf( "Unable to open fragment shader.\n" );
         return;
     }
 
@@ -39,10 +39,10 @@ void Shader::Load( const std::string &sPath )
     fcode = ss.str();
     fstream.close();
 
-    printf( "Compiling '%s'\n", sPath.c_str() );
+    printf( "Compiling '%s.v.glsl'\n", sPath.c_str() );
     Compile( VID, vcode.c_str() );
 
-    printf( "Compiling '%s'\n", sPath.c_str() );
+    printf( "Compiling '%s.f.glsl'\n", sPath.c_str() );
     Compile( FID, fcode.c_str() );
 
     m_ID = glCreateProgram();
@@ -85,6 +85,8 @@ void Shader::Compile( GLuint uShaderID, const char *szData )
         glGetShaderInfoLog( uShaderID, msgLen, NULL, &msg[0] );
         printf( "%s\n", &msg[0] );
     }
+
+    printf("Compiled shader.\n");
 }
 
 int Shader::Uniform( const char *szUniform )

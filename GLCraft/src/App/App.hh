@@ -5,6 +5,8 @@
 #pragma once
 
 #include "Graphics/Camera.hh"
+#include "Graphics/Renderer/VertexBatcher.hh"
+#include "Graphics/Shader.hh"
 #include "Graphics/Window.hh"
 
 struct AppDesc
@@ -46,4 +48,8 @@ private:
     // Graphics
     Window *m_pWindow = 0;
     Camera *m_pCamera = 0;
+    VertexBatcher *m_pVertexBatcher = 0;
+
+    // Resources
+    Shader m_MainShader;
 };
