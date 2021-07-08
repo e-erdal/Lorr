@@ -1,0 +1,37 @@
+//
+// Created on July 1st 2021 by e-erdal.
+//
+
+#pragma once
+
+#include <vector>
+
+#include "Core/Utils/BitFlags.hh"
+#include "Core/Utils/Logger.hh"
+#include "Core/Utils/Math.hh"
+
+#include <glm/glm.hpp>
+
+#include <Windows.h>
+
+#define PrintError( err )                                                                                                                                                \
+    {                                                                                                                                                                    \
+        char *pszError;                                                                                                                                                  \
+        FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, hr,                                            \
+                       MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), (LPTSTR) &pszError, 0, NULL );                                                                       \
+        Console::Fatal( err " HR: {}", pszError );                                                                                                                       \
+    }
+
+#define SAFE_DELETE( var )                                                                                                                                               \
+    if ( var )                                                                                                                                                           \
+    {                                                                                                                                                                    \
+        delete var;                                                                                                                                                      \
+        var = NULL;                                                                                                                                                      \
+    }
+
+#define SAFE_RELEASE( var )                                                                                                                                              \
+    if ( var )                                                                                                                                                           \
+    {                                                                                                                                                                    \
+        var->Release();                                                                                                                                                  \
+        var = nullptr;                                                                                                                                                   \
+    }
