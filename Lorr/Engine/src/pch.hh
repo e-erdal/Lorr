@@ -14,6 +14,12 @@
 
 #include <Windows.h>
 
+#ifndef NDEBUG
+    #define ENGINE_DEBUG 1
+#else
+    #define ENGINE_DEBUG 0
+#endif
+
 #define PrintError( err )                                                                                                                                                \
     {                                                                                                                                                                    \
         char *pszError;                                                                                                                                                  \

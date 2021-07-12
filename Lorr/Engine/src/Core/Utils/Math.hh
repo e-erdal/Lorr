@@ -6,7 +6,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace Math
+namespace Lorr::Math
 {
     inline glm::mat4 CalcTransform( const glm::vec3 &v3Position, const glm::vec3 &v3Size, float fRotation = 0.f, const glm::vec3 &v3RotationAxis = { 0, 0, 1 } )
     {
@@ -21,4 +21,4 @@ namespace Math
 
         return target;
     }
-}  // namespace Math
+}  // namespace Lorr::Math

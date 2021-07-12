@@ -1,3 +1,5 @@
+include(CMake/LorrComponent.cmake)
+
 cmake_minimum_required(VERSION 3.18.0)
 
 set_property(GLOBAL PROPERTY USE_FOLDERS ON)
