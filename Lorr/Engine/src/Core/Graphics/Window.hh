@@ -6,6 +6,8 @@
 
 #include <string>
 
+#include "Core/Systems/Helpers/InputVars.hh"
+
 #include <Core/Utils/BitFlags.hh>
 
 #include <stdint.h>
@@ -50,6 +52,15 @@ namespace Lorr
         void SetCursor( Cursor eCursor );
 
     public:
+        signals::signal<void( Key, ButtonState, KeyMod )> OnSetKeyState;
+        signals::signal<void( KeyMod, MouseButton, ButtonState, const glm::ivec2 & )> OnSetMouseState;
+        signals::signal<void( glm::ivec2 )> OnSetMousePosition;
+        signals::signal<void()> OnLoseFocus;
+        signals::signal<void()> OnGainFocus;
+
+        signals::signal<void( uint32_t, KeyMod )> OnChar;  // Text input
+
+    public:
         HWND GetHandle() const
         {
             return m_Handle;
@@ -57,12 +68,12 @@ namespace Lorr
 
         uint32_t GetWidth() const
         {
-            return uWidth;
+            return m_uWidth;
         }
 
         uint32_t GetHeight() const
         {
-            return uHeight;
+            return m_uHeight;
         }
 
         bool ShouldClose() const
@@ -75,6 +86,11 @@ namespace Lorr
             return m_bIsFullscreen;
         }
 
+        glm::ivec2 GetCursorPos() const
+        {
+            return m_iv2CursorPos;
+        }
+
     private:
         static LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
 
@@ -82,12 +98,14 @@ namespace Lorr
         HWND m_Handle = 0;
         HINSTANCE m_Instance = 0;
 
-        uint32_t uWidth = 0;
-        uint32_t uHeight = 0;
+        uint32_t m_uWidth = 0;
+        uint32_t m_uHeight = 0;
 
         bool m_bShouldClose = false;
         bool m_bIsFullscreen = false;
+        bool m_bSizeEnded = false;
 
         Cursor m_eCurrentCursor = Cursor::Arrow;
+        glm::ivec2 m_iv2CursorPos{};
     };
 }  // namespace Lorr

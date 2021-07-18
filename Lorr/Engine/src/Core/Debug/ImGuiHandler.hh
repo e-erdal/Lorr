@@ -9,6 +9,7 @@
 namespace Lorr
 {
     class Engine;
+    class Window;
     class ImGuiHandler
     {
     public:
@@ -18,5 +19,10 @@ namespace Lorr
 
         void BeginFrame();
         void EndFrame();
+
+    private:
+        void InitImGui( Window *pWindow );
+        void ImGui_ImplSurface_Shutdown();
+        void ImGui_ImplSurface_NewFrame();
     };
 }  // namespace Lorr

@@ -13,6 +13,10 @@ public:
 
     void Draw() override
     {
+        bool showing = true;
+        ImGui::SetNextWindowSize( ImVec2( 100, 100 ) );
+        ImGui::Begin( "Game View", &showing );
+        ImGui::End();
     }
 };
 

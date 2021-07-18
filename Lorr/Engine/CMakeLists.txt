@@ -7,11 +7,26 @@ set(ENGINE_VENDOR
 )
 
 set(ENGINE_COMPONENTS
-    LorrCoreGraphics
     LorrCoreDebug
+    LorrCoreGraphics
+    LorrCoreSystems
 )
 
 ######### Engine components ########
+# Debug
+LorrComponent(
+    NAME
+        LorrCoreDebug
+    INCLUDE
+        src/
+    PCH
+        src/pch.hh
+    SOURCE
+        src/Core/Debug/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
 # Graphics
 LorrComponent(
     NAME
@@ -26,16 +41,16 @@ LorrComponent(
         ${ENGINE_VENDOR}
 )
 
-# Debug
+# Systems
 LorrComponent(
     NAME
-        LorrCoreDebug
+        LorrCoreSystems
     INCLUDE
         src/
     PCH
         src/pch.hh
     SOURCE
-        src/Core/Debug/*.cc
+        src/Core/Systems/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

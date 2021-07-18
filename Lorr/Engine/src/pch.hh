@@ -13,6 +13,7 @@
 #include <glm/glm.hpp>
 
 #include <Windows.h>
+#include <signals.h>
 
 #ifndef NDEBUG
     #define ENGINE_DEBUG 1

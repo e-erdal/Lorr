@@ -1,6 +1,8 @@
 #include "Engine.hh"
 
 #include "Core/Utils/Math.hh"
+#include "Core/Utils/Timer.hh"
+
 namespace Lorr
 {
     Engine::~Engine()
@@ -23,18 +25,6 @@ namespace Lorr
         m_pImGui->Init( this );
 
         return true;
-    }
-
-    void Engine::Run()
-    {
-        while ( !m_pWindow->ShouldClose() )
-        {
-            BeginFrame();
-
-            EndFrame();
-
-            m_pWindow->Poll();
-        }
     }
 
     void Engine::BeginFrame()
@@ -60,6 +50,21 @@ namespace Lorr
 
     void BaseApp::Run()
     {
-        m_pEngine->Run();
+        Window *pWindow = m_pEngine->GetWindow();
+
+        Timer timer;
+        while ( !pWindow->ShouldClose() )
+        {
+            auto elapsed = timer.elapsed();
+            timer.reset();
+
+            Tick( elapsed );
+
+            m_pEngine->BeginFrame();
+            Draw();
+            m_pEngine->EndFrame();
+
+            pWindow->Poll();
+        }
     }
 }  // namespace Lorr
