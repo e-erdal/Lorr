@@ -4,20 +4,21 @@ set(EDITOR_VENDOR
 )
 
 set(EDITOR_COMPONENTS
-    # LorrEditor
+    LorrEditorLayers
 )
 
 ######### Editor components ########
 # # Editor
-# file(GLOB EDITOR_SOURCES
-#     src/*.cc
-# )
-
-# add_library(LorrEditor ${EDITOR_SOURCES})
-#     target_include_directories(LorrEditor PUBLIC src/)
-
-# # Link them all
-# target_link_libraries(LorrEditor PUBLIC ${EDITOR_VENDOR})
+LorrComponent(
+    NAME
+        LorrEditorLayers
+    INCLUDE
+        src/
+    SOURCE
+        src/Layers/*.cc
+    VENDOR
+        ${EDITOR_VENDOR}
+)
 
 add_executable(Editor src/main.cc)
     target_link_libraries(Editor PUBLIC ${EDITOR_VENDOR} PUBLIC ${EDITOR_COMPONENTS})

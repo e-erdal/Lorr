@@ -89,6 +89,14 @@ namespace Lorr
 
     void Window::Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags )
     {
+        ZoneScoped;
+
+        if ( uWidth == 0 && uHeight == 0 )
+        {
+            uWidth = GetMonitorWidth();
+            uHeight = GetMonitorHeight();
+        }
+
         Console::Log( "Creating new window \"{}\"<{}, {}>", sTitle, uWidth, uHeight );
 
         // Getting ready for window
@@ -115,20 +123,20 @@ namespace Lorr
         {
             Console::Log( "Getting ready for fullscreen state." );
 
-            // window will be fullscreen, no need to calculate other position and stuff
-            // just directly pass it over
-            DEVMODE dm;
-            ZeroMemory( &dm, sizeof( DEVMODE ) );
-
-            dm.dmSize = sizeof( DEVMODE );
-            dm.dmPelsWidth = GetMonitorWidth();
-            dm.dmPelsHeight = GetMonitorHeight();
-            dm.dmBitsPerPel = 32;
-            dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
-
             // actual holy shit moment
             if ( ( uWidth != GetMonitorWidth() ) && ( uHeight != GetMonitorHeight() ) )
             {
+                // window will be fullscreen, no need to calculate other position and stuff
+                // just directly pass it over
+                DEVMODE dm;
+                ZeroMemory( &dm, sizeof( DEVMODE ) );
+
+                dm.dmSize = sizeof( DEVMODE );
+                dm.dmPelsWidth = uWidth;
+                dm.dmPelsHeight = uHeight;
+                dm.dmBitsPerPel = 32;
+                dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
+
                 if ( ChangeDisplaySettingsA( &dm, CDS_FULLSCREEN ) != DISP_CHANGE_SUCCESSFUL )
                 {
                     // throw error
@@ -173,6 +181,8 @@ namespace Lorr
 
     void Window::Poll()
     {
+        ZoneScoped;
+
         MSG msg;
 
         while ( PeekMessage( &msg, NULL, 0, 0, PM_REMOVE ) )
@@ -184,16 +194,22 @@ namespace Lorr
 
     int Window::GetMonitorWidth()
     {
+        ZoneScoped;
+
         return GetSystemMetrics( SM_CXSCREEN );
     }
 
     int Window::GetMonitorHeight()
     {
+        ZoneScoped;
+
         return GetSystemMetrics( SM_CYSCREEN );
     }
 
     void Window::SetCursor( Cursor eCursor )
     {
+        ZoneScoped;
+
         ::ShowCursor( TRUE );  // make sure that cursor is shown
 
         static ::HCURSOR arrowCursor{ LoadCursor( NULL, IDC_ARROW ) };
@@ -225,6 +241,8 @@ namespace Lorr
 
     LRESULT CALLBACK Window::WindowProc( HWND hHwnd, UINT uMSG, WPARAM wParam, LPARAM lParam )
     {
+        ZoneScoped;
+
         Engine *pEngine = GetEngine();
 
         if ( !pEngine ) return DefWindowProc( hHwnd, uMSG, wParam, lParam );
@@ -237,11 +255,27 @@ namespace Lorr
         case WM_CLOSE: pWindow->m_bShouldClose = true; break;
         case WM_SIZE:
         {
-            if ( pWindow->m_bSizeEnded ) Console::Log( "Window size changed to {}, {}", LOWORD( lParam ), HIWORD( lParam ) );
+            if ( pWindow->m_bSizeEnded )
+            {
+                Console::Log( "Window size changed to {}, {}", LOWORD( lParam ), HIWORD( lParam ) );
+                pWindow->OnResolutionChanged( (uint32_t) LOWORD( lParam ), (uint32_t) HIWORD( lParam ) );
+                pWindow->m_uWidth = (uint32_t) LOWORD( lParam );
+                pWindow->m_uHeight = (uint32_t) HIWORD( lParam );
+            }
+
             break;
         }
-        case WM_EXITSIZEMOVE: pWindow->m_bSizeEnded = false; break;
-        case WM_ENTERSIZEMOVE: pWindow->m_bSizeEnded = true; break;
+        case WM_EXITSIZEMOVE:
+            pWindow->m_bSizeEnded = true;
+            RECT rc;
+            GetClientRect( pWindow->m_Handle, &rc );
+            Console::Log( "Window size changed to {}, {}", rc.right, rc.bottom );
+            pWindow->OnResolutionChanged( (uint32_t) rc.right, (uint32_t) rc.bottom );
+            pWindow->m_uWidth = (uint32_t) rc.right;
+            pWindow->m_uHeight = (uint32_t) rc.bottom;
+
+            break;
+        case WM_ENTERSIZEMOVE: pWindow->m_bSizeEnded = false; break;
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
         case WM_RBUTTONDOWN:

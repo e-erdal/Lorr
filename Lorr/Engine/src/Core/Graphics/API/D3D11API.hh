@@ -4,6 +4,7 @@
 
 #pragma once
 
+#include "Core/Graphics/Shader.hh"
 #include "Core/Graphics/Window.hh"
 
 #include <d3d11.h>
@@ -26,6 +27,15 @@ namespace Lorr
         void CreateTexture2D( ID3D11Texture2D **ppTarget, int iWidth, int iHeight, DXGI_FORMAT eFormat );
         bool CreateDevice( Window *pWindow, int iWidth, int iHeight );
         bool CreateSwapChain();
+
+        void ChangeResolution( uint32_t uWidth, uint32_t uHeight );
+
+        ID3DBlob *CompileShaderFromFile( const char *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
+        ID3D11InputLayout *CreateInputLayout(ID3DBlob * pVertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC &VertexLayout);
+
+        const char *GetLatestProfileVS( D3D_FEATURE_LEVEL eFeatureLevel );
+        const char *GetLatestProfilePS( D3D_FEATURE_LEVEL eFeatureLevel );
+        const char *ShaderTypeToLatestProfile( ShaderType eShaderType );
 
     public:
         ID3D11Device *GetDevice() const
@@ -50,5 +60,8 @@ namespace Lorr
 
         ID3D11DepthStencilState *m_pDepthStencilState;
         ID3D11RasterizerState *m_pRasterizerState;
+
+        bool m_bNeedToPresent = true;
+        bool m_bIsContextReady = false;
     };
 }  // namespace Lorr

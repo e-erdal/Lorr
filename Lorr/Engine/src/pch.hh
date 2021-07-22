@@ -12,6 +12,7 @@
 
 #include <glm/glm.hpp>
 
+#include <Tracy.hpp>
 #include <Windows.h>
 #include <signals.h>
 

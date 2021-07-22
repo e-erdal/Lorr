@@ -57,6 +57,7 @@ namespace Lorr
         signals::signal<void( glm::ivec2 )> OnSetMousePosition;
         signals::signal<void()> OnLoseFocus;
         signals::signal<void()> OnGainFocus;
+        signals::signal<void( uint32_t, uint32_t )> OnResolutionChanged;
 
         signals::signal<void( uint32_t, KeyMod )> OnChar;  // Text input
 
@@ -103,7 +104,7 @@ namespace Lorr
 
         bool m_bShouldClose = false;
         bool m_bIsFullscreen = false;
-        bool m_bSizeEnded = false;
+        bool m_bSizeEnded = true;
 
         Cursor m_eCurrentCursor = Cursor::Arrow;
         glm::ivec2 m_iv2CursorPos{};

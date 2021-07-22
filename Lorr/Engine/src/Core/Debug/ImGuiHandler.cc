@@ -11,6 +11,8 @@ namespace Lorr
 {
     void ImGui_ImplSurface_KeyPress( Key eKey, ButtonState eState, KeyMod eMod )
     {
+        ZoneScoped;
+
         if ( ImGui::GetCurrentContext() == NULL ) return;
 
         ImGuiIO &io = ImGui::GetIO();
@@ -36,6 +38,8 @@ namespace Lorr
 
     void ImGui_ImplSurface_OnChar( uint32_t Char, KeyMod eMod )
     {
+        ZoneScoped;
+
         if ( ImGui::GetCurrentContext() == NULL ) return;
 
         ImGuiIO &io = ImGui::GetIO();
@@ -45,6 +49,8 @@ namespace Lorr
 
     void ImGui_ImplSurface_MouseStateChange( KeyMod eMod, MouseButton eButton, ButtonState eState, const glm::ivec2 &ivPos )
     {
+        ZoneScoped;
+
         if ( ImGui::GetCurrentContext() == NULL ) return;
 
         ImGuiIO &io = ImGui::GetIO();
@@ -84,6 +90,8 @@ namespace Lorr
 
     void ImGui_ImplSurface_UpdateMouseCursor()
     {
+        ZoneScoped;
+
         if ( ImGui::GetCurrentContext() == NULL ) return;
 
         ImGuiIO &io = ImGui::GetIO();
@@ -121,6 +129,8 @@ namespace Lorr
 
     void ImGui_ImplSurface_UpdateMousePos()
     {
+        ZoneScoped;
+
         if ( ImGui::GetCurrentContext() == NULL ) return;
 
         ImGuiIO &io = ImGui::GetIO();
@@ -149,12 +159,15 @@ namespace Lorr
 
     void ImGuiHandler::Init( Engine *pEngine )
     {
+        ZoneScoped;
+
         ImGui::CreateContext();
 
         ImGuiIO &io = ImGui::GetIO();
         (void) io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
+        io.IniFilename = 0;
 
         ImGui::StyleColorsDark();
 
@@ -164,6 +177,8 @@ namespace Lorr
 
     void ImGuiHandler::BeginFrame()
     {
+        ZoneScoped;
+
         ImGui_ImplDX11_NewFrame();
         ImGui_ImplSurface_NewFrame();
         ImGui::NewFrame();
@@ -171,12 +186,16 @@ namespace Lorr
 
     void ImGuiHandler::EndFrame()
     {
+        ZoneScopedN("ImGuiHandler::EndFrame");
+
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
     }
 
     void ImGuiHandler::InitImGui( Window *pWindow )
     {
+        ZoneScoped;
+
         ImGuiIO &io = ImGui::GetIO();
         io.BackendFlags |= ImGuiBackendFlags_HasMouseCursors;          // We can honor GetMouseCursor() values (optional)
         io.BackendFlags |= ImGuiBackendFlags_HasSetMousePos;           // We can honor io.WantSetMousePos requests (optional, rarely used)
@@ -219,10 +238,14 @@ namespace Lorr
 
     void ImGuiHandler::ImGui_ImplSurface_Shutdown()
     {
+        ZoneScoped;
+
     }
 
     void ImGuiHandler::ImGui_ImplSurface_NewFrame()
     {
+        ZoneScoped;
+
         static Cursor lastCursor = Cursor::Hidden;
         static Timer timer{};
 

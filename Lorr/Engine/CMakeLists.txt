@@ -4,6 +4,7 @@ set(ENGINE_VENDOR
     imgui
     lw
     spdlog
+    tracy
 )
 
 set(ENGINE_COMPONENTS

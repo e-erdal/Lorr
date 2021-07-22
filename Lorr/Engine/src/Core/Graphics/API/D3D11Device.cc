@@ -4,6 +4,8 @@ namespace Lorr
 {
     bool D3D11API::CreateDevice( Window *pWindow, int iWidth, int iHeight )
     {
+        ZoneScoped;
+
         Console::Log( "Initializing D3D11 device..." );
 
         HRESULT hr;
@@ -58,7 +60,7 @@ namespace Lorr
         swapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         swapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
         swapChainDesc.OutputWindow = (HWND) pWindow->GetHandle();
-        swapChainDesc.Windowed = true;  // FIXME: HARDCODED
+        swapChainDesc.Windowed = !pWindow->IsFullscreen();  // FIXME: HARDCODED
 
         IDXGIDevice *pDXGIDevice = 0;
         IDXGIAdapter *pDXGIAdapter = 0;
@@ -219,6 +221,52 @@ namespace Lorr
 
         Console::Log( "Successfully initialized D3D11 device." );
 
+        m_bIsContextReady = true;
         return true;
+    }
+
+    void D3D11API::ChangeResolution( uint32_t uWidth, uint32_t uHeight )
+    {
+        ZoneScoped;
+
+        if ( !m_bIsContextReady ) return;
+
+        HRESULT hr;
+
+        m_pDeviceContext->OMSetRenderTargets( 0, 0, 0 );
+
+        SAFE_RELEASE( m_pRenderTargetView );
+        SAFE_RELEASE( m_pDepthStencilBuffer );
+
+        hr = m_pSwapChain->ResizeBuffers( 0, 0, 0, DXGI_FORMAT_UNKNOWN, 0 );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to resize swap chain!" );
+            return;
+        }
+
+        ID3D11Texture2D *pBackBuffer = 0;
+        hr = m_pSwapChain->GetBuffer( 0, __uuidof( ID3D11Texture2D ), (LPVOID *) &pBackBuffer );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to create D3D11 BackBuffer!" );
+            return;
+        }
+
+        hr = m_pDevice->CreateRenderTargetView( pBackBuffer, 0, &m_pRenderTargetView );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to create D3D11 RTV!" );
+            return;
+        }
+
+        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, 0 );
+
+        SAFE_RELEASE( pBackBuffer );
+
+        SetViewport( uWidth, uHeight, 99999.f, -99999.f );
     }
 }  // namespace Lorr

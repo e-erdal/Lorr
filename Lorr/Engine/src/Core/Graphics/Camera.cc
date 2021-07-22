@@ -6,6 +6,8 @@ namespace Lorr
 {
     void Camera::Init( const glm::vec3 &v3Pos, const glm::vec3 &v3Up, const glm::vec2 &v2Size, float fFOV, float fZNear, float fZFar )
     {
+        ZoneScoped;
+
         m_v3Pos = v3Pos;
         m_v3WorldUp = v3Up;
         m_v2Size = v2Size;
@@ -20,6 +22,8 @@ namespace Lorr
 
     void Camera::CalculateMetrices()
     {
+        ZoneScoped;
+
         float pitch = glm::radians( m_v3Angle.x );
         float yaw = glm::radians( m_v3Angle.y );
         auto direction = glm::vec3{
@@ -38,12 +42,16 @@ namespace Lorr
 
     void Camera::SetPosition( const glm::vec3 &v3Pos )
     {
+        ZoneScoped;
+
         m_v3Pos = v3Pos;
         CalculateMetrices();
     }
 
     void Camera::SetScale( const glm::vec2 &v2Size )
     {
+        ZoneScoped;
+
         m_v2Size = v2Size;
         CalculateMetrices();
     }

@@ -1,10 +1,13 @@
 #include "Engine.hh"
 
+#include "Layers/Main/MainLayer.hh"
+
 class EditorApp : public Lorr::BaseApp
 {
 public:
     void Init() override
     {
+        m_MainLayer->Init();
     }
 
     void Tick( float fDelta ) override
@@ -13,21 +16,24 @@ public:
 
     void Draw() override
     {
-        bool showing = true;
-        ImGui::SetNextWindowSize( ImVec2( 100, 100 ) );
-        ImGui::Begin( "Game View", &showing );
-        ImGui::End();
+        m_MainLayer->Update();
     }
+
+private:
+    MainLayer *m_MainLayer = new MainLayer;
 };
 
 static EditorApp *app = nullptr;
 
 int main()
 {
+    ZoneScoped;
+
     Lorr::ApplicationDesc desc;
     desc.sTitle = "Lorr: Editor";
     desc.uWidth = 1280;
     desc.uHeight = 720;
+    desc.eFlags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;  // WindowFlags::Resizable | WindowFlags::Centered
 
     app = new EditorApp;
     app->Start( desc );

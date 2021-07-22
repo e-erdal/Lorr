@@ -18,5 +18,11 @@ if (MSVC)
     add_definitions("/MP")
 endif()
 
+option(ENGINE_TRACING_ENABLED "Enable Tracing" OFF)
+if (ENGINE_TRACING_ENABLED)
+    message("Tracy is enabled!")
+    add_definitions(-DTRACY_ENABLE) # Enable tracing solution wide.
+endif()
+
 add_subdirectory(Vendor)
 add_subdirectory(Lorr)

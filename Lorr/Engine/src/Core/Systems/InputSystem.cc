@@ -6,6 +6,8 @@ namespace Lorr
 {
     void InputSystem::Init()
     {
+        ZoneScoped;
+
         Window *pSurface = GetEngine()->GetWindow();
 
         pSurface->OnSetKeyState.connect<&InputSystem::OnSetKeyState>( this );
@@ -16,6 +18,8 @@ namespace Lorr
 
     void InputSystem::OnSetKeyState( Key eKey, ButtonState eState, KeyMod eMod )
     {
+        ZoneScoped;
+
         if ( eState == ButtonState::Pressed )
         {
             OnKeyDown( eKey, eMod );
@@ -28,11 +32,15 @@ namespace Lorr
 
     void InputSystem::OnChar( uint32_t uChar, KeyMod eMod )
     {
+        ZoneScoped;
+
         OnCharInput( uChar, eMod );
     }
 
     void InputSystem::OnSetMouseState( KeyMod eMod, MouseButton eKey, ButtonState eState, const glm::ivec2 &ivPos )
     {
+        ZoneScoped;
+
         if ( eState == ButtonState::Pressed )
         {
             OnMouseDown( eMod, eKey, ivPos );
@@ -45,6 +53,8 @@ namespace Lorr
 
     void InputSystem::OnSetMousePosition( const glm::ivec2 &ivPos )
     {
+        ZoneScoped;
+
         OnMouseMove( ivPos );
     }
 }  // namespace Lorr
