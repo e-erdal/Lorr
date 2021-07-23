@@ -3,16 +3,11 @@
 //
 
 #pragma once
+
+#include "API/D3D11API.hh"
+
 namespace Lorr
 {
-    enum ShaderType
-    {
-        VERTEX_SHADER,
-        GEOMETRY_SHADER,
-        HULL_SHADER,
-        PIXEL_SHADER
-    };
-
     enum class VertexAttribType
     {
         None = 0,
@@ -133,6 +128,30 @@ namespace Lorr
     private:
         std::vector<VertexAttrib> m_Elements;
         uint32_t m_Stride = 0;
+    };
+
+    class Shader
+    {
+    public:
+        ~Shader();
+
+        void Init( D3D11API *pAPI, const char *szVertexPath, const char *szPixelPath, const VertexLayout &vertexLayout );
+
+    public:
+        ID3D11VertexShader *GetVertexShader()
+        {
+            return m_pVertexShader;
+        }
+
+        ID3D11PixelShader *GetPixelShader()
+        {
+            return m_pPixelShader;
+        }
+
+    private:
+        ID3D11VertexShader *m_pVertexShader = 0;
+        ID3D11PixelShader *m_pPixelShader = 0;
+        ID3D11InputLayout *m_pInputLayout = 0;
     };
 
 }  // namespace Lorr

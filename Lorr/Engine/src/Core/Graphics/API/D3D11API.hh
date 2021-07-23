@@ -4,13 +4,21 @@
 
 #pragma once
 
-#include "Core/Graphics/Shader.hh"
 #include "Core/Graphics/Window.hh"
 
 #include <d3d11.h>
 
 namespace Lorr
 {
+    enum ShaderType
+    {
+        VERTEX_SHADER,
+        GEOMETRY_SHADER,
+        HULL_SHADER,
+        PIXEL_SHADER
+    };
+
+    struct VertexLayout;
     class D3D11API
     {
     public:
@@ -31,7 +39,9 @@ namespace Lorr
         void ChangeResolution( uint32_t uWidth, uint32_t uHeight );
 
         ID3DBlob *CompileShaderFromFile( const char *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
-        ID3D11InputLayout *CreateInputLayout(ID3DBlob * pVertexShaderBlob, const D3D11_INPUT_ELEMENT_DESC &VertexLayout);
+        ID3D11InputLayout *CreateInputLayout( ID3DBlob *pVertexShaderBlob, const VertexLayout &vertexLayout );
+        ID3D11VertexShader *CreateVertexShader( ID3DBlob *pVertexShaderBlob );
+        ID3D11PixelShader *CreatePixelShader( ID3DBlob *pPixelShaderBlob );
 
         const char *GetLatestProfileVS( D3D_FEATURE_LEVEL eFeatureLevel );
         const char *GetLatestProfilePS( D3D_FEATURE_LEVEL eFeatureLevel );

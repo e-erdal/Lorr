@@ -4,6 +4,12 @@
 
 void MainLayer::Init()
 {
+    Lorr::VertexLayout layout = {
+        { Lorr::VertexAttribType::Vec3, "POSITION" },
+        { Lorr::VertexAttribType::Vec3, "NORMAL" },
+        { Lorr::VertexAttribType::Vec2, "TEXCOORD" },
+        { Lorr::VertexAttribType::Vec4, "COLOR" },
+    };
     ZoneScoped;
 }
 
