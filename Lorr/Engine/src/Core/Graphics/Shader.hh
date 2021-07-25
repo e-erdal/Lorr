@@ -135,7 +135,7 @@ namespace Lorr
     public:
         ~Shader();
 
-        void Init( D3D11API *pAPI, const char *szVertexPath, const char *szPixelPath, const VertexLayout &vertexLayout );
+        void Init( D3D11API *pAPI, const wchar_t *szVertexPath, const wchar_t *szPixelPath, const VertexLayout &vertexLayout );
 
     public:
         ID3D11VertexShader *GetVertexShader()

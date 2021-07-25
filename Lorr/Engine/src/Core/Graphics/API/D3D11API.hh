@@ -38,7 +38,7 @@ namespace Lorr
 
         void ChangeResolution( uint32_t uWidth, uint32_t uHeight );
 
-        ID3DBlob *CompileShaderFromFile( const char *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
+        ID3DBlob *CompileShaderFromFile( const wchar_t *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
         ID3D11InputLayout *CreateInputLayout( ID3DBlob *pVertexShaderBlob, const VertexLayout &vertexLayout );
         ID3D11VertexShader *CreateVertexShader( ID3DBlob *pVertexShaderBlob );
         ID3D11PixelShader *CreatePixelShader( ID3DBlob *pPixelShaderBlob );

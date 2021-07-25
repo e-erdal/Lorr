@@ -58,6 +58,8 @@ namespace Lorr
         ZoneScoped;
 
         m_pEngine->Init( Description );
+
+        Init();
     }
 
     void BaseApp::Run()

@@ -4,13 +4,16 @@
 
 void MainLayer::Init()
 {
+    ZoneScoped;
+
     Lorr::VertexLayout layout = {
-        { Lorr::VertexAttribType::Vec3, "POSITION" },
-        { Lorr::VertexAttribType::Vec3, "NORMAL" },
-        { Lorr::VertexAttribType::Vec2, "TEXCOORD" },
+        { Lorr::VertexAttribType::Vec4, "POSITION" },
+        // { Lorr::VertexAttribType::Vec3, "NORMAL" },
+        // { Lorr::VertexAttribType::Vec2, "TEXCOORD" },
         { Lorr::VertexAttribType::Vec4, "COLOR" },
     };
-    ZoneScoped;
+
+    m_pShader->Init( Lorr::GetEngine()->GetAPI(), L"mainv.hlsl", L"mainp.hlsl", layout );
 }
 
 void MainLayer::Delete()

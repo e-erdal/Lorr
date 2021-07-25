@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include "Core/Graphics/Shader.hh"
+
 #include "ResourceWindow.hh"
 
 #include "Layers/Layer.hh"
@@ -23,4 +25,6 @@ private:
     WorldLayerWindow m_WorldLayerWindow;
 
     void BuildDock( ImGuiID DockID );
+
+    Lorr::Shader *m_pShader = new Lorr::Shader;
 };

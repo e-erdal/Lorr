@@ -23,8 +23,10 @@ namespace Lorr
         }
     }
 
-    ID3DBlob *D3D11API::CompileShaderFromFile( const char *szPath, ShaderType eShaderType, const char *szEntryPoint )
+    ID3DBlob *D3D11API::CompileShaderFromFile( const wchar_t *wszPath, ShaderType eShaderType, const char *szEntryPoint )
     {
+        ZoneScoped;
+
         HRESULT hr;
         ID3DBlob *pErrorBlob = 0;
         ID3DBlob *pShaderBlob = 0;
@@ -34,15 +36,19 @@ namespace Lorr
         flags |= D3DCOMPILE_DEBUG;
 #endif
 
-        hr = D3DCompileFromFile( (LPCWSTR) szPath, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, szEntryPoint, ShaderTypeToLatestProfile( eShaderType ), flags, 0, &pShaderBlob,
+        hr = D3DCompileFromFile( wszPath, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, szEntryPoint, ShaderTypeToLatestProfile( eShaderType ), flags, 0, &pShaderBlob,
                                  &pErrorBlob );
 
-        if ( FAILED( hr ) && pErrorBlob )
+        if ( FAILED( hr ) )
         {
-            printf( "Error blob: %s\n", (char *) pErrorBlob->GetBufferPointer() );
+            if ( pErrorBlob )
+            {
+                printf( "Error blob: %s\n", (char *) pErrorBlob->GetBufferPointer() );
+                SAFE_RELEASE( pErrorBlob );
+            }
+
             PrintError( "Failed to compile shader from file!" );
             SAFE_RELEASE( pShaderBlob );
-            SAFE_RELEASE( pErrorBlob );
             return 0;
         }
 
@@ -51,6 +57,8 @@ namespace Lorr
 
     ID3D11InputLayout *D3D11API::CreateInputLayout( ID3DBlob *pVertexShaderBlob, const VertexLayout &vertexLayout )
     {
+        ZoneScoped;
+
         HRESULT hr;
         ID3D11InputLayout *pLayout = 0;
 
@@ -58,13 +66,16 @@ namespace Lorr
         for ( auto &element : vertexLayout.GetElements() )
             d3dInput.push_back( { element.Name.c_str(), 0, VertexAttribToDXGIFormat( element.Type ), 0, element.Offset, D3D11_INPUT_PER_VERTEX_DATA, 0 } );
 
-        hr = m_pDevice->CreateInputLayout( &d3dInput[0], vertexLayout.GetStride(), pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), &pLayout );
+        hr = m_pDevice->CreateInputLayout( &d3dInput[0], vertexLayout.GetElements().size(), pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(),
+                                           &pLayout );
 
         return pLayout;
     }
 
     ID3D11VertexShader *D3D11API::CreateVertexShader( ID3DBlob *pVertexShaderBlob )
     {
+        ZoneScoped;
+
         ID3D11VertexShader *pVertexShader = 0;
         HRESULT hr = m_pDevice->CreateVertexShader( pVertexShaderBlob->GetBufferPointer(), pVertexShaderBlob->GetBufferSize(), nullptr, &pVertexShader );
 
@@ -79,6 +90,8 @@ namespace Lorr
 
     ID3D11PixelShader *D3D11API::CreatePixelShader( ID3DBlob *pPixelShaderBlob )
     {
+        ZoneScoped;
+
         ID3D11PixelShader *pPixelShader = 0;
         HRESULT hr = m_pDevice->CreatePixelShader( pPixelShaderBlob->GetBufferPointer(), pPixelShaderBlob->GetBufferSize(), nullptr, &pPixelShader );
 
