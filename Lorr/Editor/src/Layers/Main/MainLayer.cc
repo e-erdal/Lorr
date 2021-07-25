@@ -2,6 +2,20 @@
 
 #include <Engine.hh>
 
+struct Vertex
+{
+    glm::vec4 Pos;
+    glm::vec4 Color;
+};
+
+Vertex Vertices[3] = {
+    { { -0.5, -0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
+    { { 0.5, -0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
+    { { 0.0, 0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
+};
+
+uint32_t Indices[3] = { 0, 1, 2 };
+
 void MainLayer::Init()
 {
     ZoneScoped;
@@ -14,6 +28,9 @@ void MainLayer::Init()
     };
 
     m_pShader->Init( Lorr::GetEngine()->GetAPI(), L"mainv.hlsl", L"mainp.hlsl", layout );
+
+    m_pVertexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( Vertices, sizeof( Vertices ), D3D11_BIND_VERTEX_BUFFER );
+    m_pIndexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( Indices, sizeof( Indices ), D3D11_BIND_INDEX_BUFFER );
 }
 
 void MainLayer::Delete()
@@ -48,50 +65,75 @@ void MainLayer::Update()
     // we simply do that here to be more clean and reliable
     //
 
-    bool open = true;
+    // bool open = true;
 
-    const ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos( viewport->WorkPos );
-    ImGui::SetNextWindowSize( viewport->WorkSize );
-    ImGui::SetNextWindowViewport( viewport->ID );
+    // const ImGuiViewport *viewport = ImGui::GetMainViewport();
+    // ImGui::SetNextWindowPos( viewport->WorkPos );
+    // ImGui::SetNextWindowSize( viewport->WorkSize );
+    // ImGui::SetNextWindowViewport( viewport->ID );
 
-    ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, { 0, 0 } );
-    ImGui::Begin( "MainDock", &open, g_DockWindowStyle );
-    {
-        ImGui::PopStyleVar();
+    // ImGui::PushStyleVar( ImGuiStyleVar_WindowPadding, { 0, 0 } );
+    // ImGui::Begin( "MainDock", &open, g_DockWindowStyle );
+    // {
+    //     ImGui::PopStyleVar();
 
-        const auto dockspace_id = ImGui::GetID( "EngineDockSpace" );
-        if ( !ImGui::DockBuilderGetNode( dockspace_id ) ) BuildDock( dockspace_id );
-        ImGui::DockSpace( dockspace_id );
+    //     const auto dockspace_id = ImGui::GetID( "EngineDockSpace" );
+    //     if ( !ImGui::DockBuilderGetNode( dockspace_id ) ) BuildDock( dockspace_id );
+    //     ImGui::DockSpace( dockspace_id );
 
-        if ( ImGui::BeginMenuBar() )
-        {
-            if ( ImGui::BeginMenu( "File" ) )
-            {
-                ImGui::Text( "yepp" );
-                ImGui::EndMenu();
-            }
+    //     if ( ImGui::BeginMenuBar() )
+    //     {
+    //         if ( ImGui::BeginMenu( "File" ) )
+    //         {
+    //             ImGui::Text( "yepp" );
+    //             ImGui::EndMenu();
+    //         }
 
-            ImGui::EndMenuBar();
-        }
+    //         ImGui::EndMenuBar();
+    //     }
 
-        ImGuiWindowClass window_class;
-        window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
-        ImGui::SetNextWindowClass( &window_class );
+    //     ImGuiWindowClass window_class;
+    //     window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
+    //     ImGui::SetNextWindowClass( &window_class );
 
-        ImGui::Begin( m_ResourceWindow.m_szTitle, &m_ResourceWindow.m_bIsOpen, g_WindowStyle );
-        {
-            m_ResourceWindow.Update();
-        }
-        ImGui::End();
+    //     ImGui::Begin( m_ResourceWindow.m_szTitle, &m_ResourceWindow.m_bIsOpen, g_WindowStyle );
+    //     {
+    //         m_ResourceWindow.Update();
+    //     }
+    //     ImGui::End();
 
-        ImGui::SetNextWindowClass( &window_class );
+    //     ImGui::SetNextWindowClass( &window_class );
 
-        ImGui::Begin( m_WorldLayerWindow.m_szTitle, &m_WorldLayerWindow.m_bIsOpen, g_WindowStyle );
-        {
-            m_WorldLayerWindow.Update();
-        }
-        ImGui::End();
-    }
-    ImGui::End();
+    //     ImGui::Begin( m_WorldLayerWindow.m_szTitle, &m_WorldLayerWindow.m_bIsOpen, g_WindowStyle );
+    //     {
+    //         m_WorldLayerWindow.Update();
+    //     }
+    //     ImGui::End();
+    // }
+    // ImGui::End();
+
+    uint32_t vertexStride = sizeof( Vertex );
+    uint32_t offset = 0;
+
+    ID3D11DeviceContext *pContext = Lorr::GetEngine()->GetAPI()->GetDeviceContext();
+    ID3D11DepthStencilState *pDepthStencilState = Lorr::GetEngine()->GetAPI()->GetDepthStencilState();
+    ID3D11RenderTargetView *pRenderTargetView = Lorr::GetEngine()->GetAPI()->GetRenderTargetView();
+    ID3D11DepthStencilView *pDepthStencilView = Lorr::GetEngine()->GetAPI()->GetDepthStencilView();
+    ID3D11RasterizerState *pRasterizerState = Lorr::GetEngine()->GetAPI()->GetRasterizerState();
+
+    pContext->IASetInputLayout( m_pShader->GetInputLayout() );
+
+    pContext->VSSetShader( m_pShader->GetVertexShader(), 0, 0 );
+
+    pContext->PSSetShader( m_pShader->GetPixelShader(), 0, 0 );
+    pContext->RSSetState( pRasterizerState );
+
+    pContext->OMSetDepthStencilState( pDepthStencilState, 0 );
+    pContext->OMSetRenderTargets( 1, &pRenderTargetView, pDepthStencilView );
+
+    pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &vertexStride, &offset );
+    pContext->IASetIndexBuffer( m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
+    pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
+
+    pContext->DrawIndexed( 3, 0, 0 );
 }

@@ -148,6 +148,11 @@ namespace Lorr
             return m_pPixelShader;
         }
 
+        ID3D11InputLayout *GetInputLayout()
+        {
+            return m_pInputLayout;
+        }
+
     private:
         ID3D11VertexShader *m_pVertexShader = 0;
         ID3D11PixelShader *m_pPixelShader = 0;

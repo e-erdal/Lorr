@@ -39,7 +39,7 @@ namespace Lorr
         hr = D3DCompileFromFile( wszPath, 0, D3D_COMPILE_STANDARD_FILE_INCLUDE, szEntryPoint, ShaderTypeToLatestProfile( eShaderType ), flags, 0, &pShaderBlob,
                                  &pErrorBlob );
 
-        if ( FAILED( hr ) )
+        if ( hr < 0 )
         {
             if ( pErrorBlob )
             {

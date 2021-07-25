@@ -31,13 +31,16 @@ namespace Lorr
 
         void Frame( uint32_t uInterval );
 
-        bool CreateIndexBuffer( uint32_t *puIndexes, uint32_t uCount, ID3D11Buffer **pBufferOut );
         void CreateTexture2D( ID3D11Texture2D **ppTarget, int iWidth, int iHeight, DXGI_FORMAT eFormat );
         bool CreateDevice( Window *pWindow, int iWidth, int iHeight );
         bool CreateSwapChain();
 
         void ChangeResolution( uint32_t uWidth, uint32_t uHeight );
 
+        // Buffer API
+        ID3D11Buffer *CreateBuffer( const void *pData, size_t sDataSize, D3D11_BIND_FLAG eBindFlags, D3D11_USAGE eUsage = D3D11_USAGE_DEFAULT );
+
+        // Shader API
         ID3DBlob *CompileShaderFromFile( const wchar_t *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
         ID3D11InputLayout *CreateInputLayout( ID3DBlob *pVertexShaderBlob, const VertexLayout &vertexLayout );
         ID3D11VertexShader *CreateVertexShader( ID3DBlob *pVertexShaderBlob );
@@ -46,6 +49,7 @@ namespace Lorr
         const char *GetLatestProfileVS( D3D_FEATURE_LEVEL eFeatureLevel );
         const char *GetLatestProfilePS( D3D_FEATURE_LEVEL eFeatureLevel );
         const char *ShaderTypeToLatestProfile( ShaderType eShaderType );
+        ////////////////////////////////////
 
     public:
         ID3D11Device *GetDevice() const
@@ -56,6 +60,26 @@ namespace Lorr
         ID3D11DeviceContext *GetDeviceContext() const
         {
             return m_pDeviceContext;
+        }
+
+        ID3D11RasterizerState *GetRasterizerState() const
+        {
+            return m_pRasterizerState;
+        }
+
+        ID3D11DepthStencilState *GetDepthStencilState() const
+        {
+            return m_pDepthStencilState;
+        }
+
+        ID3D11DepthStencilView *GetDepthStencilView() const
+        {
+            return m_pDepthStencilView;
+        }
+
+        ID3D11RenderTargetView *GetRenderTargetView() const
+        {
+            return m_pRenderTargetView;
         }
 
     private:

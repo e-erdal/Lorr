@@ -217,7 +217,7 @@ namespace Lorr
             return false;
         }
 
-        SetViewport( iWidth, iHeight, 99999.f, -99999.f );
+        SetViewport( iWidth, iHeight, 1.f, 0.f );
 
         Console::Log( "Successfully initialized D3D11 device." );
 
@@ -267,6 +267,6 @@ namespace Lorr
 
         SAFE_RELEASE( pBackBuffer );
 
-        SetViewport( uWidth, uHeight, 99999.f, -99999.f );
+        SetViewport( uWidth, uHeight, 1.f, 0.f );
     }
 }  // namespace Lorr
