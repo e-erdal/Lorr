@@ -1,36 +1,91 @@
 #include "MainLayer.hh"
 
+#include <glm/gtc/matrix_transform.hpp>
+
 #include <Engine.hh>
+#include <obj_loader.h>
 
 struct Vertex
 {
-    glm::vec4 Pos;
-    glm::vec4 Color;
+    glm::vec3 Pos;
+    glm::vec3 Norm{ 0 };
+    glm::vec4 Color = { 1, 1, 1, 1 };
 };
 
-Vertex Vertices[3] = {
-    { { -0.5, -0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
-    { { 0.5, -0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
-    { { 0.0, 0.5, 0.0, 1.0 }, { 1, 1, 1, 1 } },
+#pragma pack( push, 1 )
+struct InputData
+{
+    glm::mat4 cameraTransform;
+    glm::mat4 model;
+    glm::mat4 normalM;
 };
-
-uint32_t Indices[3] = { 0, 1, 2 };
+#pragma pack( pop )
 
 void MainLayer::Init()
 {
     ZoneScoped;
 
     Lorr::VertexLayout layout = {
-        { Lorr::VertexAttribType::Vec4, "POSITION" },
-        // { Lorr::VertexAttribType::Vec3, "NORMAL" },
-        // { Lorr::VertexAttribType::Vec2, "TEXCOORD" },
+        { Lorr::VertexAttribType::Vec3, "POSITION" },
+        { Lorr::VertexAttribType::Vec3, "NORMAL" },
         { Lorr::VertexAttribType::Vec4, "COLOR" },
     };
 
     m_pShader->Init( Lorr::GetEngine()->GetAPI(), L"mainv.hlsl", L"mainp.hlsl", layout );
 
-    m_pVertexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( Vertices, sizeof( Vertices ), D3D11_BIND_VERTEX_BUFFER );
-    m_pIndexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( Indices, sizeof( Indices ), D3D11_BIND_INDEX_BUFFER );
+    std::vector<Vertex> vertices;
+    std::vector<uint32_t> indices;
+
+    QuickOBJLoader::Result res = QuickOBJLoader::LoadFromFile( "monkey.obj" );
+
+    for ( auto &mesh : res.meshes )
+    {
+        size_t offset = 0;
+        while ( offset != mesh.vertexData.size() )
+        {
+            float vx = mesh.vertexData[offset + 0];
+            float vy = mesh.vertexData[offset + 1];
+            float vz = mesh.vertexData[offset + 2];
+            offset += 3;
+
+            Vertex vert{};
+            // vec3 of vpos
+            vert.Pos = { vx, vy, vz };
+
+            // vec3 of norms
+            if ( mesh.format.normalElementOffset.has_value() )
+            {
+                float nx = mesh.vertexData[offset + 0];
+                float ny = mesh.vertexData[offset + 1];
+                float nz = mesh.vertexData[offset + 2];
+                offset += 3;
+
+                vert.Norm = { nx, ny, nz };
+            }
+
+            // vec2 of uvs
+            if ( mesh.format.textureCoordinatesElementOffset.has_value() )
+            {
+                float u = mesh.vertexData[offset + 0];
+                float v = mesh.vertexData[offset + 1];
+                offset += 2;
+            }
+
+            vertices.push_back( vert );
+        }
+
+        // each mesh has its own index array, so we either need to create new buffers or just push new indices on old one
+        // ok, must use new buffer for some reason
+        size_t old_size = indices.size();
+        for ( auto &i : mesh.indexData ) indices.push_back( old_size + i );
+    }
+
+    m_IndexCount = indices.size();
+
+    m_pVertexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( &vertices[0], vertices.size() * sizeof( Vertex ), D3D11_BIND_VERTEX_BUFFER );
+    m_pIndexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( &indices[0], indices.size() * sizeof( uint32_t ), D3D11_BIND_INDEX_BUFFER );
+    m_pConstantBuffer =
+        Lorr::GetEngine()->GetAPI()->CreateBuffer( 0, sizeof( InputData ), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, false );
 }
 
 void MainLayer::Delete()
@@ -56,6 +111,8 @@ void MainLayer::BuildDock( ImGuiID DockID )
     ImGui::DockBuilderDockWindow( m_ResourceWindow.m_szTitle, dock_id_down );
     ImGui::DockBuilderDockWindow( "Game View", DockID );
 }
+
+float rotate = 0;
 
 void MainLayer::Update()
 {
@@ -111,29 +168,37 @@ void MainLayer::Update()
     //     ImGui::End();
     // }
     // ImGui::End();
-
+    rotate += 0.0001f;
     uint32_t vertexStride = sizeof( Vertex );
     uint32_t offset = 0;
 
     ID3D11DeviceContext *pContext = Lorr::GetEngine()->GetAPI()->GetDeviceContext();
-    ID3D11DepthStencilState *pDepthStencilState = Lorr::GetEngine()->GetAPI()->GetDepthStencilState();
-    ID3D11RenderTargetView *pRenderTargetView = Lorr::GetEngine()->GetAPI()->GetRenderTargetView();
-    ID3D11DepthStencilView *pDepthStencilView = Lorr::GetEngine()->GetAPI()->GetDepthStencilView();
-    ID3D11RasterizerState *pRasterizerState = Lorr::GetEngine()->GetAPI()->GetRasterizerState();
 
     pContext->IASetInputLayout( m_pShader->GetInputLayout() );
 
     pContext->VSSetShader( m_pShader->GetVertexShader(), 0, 0 );
 
-    pContext->PSSetShader( m_pShader->GetPixelShader(), 0, 0 );
-    pContext->RSSetState( pRasterizerState );
+    D3D11_MAPPED_SUBRESOURCE ms;
+    ZeroMemory( &ms, sizeof( D3D11_MAPPED_SUBRESOURCE ) );
+    if ( SUCCEEDED( pContext->Map( m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms ) ) )
+    {
+        InputData id;
+        id.cameraTransform = Lorr::GetEngine()->GetCamera()->GetTransform();
+        id.model = glm::translate( glm::mat4( 1.f ), glm::ceil( glm::vec3{ 0, 0, 0 } ) ) * glm::rotate( glm::mat4( 1.f ), rotate, { 0, 1, 0 } )
+                   * glm::scale( glm::mat4( 1.f ), { 1, 1, 1 } );
+        id.normalM = glm::transpose( glm::inverse( id.model ) );
 
-    pContext->OMSetDepthStencilState( pDepthStencilState, 0 );
-    pContext->OMSetRenderTargets( 1, &pRenderTargetView, pDepthStencilView );
+        memcpy( ms.pData, &id, sizeof( id ) );
+        pContext->Unmap( m_pConstantBuffer, 0 );
+    }
+    pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+
+    pContext->PSSetShader( m_pShader->GetPixelShader(), 0, 0 );
+    pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
     pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &vertexStride, &offset );
     pContext->IASetIndexBuffer( m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
     pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
 
-    pContext->DrawIndexed( 3, 0, 0 );
+    pContext->DrawIndexed( m_IndexCount, 0, 0 );
 }

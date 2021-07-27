@@ -115,28 +115,7 @@ namespace Lorr
         //      Create D3D11 depth stencil texture
         /////////////////////////////////////////////////////////////////////////
 
-        D3D11_TEXTURE2D_DESC dstextureDesc;
-        ZeroMemory( &dstextureDesc, sizeof( dstextureDesc ) );
-        dstextureDesc.CPUAccessFlags = 0;
-        dstextureDesc.MiscFlags = 0;
-        dstextureDesc.ArraySize = 1;
-        dstextureDesc.MipLevels = 1;
-        dstextureDesc.Width = iWidth;
-        dstextureDesc.Height = iHeight;
-        dstextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        dstextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-        dstextureDesc.Usage = D3D11_USAGE_DEFAULT;
-
-        dstextureDesc.SampleDesc.Count = 1;
-        dstextureDesc.SampleDesc.Quality = 0;
-
-        hr = m_pDevice->CreateTexture2D( &dstextureDesc, 0, &m_pDepthStencilBuffer );
-
-        if ( hr < 0 )
-        {
-            PrintError( "Failed to create D3D11 Depth stencil texture!" );
-            return false;
-        }
+        m_pDepthStencilBuffer = CreateDepthStencilBuffer( iWidth, iHeight );
 
         /////////////////////////////////////////////////////////////////////////
         //      Create D3D11 depth stencil state
@@ -147,7 +126,7 @@ namespace Lorr
 
         depthStencilStateDesc.DepthEnable = true;
         depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS;
+        depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
 
         depthStencilStateDesc.StencilEnable = true;
         depthStencilStateDesc.StencilReadMask = 0xFF;
@@ -171,8 +150,7 @@ namespace Lorr
             return false;
         }
 
-        // Everything is done, now tell device context to apply those settings
-        m_pDeviceContext->OMSetDepthStencilState( m_pDepthStencilState, 0 );
+        m_pDeviceContext->OMSetDepthStencilState( m_pDepthStencilState, 1 );
 
         /////////////////////////////////////////////////////////////////////////
         //      Create D3D11 depth stencil view
@@ -180,6 +158,7 @@ namespace Lorr
 
         D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
         depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
         depthStencilViewDesc.Texture2D.MipSlice = 0;
 
         hr = m_pDevice->CreateDepthStencilView( m_pDepthStencilBuffer, 0, &m_pDepthStencilView );
@@ -198,16 +177,18 @@ namespace Lorr
 
         D3D11_RASTERIZER_DESC rasterizerDesc;
         ZeroMemory( &rasterizerDesc, sizeof( D3D11_RASTERIZER_DESC ) );
-        rasterizerDesc.AntialiasedLineEnable = false;
-        rasterizerDesc.CullMode = D3D11_CULL_BACK;
+        rasterizerDesc.CullMode = D3D11_CULL_FRONT;
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+
         rasterizerDesc.DepthBias = 0;
         rasterizerDesc.DepthBiasClamp = 0.0f;
+        rasterizerDesc.SlopeScaledDepthBias = 0.0f;
+
+        rasterizerDesc.AntialiasedLineEnable = false;
         rasterizerDesc.DepthClipEnable = true;
-        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-        rasterizerDesc.FrontCounterClockwise = true;
+        rasterizerDesc.FrontCounterClockwise = false;
         rasterizerDesc.MultisampleEnable = false;
         rasterizerDesc.ScissorEnable = false;
-        rasterizerDesc.SlopeScaledDepthBias = 0.0f;
 
         hr = m_pDevice->CreateRasterizerState( &rasterizerDesc, &m_pRasterizerState );
 
@@ -217,12 +198,43 @@ namespace Lorr
             return false;
         }
 
-        SetViewport( iWidth, iHeight, 1.f, 0.f );
+        SetViewport( iWidth, iHeight, 1.f, 0.0f );
 
         Console::Log( "Successfully initialized D3D11 device." );
 
         m_bIsContextReady = true;
         return true;
+    }
+
+    ID3D11Texture2D *D3D11API::CreateDepthStencilBuffer( uint32_t uWidth, uint32_t uHeight )
+    {
+        HRESULT hr;
+        ID3D11Texture2D *pDepthTexture = 0;
+
+        D3D11_TEXTURE2D_DESC dstextureDesc;
+        ZeroMemory( &dstextureDesc, sizeof( dstextureDesc ) );
+        dstextureDesc.CPUAccessFlags = 0;
+        dstextureDesc.MiscFlags = 0;
+        dstextureDesc.ArraySize = 1;
+        dstextureDesc.MipLevels = 1;
+        dstextureDesc.Width = uWidth;
+        dstextureDesc.Height = uHeight;
+        dstextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        dstextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
+        dstextureDesc.Usage = D3D11_USAGE_DEFAULT;
+
+        dstextureDesc.SampleDesc.Count = 1;
+        dstextureDesc.SampleDesc.Quality = 0;
+
+        hr = m_pDevice->CreateTexture2D( &dstextureDesc, 0, &pDepthTexture );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to create D3D11 Depth stencil texture!" );
+            return 0;
+        }
+
+        return pDepthTexture;
     }
 
     void D3D11API::ChangeResolution( uint32_t uWidth, uint32_t uHeight )
@@ -236,6 +248,7 @@ namespace Lorr
         m_pDeviceContext->OMSetRenderTargets( 0, 0, 0 );
 
         SAFE_RELEASE( m_pRenderTargetView );
+        SAFE_RELEASE( m_pDepthStencilView );
         SAFE_RELEASE( m_pDepthStencilBuffer );
 
         hr = m_pSwapChain->ResizeBuffers( 0, 0, 0, DXGI_FORMAT_UNKNOWN, 0 );
@@ -263,7 +276,18 @@ namespace Lorr
             return;
         }
 
-        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, 0 );
+        m_pDepthStencilBuffer = CreateDepthStencilBuffer( uWidth, uHeight );
+
+        hr = m_pDevice->CreateDepthStencilView( m_pDepthStencilBuffer, 0, &m_pDepthStencilView );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to create D3D11 DSV!" );
+            return;
+        }
+
+        m_pDeviceContext->OMSetDepthStencilState( m_pDepthStencilState, 1 );
+        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
 
         SAFE_RELEASE( pBackBuffer );
 

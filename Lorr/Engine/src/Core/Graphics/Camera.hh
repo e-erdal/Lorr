@@ -9,7 +9,7 @@ namespace Lorr
     class Camera
     {
     public:
-        void Init( const glm::vec3 &v3Pos, const glm::vec3 &v3Up, const glm::vec2 &v2Size, float fFOV, float fZNear, float fZFar );
+        void Init( const glm::vec3 &v3Pos, const glm::vec3 &v3Direction, const glm::vec3 &v3Up, const glm::vec2 &v2Size, float fFOV, float fZNear, float fZFar );
 
         void CalculateMetrices();
 
@@ -19,7 +19,7 @@ namespace Lorr
     public:
         const glm::mat4 GetTransform() const
         {
-            return m_m4Projection * m_m4View;
+            return glm::transpose( m_m4Projection * m_m4View * glm::mat4( 1.f ) );
         }
 
         const glm::vec3 &GetPosition() const
@@ -28,14 +28,13 @@ namespace Lorr
         }
 
     private:
+        void OnResolutionChanged( uint32_t uWidth, uint32_t uHeight );
+
         glm::mat4 m_m4Projection{};
         glm::mat4 m_m4View{};
 
         glm::vec3 m_v3Pos{};
-        glm::vec3 m_v3Angle{};
-        glm::vec3 m_v3WorldUp{};
-        glm::vec3 m_v3Front{};
-        glm::vec3 m_v3Right{};
+        glm::vec3 m_v3Direction{};
         glm::vec3 m_v3Up{};
 
         glm::vec2 m_v2Size{};

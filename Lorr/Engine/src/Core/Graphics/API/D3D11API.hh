@@ -38,7 +38,8 @@ namespace Lorr
         void ChangeResolution( uint32_t uWidth, uint32_t uHeight );
 
         // Buffer API
-        ID3D11Buffer *CreateBuffer( const void *pData, size_t sDataSize, D3D11_BIND_FLAG eBindFlags, D3D11_USAGE eUsage = D3D11_USAGE_DEFAULT );
+        ID3D11Buffer *CreateBuffer( const void *pData, size_t sDataSize, D3D11_BIND_FLAG eBindFlags, D3D11_USAGE eUsage = D3D11_USAGE_DEFAULT,
+                                    /*D3D11_CPU_ACCESS_FLAG*/ uint32_t eAccessFlag = 0, bool bHasBufferAttach = true );
 
         // Shader API
         ID3DBlob *CompileShaderFromFile( const wchar_t *szPath, ShaderType eShaderType, const char *szEntryPoint = "main" );
@@ -81,6 +82,9 @@ namespace Lorr
         {
             return m_pRenderTargetView;
         }
+
+    private:
+        ID3D11Texture2D *CreateDepthStencilBuffer( uint32_t uWidth, uint32_t uHeight );
 
     private:
         ID3D11Device *m_pDevice;

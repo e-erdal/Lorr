@@ -39,10 +39,12 @@ namespace Lorr
         ZoneScoped;
 
         D3D11_VIEWPORT vp;
+        ZeroMemory( &vp, sizeof( D3D11_VIEWPORT ) );
+        
         vp.Width = (float) iWidth;
         vp.Height = (float) iHeight;
-        vp.MinDepth = fNear;
         vp.MaxDepth = fFar;
+        vp.MinDepth = fNear;
         vp.TopLeftX = 0;
         vp.TopLeftY = 0;
 
