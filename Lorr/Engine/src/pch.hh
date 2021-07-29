@@ -10,8 +10,9 @@
 #include "Core/Utils/Logger.hh"
 #include "Core/Utils/Math.hh"
 
-#include <glm/glm.hpp>
+// #include <glm/glm.hpp>
 
+#include <DirectXMath.h>
 #include <Tracy.hpp>
 #include <Windows.h>
 #include <signals.h>

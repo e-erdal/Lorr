@@ -118,6 +118,26 @@ namespace Lorr
         m_pDepthStencilBuffer = CreateDepthStencilBuffer( iWidth, iHeight );
 
         /////////////////////////////////////////////////////////////////////////
+        //      Create D3D11 depth stencil view
+        /////////////////////////////////////////////////////////////////////////
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
+        ZeroMemory( &depthStencilViewDesc, sizeof( D3D11_DEPTH_STENCIL_VIEW_DESC ) );
+
+        depthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
+        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+        hr = m_pDevice->CreateDepthStencilView( m_pDepthStencilBuffer, &depthStencilViewDesc, &m_pDepthStencilView );
+
+        if ( hr < 0 )
+        {
+            PrintError( "Failed to create D3D11 Depth stencil view!" );
+            return false;
+        }
+
+        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
+
+        /////////////////////////////////////////////////////////////////////////
         //      Create D3D11 depth stencil state
         /////////////////////////////////////////////////////////////////////////
 
@@ -126,9 +146,9 @@ namespace Lorr
 
         depthStencilStateDesc.DepthEnable = true;
         depthStencilStateDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
-        depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS_EQUAL;
+        depthStencilStateDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
-        depthStencilStateDesc.StencilEnable = true;
+        depthStencilStateDesc.StencilEnable = false;
         depthStencilStateDesc.StencilReadMask = 0xFF;
         depthStencilStateDesc.StencilWriteMask = 0xFF;
 
@@ -153,40 +173,22 @@ namespace Lorr
         m_pDeviceContext->OMSetDepthStencilState( m_pDepthStencilState, 1 );
 
         /////////////////////////////////////////////////////////////////////////
-        //      Create D3D11 depth stencil view
-        /////////////////////////////////////////////////////////////////////////
-
-        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilViewDesc;
-        depthStencilViewDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
-        depthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-        depthStencilViewDesc.Texture2D.MipSlice = 0;
-
-        hr = m_pDevice->CreateDepthStencilView( m_pDepthStencilBuffer, 0, &m_pDepthStencilView );
-
-        if ( hr < 0 )
-        {
-            PrintError( "Failed to create D3D11 Depth stencil view!" );
-            return false;
-        }
-
-        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
-
-        /////////////////////////////////////////////////////////////////////////
         //      Create D3D11 rasterizer state
         /////////////////////////////////////////////////////////////////////////
 
         D3D11_RASTERIZER_DESC rasterizerDesc;
         ZeroMemory( &rasterizerDesc, sizeof( D3D11_RASTERIZER_DESC ) );
-        rasterizerDesc.CullMode = D3D11_CULL_FRONT;
+
+        rasterizerDesc.CullMode = D3D11_CULL_BACK;
         rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
+        rasterizerDesc.DepthClipEnable = true;
         rasterizerDesc.DepthBias = 0;
         rasterizerDesc.DepthBiasClamp = 0.0f;
         rasterizerDesc.SlopeScaledDepthBias = 0.0f;
 
         rasterizerDesc.AntialiasedLineEnable = false;
-        rasterizerDesc.DepthClipEnable = true;
-        rasterizerDesc.FrontCounterClockwise = false;
+        rasterizerDesc.FrontCounterClockwise = true;
         rasterizerDesc.MultisampleEnable = false;
         rasterizerDesc.ScissorEnable = false;
 
@@ -213,13 +215,14 @@ namespace Lorr
 
         D3D11_TEXTURE2D_DESC dstextureDesc;
         ZeroMemory( &dstextureDesc, sizeof( dstextureDesc ) );
+
         dstextureDesc.CPUAccessFlags = 0;
         dstextureDesc.MiscFlags = 0;
         dstextureDesc.ArraySize = 1;
         dstextureDesc.MipLevels = 1;
         dstextureDesc.Width = uWidth;
         dstextureDesc.Height = uHeight;
-        dstextureDesc.Format = DXGI_FORMAT_D24_UNORM_S8_UINT;
+        dstextureDesc.Format = DXGI_FORMAT_D32_FLOAT;
         dstextureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
         dstextureDesc.Usage = D3D11_USAGE_DEFAULT;
 

@@ -39,8 +39,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_m4View = glm::lookAtRH( m_v3Pos, m_v3Pos + m_v3Direction, { 0, 1, 0 } );
-        m_m4Projection = glm::perspectiveFovRH_ZO( glm::radians( m_fFOV ), m_v2Size.x, m_v2Size.y, m_fZNear, m_fZFar );
+        m_m4View = glm::lookAtRH( m_v3Pos, m_v3Pos + m_v3Direction, m_v3Up );
+        m_m4Projection = glm::perspectiveFovRH( glm::radians( m_fFOV ), m_v2Size.x, m_v2Size.y, m_fZNear, m_fZFar );
     }
 
     void Camera::SetPosition( const glm::vec3 &v3Pos )

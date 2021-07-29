@@ -10,6 +10,7 @@
 
 #include "Layers/Layer.hh"
 
+#include "Model/Model.hh"
 #include "WorldLayerWindow.hh"
 
 class MainLayer : Layer
@@ -27,9 +28,7 @@ private:
     void BuildDock( ImGuiID DockID );
 
     Lorr::Shader *m_pShader = new Lorr::Shader;
-    ID3D11Buffer *m_pVertexBuffer = 0;
-    ID3D11Buffer *m_pIndexBuffer = 0;
     ID3D11Buffer *m_pConstantBuffer = 0;
 
-    uint32_t m_IndexCount = 0;
+    Lorr::Model m_Model;
 };

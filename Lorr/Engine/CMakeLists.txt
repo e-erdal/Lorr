@@ -11,6 +11,8 @@ set(ENGINE_COMPONENTS
     LorrCoreDebug
     LorrCoreGraphics
     LorrCoreSystems
+
+    LorrModel
 )
 
 ######### Engine components ########
@@ -52,6 +54,20 @@ LorrComponent(
         src/pch.hh
     SOURCE
         src/Core/Systems/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# Model
+LorrComponent(
+    NAME
+        LorrModel
+    INCLUDE
+        src/
+    PCH
+        src/pch.hh
+    SOURCE
+        src/Model/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

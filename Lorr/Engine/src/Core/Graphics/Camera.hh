@@ -19,7 +19,7 @@ namespace Lorr
     public:
         const glm::mat4 GetTransform() const
         {
-            return glm::transpose( m_m4Projection * m_m4View * glm::mat4( 1.f ) );
+            return glm::transpose( m_m4Projection * m_m4View );
         }
 
         const glm::vec3 &GetPosition() const

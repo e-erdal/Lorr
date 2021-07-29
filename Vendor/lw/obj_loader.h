@@ -274,7 +274,7 @@ namespace QuickOBJLoader
         bool interleaved = true;
 
         // The size in byte of each vertex element
-        uint32_t elementSize = 0;
+        uint32_t elementSize = sizeof( float );
 
         // We start elementCount at 1 because we divide by it when calculating the number of vertices in a mesh
         // before the actual element count is known. If it is 0, we will crash, if it is not 0 we get the
@@ -293,88 +293,57 @@ namespace QuickOBJLoader
         std::optional<uint32_t> textureCoordinatesElementOffset;
     };
 
-    struct Mesh
+    struct Material
     {
-        VertexFormat format;
+        std::string Name;
 
-        std::string material;
-        std::vector<float> vertexData;
-        std::vector<uint32_t> indexData;
-
-        Mesh( const std::string &materialName ) : material( materialName )
-        {
-            format.elementSize = sizeof( float );
-        }
-
-        void deduplicateVertices()
-        {
-            using VertexProxy = Detail::VertexProxy<float>;
-
-            uint32_t vertexElementCount = format.elementCount;
-            size_t vertexCount = vertexData.size() / vertexElementCount;
-            std::vector<float> dedupedVertexData;
-
-            std::vector<VertexProxy> proxies;
-            proxies.reserve( vertexCount );
-
-            for ( size_t i = 0; i < vertexCount; i++ )
-            {
-                proxies.push_back( { i, &vertexData[i * vertexElementCount] } );
-            }
-
-            std::sort( proxies.begin(), proxies.end(), [=]( const VertexProxy &a, const VertexProxy &b ) {
-                uint32_t firstNotEqualIndex = a.firstNotEqualIndex( b, vertexElementCount );
-                return firstNotEqualIndex != vertexElementCount && a.data[firstNotEqualIndex] < b.data[firstNotEqualIndex];
-            } );
-
-            std::vector<uint32_t> indexRedirects( vertexCount );
-
-            uint32_t currentUniqueVertexIndex = 0;
-            const VertexProxy *uniqueVertex = &proxies[0];
-            uniqueVertex->appendDataTo( dedupedVertexData, vertexElementCount );
-
-            for ( const auto &proxy : proxies )
-            {
-                if ( uniqueVertex->firstNotEqualIndex( proxy, vertexElementCount ) != vertexElementCount )
-                {
-                    currentUniqueVertexIndex++;
-                    uniqueVertex = &proxy;
-                    uniqueVertex->appendDataTo( dedupedVertexData, vertexElementCount );
-                }
-                indexRedirects[proxy.index] = currentUniqueVertexIndex;
-            }
-
-            for ( uint32_t &index : indexData )
-            {
-                index = indexRedirects[index];
-            }
-
-            vertexData = std::move( dedupedVertexData );
-        }
+        float R;
+        float G;
+        float B;
     };
 
-    struct Result
+    struct Mesh
+    {
+        Mesh( const std::string &sMaterial, const std::string &sMaterialPath ) : materialName( sMaterial ), materialPath( sMaterialPath ){};
+
+        VertexFormat format;
+
+        std::string materialPath;
+        std::string materialName;
+
+        std::vector<float> vertexData;
+        std::vector<uint32_t> indexData;
+    };
+
+    struct ModelResult
     {
         std::vector<Mesh> meshes;
     };
 
-    inline Result LoadFromString( const std::string_view data )
+    struct MaterialResult
+    {
+        std::vector<Material> materials;
+    };
+
+    inline ModelResult LoadFromString( const std::string_view data )
     {
         using namespace QuickOBJLoader::Detail;
 
-        Result result;
+        ModelResult result;
         std::unordered_map<std::string, size_t> meshPartIndices;
 
         std::vector<Vector3<float>> positions;
         std::vector<Vector3<float>> normals;
         std::vector<Vector2<float>> textureCoordinates;
 
-        Mesh defaultMesh( "unknown" );
+        Mesh defaultMesh( "unknown", "no_material" );
 
-        std::string currentMaterialName = defaultMesh.material;
         Mesh *currentMesh = &defaultMesh;
+        std::string currentMaterial = defaultMesh.materialName;
+        std::string currentMaterialPath = defaultMesh.materialPath;
 
         std::vector<std::string_view> elements;
+        std::vector<std::string_view> materialElements;
         std::vector<std::string_view> face;
 
         const uint32_t PositionElements = 3;
@@ -398,14 +367,18 @@ namespace QuickOBJLoader
             {
                 normals.emplace_back( elements );
             }
+            else if ( elements[0] == "mtllib" )
+            {
+                currentMaterialPath = elements[1];
+            }
             else if ( elements[0] == "usemtl" )
             {
-                currentMaterialName = elements[1];
-                auto meshPartIndex = meshPartIndices.find( currentMaterialName );
+                currentMaterial = elements[1];
+                auto meshPartIndex = meshPartIndices.find( currentMaterial );
                 if ( meshPartIndex == meshPartIndices.end() )
                 {
-                    meshPartIndices[currentMaterialName] = result.meshes.size();
-                    currentMesh = &result.meshes.emplace_back( currentMaterialName );
+                    meshPartIndices[currentMaterial] = result.meshes.size();
+                    currentMesh = &result.meshes.emplace_back( currentMaterial, currentMaterialPath );
                 }
                 else
                 {
@@ -476,11 +449,60 @@ namespace QuickOBJLoader
         return result;
     }
 
-    inline Result LoadFromFile( const std::filesystem::path &filename )
+    inline ModelResult LoadFromFile( const std::filesystem::path &filename )
     {
         using namespace QuickOBJLoader::Detail;
         std::string data = ReadFile( filename );
         return LoadFromString( data );
+    }
+
+    inline MaterialResult LoadMaterialFromString( const std::string_view data )
+    {
+        using namespace QuickOBJLoader::Detail;
+
+        MaterialResult result;
+
+        std::vector<std::string_view> elements;
+
+        Material *currentMaterial = 0;
+        Material mat;
+
+        ProcessLines( data, [&]( const std::string_view &line ) {
+            // There may be more than one space between elements, this will break in such a case :(
+            SplitLineIntoBuffer( line, elements );
+            if ( elements.size() == 0 ) return;
+
+            if ( elements[0] == "newmtl" )
+            {
+                if ( currentMaterial )
+                {
+                    result.materials.push_back( *currentMaterial );
+                }
+
+                mat.Name = elements[1];
+                currentMaterial = &mat;
+            }
+            if ( elements[0] == "Kd" )
+            {
+                currentMaterial->R = atof( elements[1].data() );
+                currentMaterial->G = atof( elements[2].data() );
+                currentMaterial->B = atof( elements[3].data() );
+            }
+        } );
+
+        if ( currentMaterial )
+        {
+            result.materials.push_back( *currentMaterial );
+        }
+
+        return result;
+    }
+
+    inline MaterialResult LoadMaterialFromFile( const std::filesystem::path &filename )
+    {
+        using namespace QuickOBJLoader::Detail;
+        std::string data = ReadFile( filename );
+        return LoadMaterialFromString( data );
     }
 }  // namespace QuickOBJLoader
 #endif

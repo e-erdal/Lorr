@@ -15,7 +15,7 @@ struct Vertex
 #pragma pack( push, 1 )
 struct InputData
 {
-    glm::mat4 cameraTransform;
+    glm::mat4 matrix;
     glm::mat4 model;
     glm::mat4 normalM;
 };
@@ -32,60 +32,10 @@ void MainLayer::Init()
     };
 
     m_pShader->Init( Lorr::GetEngine()->GetAPI(), L"mainv.hlsl", L"mainp.hlsl", layout );
-
-    std::vector<Vertex> vertices;
-    std::vector<uint32_t> indices;
-
-    QuickOBJLoader::Result res = QuickOBJLoader::LoadFromFile( "monkey.obj" );
-
-    for ( auto &mesh : res.meshes )
-    {
-        size_t offset = 0;
-        while ( offset != mesh.vertexData.size() )
-        {
-            float vx = mesh.vertexData[offset + 0];
-            float vy = mesh.vertexData[offset + 1];
-            float vz = mesh.vertexData[offset + 2];
-            offset += 3;
-
-            Vertex vert{};
-            // vec3 of vpos
-            vert.Pos = { vx, vy, vz };
-
-            // vec3 of norms
-            if ( mesh.format.normalElementOffset.has_value() )
-            {
-                float nx = mesh.vertexData[offset + 0];
-                float ny = mesh.vertexData[offset + 1];
-                float nz = mesh.vertexData[offset + 2];
-                offset += 3;
-
-                vert.Norm = { nx, ny, nz };
-            }
-
-            // vec2 of uvs
-            if ( mesh.format.textureCoordinatesElementOffset.has_value() )
-            {
-                float u = mesh.vertexData[offset + 0];
-                float v = mesh.vertexData[offset + 1];
-                offset += 2;
-            }
-
-            vertices.push_back( vert );
-        }
-
-        // each mesh has its own index array, so we either need to create new buffers or just push new indices on old one
-        // ok, must use new buffer for some reason
-        size_t old_size = indices.size();
-        for ( auto &i : mesh.indexData ) indices.push_back( old_size + i );
-    }
-
-    m_IndexCount = indices.size();
-
-    m_pVertexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( &vertices[0], vertices.size() * sizeof( Vertex ), D3D11_BIND_VERTEX_BUFFER );
-    m_pIndexBuffer = Lorr::GetEngine()->GetAPI()->CreateBuffer( &indices[0], indices.size() * sizeof( uint32_t ), D3D11_BIND_INDEX_BUFFER );
     m_pConstantBuffer =
         Lorr::GetEngine()->GetAPI()->CreateBuffer( 0, sizeof( InputData ), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, false );
+
+    m_Model.Init( "monkey.obj" );
 }
 
 void MainLayer::Delete()
@@ -176,6 +126,7 @@ void MainLayer::Update()
 
     pContext->IASetInputLayout( m_pShader->GetInputLayout() );
 
+    pContext->PSSetShader( m_pShader->GetPixelShader(), 0, 0 );
     pContext->VSSetShader( m_pShader->GetVertexShader(), 0, 0 );
 
     D3D11_MAPPED_SUBRESOURCE ms;
@@ -183,22 +134,18 @@ void MainLayer::Update()
     if ( SUCCEEDED( pContext->Map( m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms ) ) )
     {
         InputData id;
-        id.cameraTransform = Lorr::GetEngine()->GetCamera()->GetTransform();
-        id.model = glm::translate( glm::mat4( 1.f ), glm::ceil( glm::vec3{ 0, 0, 0 } ) ) * glm::rotate( glm::mat4( 1.f ), rotate, { 0, 1, 0 } )
-                   * glm::scale( glm::mat4( 1.f ), { 1, 1, 1 } );
+        id.model = glm::translate( glm::mat4( 1.f ), { 0, 0, 0 } ) * glm::rotate( glm::mat4( 1.f ), rotate, { 0, 1, 0 } ) * glm::scale( glm::mat4( 1.f ), { 1, 1, 1 } );
+
+        id.matrix = id.model * Lorr::GetEngine()->GetCamera()->GetTransform();
+
         id.normalM = glm::transpose( glm::inverse( id.model ) );
 
         memcpy( ms.pData, &id, sizeof( id ) );
         pContext->Unmap( m_pConstantBuffer, 0 );
     }
-    pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
-    pContext->PSSetShader( m_pShader->GetPixelShader(), 0, 0 );
+    pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
     pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
 
-    pContext->IASetVertexBuffers( 0, 1, &m_pVertexBuffer, &vertexStride, &offset );
-    pContext->IASetIndexBuffer( m_pIndexBuffer, DXGI_FORMAT_R32_UINT, 0 );
-    pContext->IASetPrimitiveTopology( D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST );
-
-    pContext->DrawIndexed( m_IndexCount, 0, 0 );
+    m_Model.Render();
 }
