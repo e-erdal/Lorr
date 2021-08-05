@@ -179,8 +179,8 @@ namespace Lorr
         D3D11_RASTERIZER_DESC rasterizerDesc;
         ZeroMemory( &rasterizerDesc, sizeof( D3D11_RASTERIZER_DESC ) );
 
-        rasterizerDesc.CullMode = D3D11_CULL_BACK;
-        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+        rasterizerDesc.CullMode = D3D11_CULL_FRONT;
+        rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
 
         rasterizerDesc.DepthClipEnable = true;
         rasterizerDesc.DepthBias = 0;
@@ -188,7 +188,7 @@ namespace Lorr
         rasterizerDesc.SlopeScaledDepthBias = 0.0f;
 
         rasterizerDesc.AntialiasedLineEnable = false;
-        rasterizerDesc.FrontCounterClockwise = true;
+        rasterizerDesc.FrontCounterClockwise = false;
         rasterizerDesc.MultisampleEnable = false;
         rasterizerDesc.ScissorEnable = false;
 

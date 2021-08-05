@@ -13,7 +13,7 @@ namespace Lorr
         pSurface->OnSetKeyState.connect<&InputSystem::OnSetKeyState>( this );
         pSurface->OnChar.connect<&InputSystem::OnChar>( this );
         pSurface->OnSetMouseState.connect<&InputSystem::OnSetMouseState>( this );
-        pSurface->OnSetMousePosition.connect<&InputSystem::OnSetMousePosition>( this );
+        // pSurface->OnSetMousePosition.connect<&InputSystem::OnSetMousePosition>( this );
     }
 
     void InputSystem::OnSetKeyState( Key eKey, ButtonState eState, KeyMod eMod )

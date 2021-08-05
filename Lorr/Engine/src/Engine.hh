@@ -29,13 +29,11 @@ namespace Lorr
 
         bool Init( ApplicationDesc const &Description );
         void Run();
-        
+
         // Graphics
         void BeginFrame();
         void EndFrame();
-
-    private:
-
+        
         // Logic
         void Tick( float fDelta );
 

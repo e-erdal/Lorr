@@ -25,7 +25,7 @@ namespace Lorr
 
         m_pWindow->Init( Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags );
         m_pAPI->Init( m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight() );
-        m_pCamera->Init( { 0, 15, -40 }, { 0, 0, 1 }, { 0, 1, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, 60.f, 0.01f, 10000.f );
+        m_pCamera->Init( { 0, 0, -55 }, { 180, 0, 0 }, { 0, 1, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, 60.f, 0.01f, 10000.f );
 
         m_pImGui->Init( this );
 
@@ -58,6 +58,11 @@ namespace Lorr
         m_pAPI->Frame( 0 );
     }
 
+    void Engine::Tick( float fDelta )
+    {
+        m_pCamera->Update( fDelta );
+    }
+
     BaseApp::~BaseApp()
     {
         ZoneScoped;
@@ -84,6 +89,8 @@ namespace Lorr
         {
             auto elapsed = timer.elapsed();
             timer.reset();
+
+            m_pEngine->Tick( elapsed );
 
             Tick( elapsed );
 

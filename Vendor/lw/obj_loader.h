@@ -297,9 +297,9 @@ namespace QuickOBJLoader
     {
         std::string Name;
 
-        float R;
-        float G;
-        float B;
+        float R = 1;
+        float G = 1;
+        float B = 1;
     };
 
     struct Mesh
@@ -502,6 +502,9 @@ namespace QuickOBJLoader
     {
         using namespace QuickOBJLoader::Detail;
         std::string data = ReadFile( filename );
+
+        if ( data.empty() ) return {};
+
         return LoadMaterialFromString( data );
     }
 }  // namespace QuickOBJLoader
@@ -626,7 +629,8 @@ namespace QuickOBJLoader::Detail
         std::ifstream file( filename, std::ios::in | std::ios::binary );
         if ( !file )
         {
-            assert( false );  // Couldn't read file
+            // assert( false );  // Couldn't read file
+            return std::string();
         }
 
         uint64_t fileSize = std::filesystem::file_size( filename );

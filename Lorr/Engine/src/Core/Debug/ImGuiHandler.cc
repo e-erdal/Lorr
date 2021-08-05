@@ -144,7 +144,7 @@ namespace Lorr
 
         if ( io.WantSetMousePos )
         {
-            pSurface->OnSetMousePosition( glm::vec2{ io.MousePos.x, io.MousePos.y } );
+            pSurface->OnSetMousePosition( glm::vec2{ io.MousePos.x, io.MousePos.y }, glm::vec2{ io.MouseDelta.x, io.MouseDelta.y } );
         }
 
         io.MousePos = ImVec2( -FLT_MAX, -FLT_MAX );
@@ -186,7 +186,7 @@ namespace Lorr
 
     void ImGuiHandler::EndFrame()
     {
-        ZoneScopedN("ImGuiHandler::EndFrame");
+        ZoneScopedN( "ImGuiHandler::EndFrame" );
 
         ImGui::Render();
         ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
@@ -239,7 +239,6 @@ namespace Lorr
     void ImGuiHandler::ImGui_ImplSurface_Shutdown()
     {
         ZoneScoped;
-
     }
 
     void ImGuiHandler::ImGui_ImplSurface_NewFrame()

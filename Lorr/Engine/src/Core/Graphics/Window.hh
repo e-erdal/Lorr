@@ -54,7 +54,7 @@ namespace Lorr
     public:
         signals::signal<void( Key, ButtonState, KeyMod )> OnSetKeyState;
         signals::signal<void( KeyMod, MouseButton, ButtonState, const glm::ivec2 & )> OnSetMouseState;
-        signals::signal<void( glm::ivec2 )> OnSetMousePosition;
+        signals::signal<void( glm::ivec2, glm::ivec2 )> OnSetMousePosition;
         signals::signal<void()> OnLoseFocus;
         signals::signal<void()> OnGainFocus;
         signals::signal<void( uint32_t, uint32_t )> OnResolutionChanged;

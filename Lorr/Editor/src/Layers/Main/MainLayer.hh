@@ -28,7 +28,8 @@ private:
     void BuildDock( ImGuiID DockID );
 
     Lorr::Shader *m_pShader = new Lorr::Shader;
-    ID3D11Buffer *m_pConstantBuffer = 0;
+    ID3D11Buffer *m_pVConstantBuffer = 0;
+    ID3D11Buffer *m_pPConstantBuffer = 0;
 
     Lorr::Model m_Model;
 };

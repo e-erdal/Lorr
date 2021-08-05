@@ -326,8 +326,31 @@ namespace Lorr
 
         case WM_MOUSEMOVE:
         {
-            pWindow->m_iv2CursorPos = glm::ivec2( LOWORD( lParam ), HIWORD( lParam ) );
-            pWindow->OnSetMousePosition( glm::ivec2( LOWORD( lParam ), HIWORD( lParam ) ) );
+            static bool first = true;
+            static int lastX, lastY;
+            int offsetX = 0, offsetY = 0;
+
+            int x = ( (int) (short) LOWORD( lParam ) );
+            int y = ( (int) (short) HIWORD( lParam ) );
+
+            if ( first )
+            {
+                lastX = x;
+                lastY = y;
+
+                first = false;
+            }
+            else
+            {
+                offsetX = x - lastX;
+                offsetY = y - lastY;
+
+                lastX = x;
+                lastY = y;
+            }
+
+            pWindow->m_iv2CursorPos = glm::ivec2( x, y );
+            pWindow->OnSetMousePosition( pWindow->m_iv2CursorPos, glm::ivec2( offsetX, offsetY ) );
 
             break;
         }

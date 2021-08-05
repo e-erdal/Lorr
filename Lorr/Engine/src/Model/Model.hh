@@ -15,6 +15,9 @@ namespace Lorr
 
         void Init( const char *szPath );
 
+        void InitAsSphere(float fRadius, uint32_t uTessellation);
+        void InitAsRect(float fRadius, uint32_t uTessellation);
+
         void Render();
 
     private:

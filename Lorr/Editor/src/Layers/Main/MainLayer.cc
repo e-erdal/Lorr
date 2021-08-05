@@ -15,11 +15,52 @@ struct Vertex
 #pragma pack( push, 1 )
 struct InputData
 {
-    glm::mat4 matrix;
-    glm::mat4 model;
+    glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
+    glm::mat4 modelMatrix;
     glm::mat4 normalM;
 };
 #pragma pack( pop )
+
+void KeyDown( Lorr::Key eKey, Lorr::ButtonState eState, Lorr::KeyMod eMod )
+{
+    using namespace Lorr;
+    Camera *pCam = GetEngine()->GetCamera();
+
+    if ( eState == ButtonState::Pressed )
+    {
+        switch ( eKey )
+        {
+        case Key::Key_W: pCam->StartMoving( Direction::FORWARD ); break;
+        case Key::Key_S: pCam->StartMoving( Direction::BACKWARD ); break;
+        case Key::Key_A: pCam->StartMoving( Direction::LEFT ); break;
+        case Key::Key_D: pCam->StartMoving( Direction::RIGHT ); break;
+        case Key::Key_Q: pCam->StartMoving( Direction::UP ); break;
+        case Key::Key_E: pCam->StartMoving( Direction::DOWN ); break;
+        default: break;
+        }
+    }
+    else if ( eState == ButtonState::Released )
+    {
+        switch ( eKey )
+        {
+        case Key::Key_W: pCam->StopMoving( Direction::FORWARD ); break;
+        case Key::Key_S: pCam->StopMoving( Direction::BACKWARD ); break;
+        case Key::Key_A: pCam->StopMoving( Direction::LEFT ); break;
+        case Key::Key_D: pCam->StopMoving( Direction::RIGHT ); break;
+        case Key::Key_Q: pCam->StopMoving( Direction::UP ); break;
+        case Key::Key_E: pCam->StopMoving( Direction::DOWN ); break;
+        default: break;
+        }
+    }
+}
+
+void MouseMove( glm::ivec2, glm::ivec2 offset )
+{
+    using namespace Lorr;
+    Camera *pCam = GetEngine()->GetCamera();
+    pCam->SetDirection( offset.x, offset.y );
+}
 
 void MainLayer::Init()
 {
@@ -28,14 +69,21 @@ void MainLayer::Init()
     Lorr::VertexLayout layout = {
         { Lorr::VertexAttribType::Vec3, "POSITION" },
         { Lorr::VertexAttribType::Vec3, "NORMAL" },
+        { Lorr::VertexAttribType::Vec2, "TEXCOORD" },
         { Lorr::VertexAttribType::Vec4, "COLOR" },
     };
 
+    Lorr::GetEngine()->GetWindow()->OnSetKeyState.connect<KeyDown>();
+    Lorr::GetEngine()->GetWindow()->OnSetMousePosition.connect<MouseMove>();
+
     m_pShader->Init( Lorr::GetEngine()->GetAPI(), L"mainv.hlsl", L"mainp.hlsl", layout );
-    m_pConstantBuffer =
+
+    m_pVConstantBuffer =
         Lorr::GetEngine()->GetAPI()->CreateBuffer( 0, sizeof( InputData ), D3D11_BIND_CONSTANT_BUFFER, D3D11_USAGE_DYNAMIC, D3D11_CPU_ACCESS_WRITE, false );
 
     m_Model.Init( "monkey.obj" );
+    m_Model.InitAsRect( 1.0f, 50 );
+    // m_Model.InitAsSphere( 10.0f, 1024 );
 }
 
 void MainLayer::Delete()
@@ -118,9 +166,11 @@ void MainLayer::Update()
     //     ImGui::End();
     // }
     // ImGui::End();
-    rotate += 0.0001f;
-    uint32_t vertexStride = sizeof( Vertex );
+    rotate += 0.01f;
+    uint32_t vertexStride = sizeof( Lorr::Vertex );
     uint32_t offset = 0;
+
+    Lorr::Camera *pCamera = Lorr::GetEngine()->GetCamera();
 
     ID3D11DeviceContext *pContext = Lorr::GetEngine()->GetAPI()->GetDeviceContext();
 
@@ -131,21 +181,24 @@ void MainLayer::Update()
 
     D3D11_MAPPED_SUBRESOURCE ms;
     ZeroMemory( &ms, sizeof( D3D11_MAPPED_SUBRESOURCE ) );
-    if ( SUCCEEDED( pContext->Map( m_pConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms ) ) )
+    if ( SUCCEEDED( pContext->Map( m_pVConstantBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &ms ) ) )
     {
-        InputData id;
-        id.model = glm::translate( glm::mat4( 1.f ), { 0, 0, 0 } ) * glm::rotate( glm::mat4( 1.f ), rotate, { 0, 1, 0 } ) * glm::scale( glm::mat4( 1.f ), { 1, 1, 1 } );
+        InputData *id = (InputData *) ms.pData;
 
-        id.matrix = id.model * Lorr::GetEngine()->GetCamera()->GetTransform();
+        id->projectionMatrix = glm::transpose( pCamera->GetProjection() );
+        id->viewMatrix = glm::transpose( pCamera->GetView() );
 
-        id.normalM = glm::transpose( glm::inverse( id.model ) );
+        id->modelMatrix = glm::translate( glm::mat4( 1.f ), { 0, 0, 0 } );
+        id->modelMatrix = glm::rotate( id->modelMatrix, glm::radians( 90.f ), { 1, 0, 0 } );
+        id->modelMatrix = glm::scale( id->modelMatrix, { 1, 1, 1 } );
+        id->modelMatrix = glm::transpose( id->modelMatrix );
 
-        memcpy( ms.pData, &id, sizeof( id ) );
-        pContext->Unmap( m_pConstantBuffer, 0 );
+        id->normalM = id->modelMatrix;
+
+        pContext->Unmap( m_pVConstantBuffer, 0 );
     }
 
-    pContext->VSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
-    pContext->PSSetConstantBuffers( 0, 1, &m_pConstantBuffer );
+    pContext->VSSetConstantBuffers( 0, 1, &m_pVConstantBuffer );
 
     m_Model.Render();
 }
