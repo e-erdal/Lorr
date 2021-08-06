@@ -26,7 +26,6 @@ namespace Lorr
         m_pWindow->Init( Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags );
         m_pAPI->Init( m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight() );
         m_pCamera->Init( { 0, 0, -55 }, { 180, 0, 0 }, { 0, 1, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, 60.f, 0.01f, 10000.f );
-
         m_pImGui->Init( this );
 
         return true;
@@ -36,16 +35,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11DeviceContext *pContext = m_pAPI->GetDeviceContext();
-        ID3D11DepthStencilState *pDepthStencilState = m_pAPI->GetDepthStencilState();
-        ID3D11RenderTargetView *pRenderTargetView = m_pAPI->GetRenderTargetView();
-        ID3D11DepthStencilView *pDepthStencilView = m_pAPI->GetDepthStencilView();
-        ID3D11RasterizerState *pRasterizerState = m_pAPI->GetRasterizerState();
-
         m_pAPI->SetClearColor( { 0.1, 0.1, 0.1, 1 } );
-        pContext->OMSetDepthStencilState( pDepthStencilState, 1 );
-        pContext->OMSetRenderTargets( 1, &pRenderTargetView, pDepthStencilView );
-        pContext->RSSetState( pRasterizerState );
+        m_pAPI->HandlePreFrame();
 
         m_pImGui->BeginFrame();
     }
