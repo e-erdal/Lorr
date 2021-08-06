@@ -1,8 +1,8 @@
 #include "Engine.hh"
 
-#include "Core/Utils/FPSLimiter.hh"
-#include "Core/Utils/Math.hh"
-#include "Core/Utils/Timer.hh"
+#include "Utils/FPSLimiter.hh"
+#include "Utils/Math.hh"
+#include "Utils/Timer.hh"
 
 namespace Lorr
 {

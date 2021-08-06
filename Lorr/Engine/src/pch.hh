@@ -6,9 +6,9 @@
 
 #include <vector>
 
-#include "Core/Utils/BitFlags.hh"
-#include "Core/Utils/Logger.hh"
-#include "Core/Utils/Math.hh"
+#include "Utils/BitFlags.hh"
+#include "Utils/Logger.hh"
+#include "Utils/Math.hh"
 
 #include <glm/glm.hpp>
 

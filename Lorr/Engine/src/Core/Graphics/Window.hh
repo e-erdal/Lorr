@@ -6,9 +6,9 @@
 
 #include <string>
 
-#include "Core/Systems/Helpers/InputVars.hh"
+#include "Utils/BitFlags.hh"
 
-#include <Core/Utils/BitFlags.hh>
+#include "Core/Systems/Helpers/InputVars.hh"
 
 #include <stdint.h>
 
