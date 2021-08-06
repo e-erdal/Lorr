@@ -50,6 +50,12 @@ namespace Lorr
         const char *GetLatestProfileVS( D3D_FEATURE_LEVEL eFeatureLevel );
         const char *GetLatestProfilePS( D3D_FEATURE_LEVEL eFeatureLevel );
         const char *ShaderTypeToLatestProfile( ShaderType eShaderType );
+
+        // Rendering stage action handlers
+
+        void HandlePreFrame();
+        void HanlePostFrame();
+
         ////////////////////////////////////
 
     public:

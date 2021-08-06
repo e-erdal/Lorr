@@ -40,7 +40,7 @@ namespace Lorr
 
         D3D11_VIEWPORT vp;
         ZeroMemory( &vp, sizeof( D3D11_VIEWPORT ) );
-        
+
         vp.Width = (float) iWidth;
         vp.Height = (float) iHeight;
         vp.MaxDepth = fFar;
@@ -49,5 +49,16 @@ namespace Lorr
         vp.TopLeftY = 0;
 
         m_pDeviceContext->RSSetViewports( 1, &vp );
+    }
+
+    void D3D11API::HandlePreFrame()
+    {
+        m_pDeviceContext->OMSetDepthStencilState( m_pDepthStencilState, 1 );
+        m_pDeviceContext->OMSetRenderTargets( 1, &m_pRenderTargetView, m_pDepthStencilView );
+        m_pDeviceContext->RSSetState( m_pRasterizerState );
+    }
+
+    void D3D11API::HanlePostFrame()
+    {
     }
 }  // namespace Lorr
