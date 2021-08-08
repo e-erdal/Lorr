@@ -1,8 +1,6 @@
-#include "Window.hh"
+#include "Win32Window.hh"
 
 #include "Engine.hh"
-
-#include "Core/Systems/Helpers/InputVars.hh"
 
 namespace Lorr
 {
@@ -83,11 +81,11 @@ namespace Lorr
         return Key::Key_UNKNOWN;
     }
 
-    Window::~Window()
+    Win32Window::~Win32Window()
     {
     }
 
-    void Window::Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags )
+    void Win32Window::Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags )
     {
         ZoneScoped;
 
@@ -147,7 +145,7 @@ namespace Lorr
             m_Handle = CreateWindowEx( 0, wc.lpszClassName, sTitle.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, GetMonitorWidth(),
                                        GetMonitorHeight(), 0, 0, 0, 0 );
 
-            m_bIsFullscreen = true;
+            m_IsFullscreen = true;
         }
 
         else
@@ -175,11 +173,11 @@ namespace Lorr
 
         Console::Log( "Successfully created window." );
 
-        m_uWidth = uWidth;
-        m_uHeight = uHeight;
+        m_Width = uWidth;
+        m_Height = uHeight;
     }
 
-    void Window::Poll()
+    void Win32Window::Poll()
     {
         ZoneScoped;
 
@@ -192,21 +190,21 @@ namespace Lorr
         }
     }
 
-    int Window::GetMonitorWidth()
+    int Win32Window::GetMonitorWidth()
     {
         ZoneScoped;
 
         return GetSystemMetrics( SM_CXSCREEN );
     }
 
-    int Window::GetMonitorHeight()
+    int Win32Window::GetMonitorHeight()
     {
         ZoneScoped;
 
         return GetSystemMetrics( SM_CYSCREEN );
     }
 
-    void Window::SetCursor( Cursor eCursor )
+    void Win32Window::SetCursor( Cursor eCursor )
     {
         ZoneScoped;
 
@@ -236,10 +234,10 @@ namespace Lorr
         case Cursor::Hidden: ::ShowCursor( FALSE ); break;
         }
 
-        m_eCurrentCursor = eCursor;
+        m_CurrentCursor = eCursor;
     }
 
-    LRESULT CALLBACK Window::WindowProc( HWND hHwnd, UINT uMSG, WPARAM wParam, LPARAM lParam )
+    LRESULT CALLBACK Win32Window::WindowProc( HWND hHwnd, UINT uMSG, WPARAM wParam, LPARAM lParam )
     {
         ZoneScoped;
 
@@ -247,35 +245,35 @@ namespace Lorr
 
         if ( !pEngine ) return DefWindowProc( hHwnd, uMSG, wParam, lParam );
 
-        Window *pWindow = pEngine->GetWindow();
+        Win32Window *pWindow = (Win32Window *) pEngine->GetWindow();
 
         switch ( uMSG )
         {
         case WM_DESTROY:
-        case WM_CLOSE: pWindow->m_bShouldClose = true; break;
+        case WM_CLOSE: pWindow->m_ShouldClose = true; break;
         case WM_SIZE:
         {
-            if ( pWindow->m_bSizeEnded )
+            if ( pWindow->m_SizeEnded )
             {
                 Console::Log( "Window size changed to {}, {}", LOWORD( lParam ), HIWORD( lParam ) );
                 pWindow->OnResolutionChanged( (uint32_t) LOWORD( lParam ), (uint32_t) HIWORD( lParam ) );
-                pWindow->m_uWidth = (uint32_t) LOWORD( lParam );
-                pWindow->m_uHeight = (uint32_t) HIWORD( lParam );
+                pWindow->m_Width = (uint32_t) LOWORD( lParam );
+                pWindow->m_Height = (uint32_t) HIWORD( lParam );
             }
 
             break;
         }
         case WM_EXITSIZEMOVE:
-            pWindow->m_bSizeEnded = true;
+            pWindow->m_SizeEnded = true;
             RECT rc;
             GetClientRect( pWindow->m_Handle, &rc );
             Console::Log( "Window size changed to {}, {}", rc.right, rc.bottom );
             pWindow->OnResolutionChanged( (uint32_t) rc.right, (uint32_t) rc.bottom );
-            pWindow->m_uWidth = (uint32_t) rc.right;
-            pWindow->m_uHeight = (uint32_t) rc.bottom;
+            pWindow->m_Width = (uint32_t) rc.right;
+            pWindow->m_Height = (uint32_t) rc.bottom;
 
             break;
-        case WM_ENTERSIZEMOVE: pWindow->m_bSizeEnded = false; break;
+        case WM_ENTERSIZEMOVE: pWindow->m_SizeEnded = false; break;
         case WM_LBUTTONDOWN:
         case WM_LBUTTONDBLCLK:
         case WM_RBUTTONDOWN:
@@ -349,8 +347,8 @@ namespace Lorr
                 lastY = y;
             }
 
-            pWindow->m_iv2CursorPos = glm::ivec2( x, y );
-            pWindow->OnSetMousePosition( pWindow->m_iv2CursorPos, glm::ivec2( offsetX, offsetY ) );
+            pWindow->m_CursorPos = glm::ivec2( x, y );
+            pWindow->OnSetMousePosition( pWindow->m_CursorPos, glm::ivec2( offsetX, offsetY ) );
 
             break;
         }
@@ -375,7 +373,7 @@ namespace Lorr
         {
             if ( LOWORD( lParam ) == 1 )
             {
-                pWindow->SetCursor( pWindow->m_eCurrentCursor );
+                pWindow->SetCursor( pWindow->m_CurrentCursor );
                 return true;
             }
 
@@ -386,5 +384,13 @@ namespace Lorr
         }
 
         return 0;
+    }
+
+    bgfx::PlatformData Win32Window::GetPlatformData()
+    {
+        bgfx::PlatformData platformData;
+        platformData.nwh = (void *) m_Handle;
+
+        return platformData;
     }
 }  // namespace Lorr

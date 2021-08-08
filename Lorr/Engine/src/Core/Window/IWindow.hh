@@ -1,19 +1,19 @@
 //
-// Created on July 1st 2021 by e-erdal.
+// Created on August 8th 2021 by e-erdal.
 //
 
 #pragma once
-
-#include <string>
 
 #include "Utils/BitFlags.hh"
 
 #include "Core/Systems/Helpers/InputVars.hh"
 
-#include <stdint.h>
+#include <bgfx/bgfx.h>
 
 namespace Lorr
 {
+    typedef intptr_t PlatformHandle;
+
     enum class Cursor
     {
         Arrow,
@@ -38,18 +38,18 @@ namespace Lorr
     };
     BitFlags( WindowFlags );
 
-    class Window
+    class IWindow
     {
     public:
-        ~Window();
+        virtual ~IWindow(){};
 
-        void Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags );
-        void Poll();
+        virtual void Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags ) = 0;
+        virtual void Poll() = 0;
 
-        int GetMonitorWidth();
-        int GetMonitorHeight();
+        virtual int GetMonitorWidth() = 0;
+        virtual int GetMonitorHeight() = 0;
 
-        void SetCursor( Cursor eCursor );
+        virtual void SetCursor( Cursor eCursor ) = 0;
 
     public:
         signals::signal<void( Key, ButtonState, KeyMod )> OnSetKeyState;
@@ -62,51 +62,43 @@ namespace Lorr
         signals::signal<void( uint32_t, KeyMod )> OnChar;  // Text input
 
     public:
-        HWND GetHandle() const
-        {
-            return m_Handle;
-        }
+        virtual bgfx::PlatformData GetPlatformData() = 0;
 
         uint32_t GetWidth() const
         {
-            return m_uWidth;
+            return m_Width;
         }
 
         uint32_t GetHeight() const
         {
-            return m_uHeight;
+            return m_Height;
         }
 
         bool ShouldClose() const
         {
-            return m_bShouldClose;
+            return m_ShouldClose;
         }
 
         bool IsFullscreen() const
         {
-            return m_bIsFullscreen;
+            return m_IsFullscreen;
         }
 
         glm::ivec2 GetCursorPos() const
         {
-            return m_iv2CursorPos;
+            return m_CursorPos;
         }
 
-    private:
-        static LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
+    protected:
+        uint32_t m_Width = 0;
+        uint32_t m_Height = 0;
 
-    private:
-        HWND m_Handle = 0;
-        HINSTANCE m_Instance = 0;
+        bool m_ShouldClose = false;
+        bool m_IsFullscreen = false;
+        bool m_SizeEnded = true;
 
-        uint32_t m_uWidth = 0;
-        uint32_t m_uHeight = 0;
-
-        bool m_bShouldClose = false;
-        bool m_bIsFullscreen = false;
-        bool m_bSizeEnded = true;
-
-        Cursor m_eCurrentCursor = Cursor::Arrow;
-        glm::ivec2 m_iv2CursorPos{};
+        Cursor m_CurrentCursor = Cursor::Arrow;
+        glm::ivec2 m_CursorPos{};
     };
+
 }  // namespace Lorr

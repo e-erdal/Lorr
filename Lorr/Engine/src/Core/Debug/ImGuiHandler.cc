@@ -4,9 +4,9 @@
 
 #include "Utils/Timer.hh"
 
-#include "Core/Graphics/Window.hh"
+#include "Core/Window/IWindow.hh"
 
-#include "backends/imgui_impl_dx11.h"
+#include <imgui_impl_bgfx.h>
 
 namespace Lorr
 {
@@ -99,7 +99,7 @@ namespace Lorr
         if ( io.ConfigFlags & ImGuiConfigFlags_NoMouseCursorChange ) return;
 
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        Window *pSurface = (Window *) io.BackendPlatformUserData;
+        PlatformWindow *pSurface = (PlatformWindow *) io.BackendPlatformUserData;
 
         ImGuiMouseCursor imgui_cursor = ImGui::GetMouseCursor();
         if ( imgui_cursor == ImGuiMouseCursor_None || io.MouseDrawCursor )
@@ -137,7 +137,7 @@ namespace Lorr
         ImGuiIO &io = ImGui::GetIO();
 
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        Window *pSurface = (Window *) io.BackendPlatformUserData;
+        PlatformWindow *pSurface = (PlatformWindow *) io.BackendPlatformUserData;
 
         IM_ASSERT( pSurface != 0 );
 
@@ -172,7 +172,7 @@ namespace Lorr
 
         ImGui::StyleColorsDark();
 
-        ImGui_ImplDX11_Init( pEngine->GetAPI()->GetDevice(), pEngine->GetAPI()->GetDeviceContext() );
+        ImGui_Implbgfx_Init( 255 );
         InitImGui( pEngine->GetWindow() );
     }
 
@@ -180,7 +180,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ImGui_ImplDX11_NewFrame();
+        ImGui_Implbgfx_NewFrame();
         ImGui_ImplSurface_NewFrame();
         ImGui::NewFrame();
     }
@@ -190,10 +190,10 @@ namespace Lorr
         ZoneScopedN( "ImGuiHandler::EndFrame" );
 
         ImGui::Render();
-        ImGui_ImplDX11_RenderDrawData( ImGui::GetDrawData() );
+        ImGui_Implbgfx_RenderDrawLists( ImGui::GetDrawData() );
     }
 
-    void ImGuiHandler::InitImGui( Window *pWindow )
+    void ImGuiHandler::InitImGui( PlatformWindow *pWindow )
     {
         ZoneScoped;
 
@@ -230,7 +230,7 @@ namespace Lorr
         io.BackendPlatformUserData = (void *) pWindow;
 
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        main_viewport->PlatformHandle = (void *) pWindow->GetHandle();
+        main_viewport->PlatformHandle = (void *) pWindow->GetPlatformData().nwh;
 
         pWindow->OnSetKeyState.connect<&ImGui_ImplSurface_KeyPress>();
         pWindow->OnSetMouseState.connect<&ImGui_ImplSurface_MouseStateChange>();
@@ -256,7 +256,7 @@ namespace Lorr
 
         // Setup display size (every frame to accommodate for window resizing)
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        Window *pSurface = (Window *) io.BackendPlatformUserData;
+        PlatformWindow *pSurface = (PlatformWindow *) io.BackendPlatformUserData;
 
         io.DisplaySize = ImVec2( (float) ( pSurface->GetWidth() ), (float) ( pSurface->GetHeight() ) );
 

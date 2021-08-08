@@ -11,7 +11,7 @@ namespace Lorr
         ZoneScoped;
 
         delete m_pWindow;
-        delete m_pAPI;
+        delete m_pRenderer;
         delete m_pImGui;
         delete m_pCamera;
     }
@@ -24,8 +24,8 @@ namespace Lorr
         Console::Info( "Initializing Lorr..." );
 
         m_pWindow->Init( Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags );
-        m_pAPI->Init( m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight() );
-        m_pCamera->Init( { 0, 0, -55 }, { 180, 0, 0 }, { 0, 1, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, 60.f, 0.01f, 10000.f );
+        // m_pAPI->Init( m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight() );
+        // m_pCamera->Init( { 0, 0, -55 }, { 180, 0, 0 }, { 0, 1, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, 60.f, 0.01f, 10000.f );
         m_pImGui->Init( this );
 
         return true;
@@ -35,8 +35,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_pAPI->SetClearColor( { 0.1, 0.1, 0.1, 1 } );
-        m_pAPI->HandlePreFrame();
+        // m_pAPI->SetClearColor( { 0.1, 0.1, 0.1, 1 } );
+        // m_pAPI->HandlePreFrame();
 
         m_pImGui->BeginFrame();
     }
@@ -46,7 +46,7 @@ namespace Lorr
         ZoneScoped;
 
         m_pImGui->EndFrame();
-        m_pAPI->Frame( 0 );
+        // m_pAPI->Frame( 0 );
     }
 
     void Engine::Tick( float fDelta )
@@ -72,7 +72,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        Window *pWindow = m_pEngine->GetWindow();
+        PlatformWindow *pWindow = m_pEngine->GetWindow();
 
         Timer timer;
 

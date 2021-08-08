@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Core/Debug/ImGuiHandler.hh"
-#include "Core/Graphics/API/D3D11API.hh"
 #include "Core/Graphics/Camera.hh"
-#include "Core/Graphics/Window.hh"
+#include "Core/Graphics/Renderer/Renderer2D.hh"
+#include "Core/Window/IWindow.hh"
 
 namespace Lorr
 {
@@ -33,19 +33,19 @@ namespace Lorr
         // Graphics
         void BeginFrame();
         void EndFrame();
-        
+
         // Logic
         void Tick( float fDelta );
 
     public:  // OOP :)
-        Window *GetWindow() const
+        PlatformWindow *GetWindow() const
         {
             return m_pWindow;
         }
 
-        D3D11API *GetAPI() const
+        Renderer2D *GetRenderer() const
         {
-            return m_pAPI;
+            return m_pRenderer;
         }
 
         Camera *GetCamera() const
@@ -55,8 +55,8 @@ namespace Lorr
 
     private:
         // Graphics
-        Window *m_pWindow = new Window;
-        D3D11API *m_pAPI = new D3D11API;
+        PlatformWindow *m_pWindow = new PlatformWindow;
+        Renderer2D *m_pRenderer = new Renderer2D;
         Camera *m_pCamera = new Camera;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
 

@@ -8,7 +8,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        Window *pSurface = GetEngine()->GetWindow();
+        PlatformWindow *pSurface = GetEngine()->GetWindow();
 
         pSurface->OnSetKeyState.connect<&InputSystem::OnSetKeyState>( this );
         pSurface->OnChar.connect<&InputSystem::OnChar>( this );
