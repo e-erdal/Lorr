@@ -1,22 +1,4 @@
-#include "Engine.hh"
-
-class GameApp : public Lorr::BaseApp
-{
-public:
-    void Init() override
-    {
-    }
-
-    void Tick( float fDelta ) override
-    {
-    }
-
-    void Draw() override
-    {
-    }
-
-private:
-};
+#include "GameApp/GameApp.hh"
 
 static GameApp *app = nullptr;
 
@@ -28,7 +10,7 @@ int main()
     desc.sTitle = "Lorr: Game";
     desc.uWidth = 1280;
     desc.uHeight = 720;
-    desc.eFlags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;  // WindowFlags::Resizable | WindowFlags::Centered
+    desc.eFlags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;
 
     app = new GameApp;
     app->Start( desc );

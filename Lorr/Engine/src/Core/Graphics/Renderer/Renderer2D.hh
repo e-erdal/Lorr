@@ -16,6 +16,9 @@ namespace Lorr
         ~Renderer2D();
 
         void Init( PlatformWindow *pWindow );
+
+    private:
+        uint32_t m_ResetFlags = 0;
     };
 
 }  // namespace Lorr

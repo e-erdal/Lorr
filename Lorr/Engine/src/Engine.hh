@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Core/Debug/ImGuiHandler.hh"
-#include "Core/Graphics/Camera.hh"
+#include "Core/Graphics/Camera2D.hh"
 #include "Core/Graphics/Renderer/Renderer2D.hh"
 #include "Core/Window/IWindow.hh"
 
@@ -48,7 +48,7 @@ namespace Lorr
             return m_pRenderer;
         }
 
-        Camera *GetCamera() const
+        Camera2D *GetCamera() const
         {
             return m_pCamera;
         }
@@ -57,7 +57,7 @@ namespace Lorr
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
         Renderer2D *m_pRenderer = new Renderer2D;
-        Camera *m_pCamera = new Camera;
+        Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
 
         // Resources
