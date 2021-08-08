@@ -180,7 +180,7 @@ namespace Lorr
         ZeroMemory( &rasterizerDesc, sizeof( D3D11_RASTERIZER_DESC ) );
 
         rasterizerDesc.CullMode = D3D11_CULL_FRONT;
-        rasterizerDesc.FillMode = D3D11_FILL_WIREFRAME;
+        rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
         rasterizerDesc.DepthClipEnable = true;
         rasterizerDesc.DepthBias = 0;

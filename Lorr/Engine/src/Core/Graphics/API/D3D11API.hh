@@ -4,21 +4,14 @@
 
 #pragma once
 
+#include "IGraphicsAPI.hh"
+
 #include "Core/Graphics/Window.hh"
 
 #include <d3d11.h>
 
 namespace Lorr
 {
-    enum ShaderType
-    {
-        VERTEX_SHADER,
-        GEOMETRY_SHADER,
-        HULL_SHADER,
-        PIXEL_SHADER
-    };
-
-    struct VertexLayout;
     class D3D11API
     {
     public:
