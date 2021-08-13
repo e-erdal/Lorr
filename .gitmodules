@@ -10,3 +10,9 @@
 [submodule "Vendor/bgfx.cmake"]
 	path = Vendor/bgfx.cmake
 	url = https://github.com/bkaradzic/bgfx.cmake.git
+[submodule "Vendor/EASTL"]
+	path = Vendor/EASTL
+	url = https://github.com/electronicarts/EASTL.git
+[submodule "Vendor/EAThread"]
+	path = Vendor/EAThread
+	url = https://github.com/electronicarts/EAThread.git
