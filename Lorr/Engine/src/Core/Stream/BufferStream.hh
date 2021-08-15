@@ -28,6 +28,11 @@ namespace Lorr
             Assign( &Data[0], Data.size() );
         }
 
+        ~BufferStream()
+        {
+            free( m_Data );
+        }
+
     public:
         inline void Expand( size_t Len )
         {
