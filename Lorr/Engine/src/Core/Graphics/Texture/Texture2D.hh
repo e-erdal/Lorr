@@ -35,7 +35,7 @@ namespace Lorr
         void Init( Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES );
 
     private:
-        Identifier m_Ident = EmptyIdentifier;
+        Identifier m_Ident = "empty::";
 
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;

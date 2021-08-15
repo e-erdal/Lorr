@@ -11,6 +11,7 @@
 #include <span>
 #include <string>
 #include <string_view>
+#include <unordered_map>
 
 namespace Lorr
 {
@@ -98,15 +99,13 @@ namespace Lorr
         uint32_t m_iProtoSize = 0;
     };
 
-    static constexpr Identifier EmptyIdentifier = Identifier( "comp://empty" );
-
     // std::unordered_map support
     template<>
     struct std::hash<Identifier>
     {
-        std::size_t operator()( const Identifier &s ) const noexcept
+        size_t operator()( const Identifier &s ) const noexcept
         {
-            std::size_t h1 = std::hash<std::string_view>{}( s.Raw() );
+            size_t h1 = std::hash<std::string_view>{}( s.Raw() );
 
             return h1;
         }

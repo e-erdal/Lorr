@@ -4,29 +4,25 @@
 
 #pragma once
 
-#define _REALLOC( x, len ) (uint8_t *) realloc( (void *) x, len )
-#define _MALLOC( len ) (uint8_t *) malloc( len )
-#define _ZEROM( x, len ) memset( (void *) x, 0, len )
-
 namespace Lorr
 {
-    class Buffer
+    class BufferStream
     {
     public:
-        Buffer() = default;
+        BufferStream() = default;
 
-        Buffer( size_t DataLen )
+        BufferStream( size_t DataLen )
         {
             Expand( DataLen );
         }
 
-        Buffer( uint8_t *pData, size_t DataLen )
+        BufferStream( uint8_t *pData, size_t DataLen )
         {
             Expand( DataLen );
             Assign( pData, DataLen );
         }
 
-        Buffer( std::vector<uint8_t> &Data )
+        BufferStream( std::vector<uint8_t> &Data )
         {
             Expand( Data.size() );
             Assign( &Data[0], Data.size() );
@@ -37,7 +33,7 @@ namespace Lorr
         {
             m_DataLen += Len;
             m_Data = _REALLOC( m_Data, m_DataLen );
-            _ZEROM( m_Data, m_DataLen );
+            _ZEROM( ( m_Data + Len ), Len );
         }
 
         // Copies input into buffer's data. Also increases offset.
@@ -62,11 +58,12 @@ namespace Lorr
         }
 
         // Copies input into buffer's data.
-        inline void Insert( void *pData, size_t DataLen )
+        template<typename T>
+        inline void Insert( T *pData, size_t DataLen )
         {
             Expand( DataLen );
 
-            memcpy( m_Data + m_Offset, pData, DataLen );
+            memcpy( m_Data + m_Offset, (uint8_t *) pData, DataLen );
             m_Offset += DataLen;
         }
 
@@ -74,9 +71,29 @@ namespace Lorr
         {
             size_t len = String.length();
 
-            Expand( String.length() + 4 );
-            Assign( &len, 4 );
+            Expand( String.length() + sizeof( size_t ) );
+            Assign( &len, sizeof( size_t ) );
             Assign( String.data(), String.length() );
+        }
+
+        template<typename T>
+        inline T *&Get()
+        {
+            auto data = *(T *) ( m_Data + m_Offset );
+            m_Offset += sizeof( T );
+            return data;
+        }
+
+        inline void *Get( size_t DataLen )
+        {
+            auto data = ( m_Data + m_Offset );
+            m_Offset += DataLen;
+            return data;
+        }
+
+        inline void StartOver()
+        {
+            m_Offset = 0;
         }
 
     public:
@@ -88,6 +105,11 @@ namespace Lorr
         inline const size_t &GetSize() const
         {
             return m_DataLen;
+        }
+
+        inline const uintptr_t &GetOffset() const
+        {
+            return m_Offset;
         }
 
     private:

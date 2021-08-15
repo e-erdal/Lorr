@@ -15,6 +15,7 @@
 #include <Tracy.hpp>
 #include <Windows.h>
 #include <signals.h>
+#include <stdint.h>
 
 #ifndef NDEBUG
     #define ENGINE_DEBUG 1
@@ -43,3 +44,7 @@
         var->Release();                                                                                                                                                  \
         var = nullptr;                                                                                                                                                   \
     }
+
+#define _REALLOC( x, len ) (uint8_t *) realloc( (void *) x, len )
+#define _MALLOC( len ) (uint8_t *) malloc( len )
+#define _ZEROM( x, len ) memset( (void *) x, 0, len )

@@ -95,7 +95,7 @@ namespace Lorr
             uHeight = GetMonitorHeight();
         }
 
-        Console::Log( "Creating new window \"{}\"<{}, {}>", sTitle, uWidth, uHeight );
+        Console::Log( "Creating new window \"{}\"<{}, {}>", sTitle.c_str(), uWidth, uHeight );
 
         // Getting ready for window
         WNDCLASSEX wc;

@@ -6,7 +6,7 @@
 // https://stackoverflow.com/a/59165784
 namespace Lorr
 {
-    template<std::intmax_t FPS>
+    template<intmax_t FPS>
     class FrameLimiter
     {
     public:
