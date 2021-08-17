@@ -9,6 +9,7 @@ set(ENGINE_VENDOR
     lw
     spdlog
     tracy
+    zlib1
 )
 
 set(ENGINE_COMPONENTS

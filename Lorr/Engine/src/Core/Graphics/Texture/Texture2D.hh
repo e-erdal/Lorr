@@ -1,6 +1,8 @@
 //
 // Created on August 8th 2021 by e-erdal.
 //
+// D3D11 like low level texture wrapper
+//
 
 #pragma once
 
@@ -8,7 +10,7 @@
 
 #include <bgfx/bgfx.h>
 
-#define TEXTURE_FORMAT_NEAREST ( BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT )
+#define TEXTURE_MAG_NEAREST ( BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT )
 
 namespace Lorr
 {
@@ -32,10 +34,10 @@ namespace Lorr
     class Texture2D
     {
     public:
-        void Init( Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES );
+        void Init( Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0 );
 
     private:
-        Identifier m_Ident = "empty::";
+        Identifier m_Ident = EmptyIdentifier;
 
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;

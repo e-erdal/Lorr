@@ -5,10 +5,11 @@ set(GAME_VENDOR
 
 set(GAME_COMPONENTS
     GameApp
+    Growtopia
 )
 
 ######### Editor components ########
-# # Editor
+# GameApp
 LorrComponent(
     NAME
         GameApp
@@ -16,6 +17,18 @@ LorrComponent(
         src/
     SOURCE
         src/GameApp/*.cc
+    VENDOR
+        ${GAME_VENDOR}
+)
+
+# Growtopia
+LorrComponent(
+    NAME
+        Growtopia
+    INCLUDE
+        src/
+    SOURCE
+        src/Growtopia/*.cc
     VENDOR
         ${GAME_VENDOR}
 )

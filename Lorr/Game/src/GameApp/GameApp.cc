@@ -1,21 +1,12 @@
 #include "GameApp.hh"
 
-#include "Core/Stream/FileStream.hh"
+#include "Growtopia/RTTexture.hh"
 
 void GameApp::Init()
 {
     using namespace Lorr;
 
-    FileStream file( "test.txt", true );
-
-    file.WriteString( "Holy shit\n" );
-    file.WriteString( "Holy shit" );
-    file.WriteString( "Holy shit" );
-    file.WriteString( "Holy shit" );
-    file.WriteString( "Holy shit" );
-    file.WriteString( "Holy shit" );
-
-    file.Close();
+    RTTEX::ToTexture( "gt://game-tiles_page1", "tiles_page1.rttex" );
 }
 
 void GameApp::Tick( float fDelta )

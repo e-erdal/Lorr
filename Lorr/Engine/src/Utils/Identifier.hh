@@ -99,6 +99,8 @@ namespace Lorr
         uint32_t m_iProtoSize = 0;
     };
 
+    inline static Identifier EmptyIdentifier = "engine://empty";
+
     // std::unordered_map support
     template<>
     struct std::hash<Identifier>

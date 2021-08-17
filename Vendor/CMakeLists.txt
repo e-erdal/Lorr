@@ -31,10 +31,17 @@ add_subdirectory(lw)
 
 ###############################################################################################
 
+set(LEVEL_NAMES "{\"TRACE\", \"DEBUG\", \"INFO\", \"WARN\", \"ERROR\", \"FATAL\", \"OFF\"}")
 add_subdirectory(spdlog)
+target_compile_definitions(spdlog PRIVATE SPDLOG_LEVEL_NAMES=${LEVEL_NAMES})
 
 ###############################################################################################
 
 add_subdirectory(tracy)
+
+###############################################################################################
+
+add_definitions(-DZLIB_DLL)
+add_subdirectory(zlib)
 
 ###############################################################################################
