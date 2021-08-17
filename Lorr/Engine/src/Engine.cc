@@ -35,8 +35,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        // m_pAPI->SetClearColor( { 0.1, 0.1, 0.1, 1 } );
-        // m_pAPI->HandlePreFrame();
+        m_pCamera->SetUniformTransform( 0 );
 
         m_pImGui->BeginFrame();
     }
@@ -46,11 +45,12 @@ namespace Lorr
         ZoneScoped;
 
         m_pImGui->EndFrame();
-        // m_pAPI->Frame( 0 );
+        m_pRenderer->EndFrame();
     }
 
     void Engine::Tick( float fDelta )
     {
+        ZoneScoped;
     }
 
     BaseApp::~BaseApp()

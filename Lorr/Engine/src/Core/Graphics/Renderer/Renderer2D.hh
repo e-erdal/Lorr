@@ -17,6 +17,8 @@ namespace Lorr
 
         void Init( PlatformWindow *pWindow );
 
+        void EndFrame();
+
     private:
         uint32_t m_ResetFlags = 0;
     };

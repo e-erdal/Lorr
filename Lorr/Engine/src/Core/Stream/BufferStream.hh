@@ -63,37 +63,43 @@ namespace Lorr
 
         inline void AssignString( const std::string &val )
         {
-            size_t len = val.length();
-
-            Assign( &len, 4 );
             Assign( val.data(), val.length() );
         }
 
         // Copies input into buffer's data.
         template<typename T>
-        inline void Insert( T *pData, size_t dataLen )
+        inline void Insert( T &&pData, size_t dataLen = 0 )
         {
-            Expand( dataLen );
+            size_t size = ( dataLen == 0 ? sizeof( T ) : dataLen );
 
-            memcpy( m_Data + m_Offset, (uint8_t *) pData, dataLen );
-            m_Offset += dataLen;
+            Expand( size );
+
+            memcpy( m_Data + m_Offset, (uint8_t *) pData, size );
+            m_Offset += size;
         }
 
         inline void InsertString( const std::string &val )
         {
             size_t len = val.length();
 
-            Expand( val.length() + sizeof( size_t ) );
-            Assign( &len, sizeof( size_t ) );
+            Expand( val.length() );
             Assign( val.data(), val.length() );
         }
 
         template<typename T>
-        inline T *&Get( size_t dataLen = 0 )
+        inline T &Get( size_t dataLen = 0 )
         {
-            T *data = (T *) ( m_Data + m_Offset );
+            T &data = *(T *) ( m_Data + m_Offset );
             m_Offset += ( dataLen == 0 ? sizeof( T ) : dataLen );
             return data;
+        }
+
+        inline std::string GetString( size_t strLen )
+        {
+            char *data = (char *) ( m_Data + m_Offset );
+            m_Offset += strLen;
+
+            return std::string( data, strLen );
         }
 
         inline void StartOver()

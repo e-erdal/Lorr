@@ -55,4 +55,9 @@ namespace Lorr
 
         CalculateProjection();
     }
+
+    void Camera2D::SetUniformTransform( bgfx::ViewId view )
+    {
+        bgfx::setViewTransform( view, &m_View[0][0], &m_Projection[0][0] );
+    }
 }  // namespace Lorr

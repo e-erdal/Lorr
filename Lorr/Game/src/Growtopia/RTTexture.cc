@@ -33,26 +33,28 @@ Texture2D *RTTEX::ToTexture( const Lorr::Identifier &ident, const std::string &p
         return 0;
     }
 
-    RTPackHeader *header = buffer.Get<RTPackHeader>();
-    buffer.Decompress( header->compressedSize, header->decompressedSize );
+    RTPackHeader header = buffer.Get<RTPackHeader>();
+    buffer.Decompress( header.compressedSize, header.decompressedSize );
     buffer.Get<char>( 8 );
-    RTTextureHeader *textureHeader = buffer.Get<RTTextureHeader>();
+    RTTextureHeader textureHeader = buffer.Get<RTTextureHeader>();
     buffer.Get<char>( 24 );
 
-    size_t textureDataSize = textureHeader->width * textureHeader->height * ( ( textureHeader->alpha ? 4 : 3 ) );
+    size_t textureDataSize = textureHeader.width * textureHeader.height * ( textureHeader.alpha ? 4 : 3 );
 
     TEXTURE2D_DESC texDesc;
     texDesc.Filters = TEXTURE_MAG_NEAREST;
 
     TEXTURE2D_DESC_SUBRESC srDesc;
-    srDesc.Width = textureHeader->width;
-    srDesc.Height = textureHeader->height;
+    srDesc.Width = textureHeader.width;
+    srDesc.Height = textureHeader.height;
     srDesc.Format = bgfx::TextureFormat::BGRA8;
-    srDesc.Data = buffer.Get<uint8_t>( textureDataSize );
+    srDesc.Data = buffer.Get<uint8_t *>( textureDataSize );
     srDesc.DataSize = textureDataSize;
 
     Texture2D *texture = new Texture2D;
     texture->Init( ident, &texDesc, &srDesc );
+
+    free( pData );
 
     return texture;
 }

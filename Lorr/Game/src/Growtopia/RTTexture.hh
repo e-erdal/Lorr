@@ -10,7 +10,7 @@
 
 struct RTFileHeader
 {
-    char fileTypeID[C_RTFILE_PACKAGE_HEADER_BYTE_SIZE];
+    uint8_t fileTypeID[C_RTFILE_PACKAGE_HEADER_BYTE_SIZE];
     uint8_t version;
     uint8_t reserved[1];
 };
@@ -18,8 +18,8 @@ struct RTFileHeader
 struct RTPackHeader
 {
     RTFileHeader rtFileHeader;
-    unsigned int compressedSize;
-    unsigned int decompressedSize;
+    uint32_t compressedSize;
+    uint32_t decompressedSize;
     uint8_t compressionType;  // one of eCompressionType
     uint8_t reserved[15];
 };
@@ -35,7 +35,7 @@ struct RTTextureHeader
     bool compressed;
     short flags;
     int mipmaps;
-    int rb[16];
+    int reserved[16];
 };
 
 namespace RTTEX

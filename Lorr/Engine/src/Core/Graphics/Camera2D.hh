@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <bgfx/bgfx.h>
+
 namespace Lorr
 {
     enum class Direction
@@ -28,6 +30,8 @@ namespace Lorr
 
         void SetPosition( const glm::vec2 &v2Pos );
         void SetScale( const glm::vec2 &v2Size );
+
+        void SetUniformTransform( bgfx::ViewId view );
 
     public:
         const void *GetViewMatrixPtr() const

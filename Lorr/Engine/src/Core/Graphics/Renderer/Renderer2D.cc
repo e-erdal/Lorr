@@ -24,4 +24,9 @@ namespace Lorr
         }
     }
 
+    void Renderer2D::EndFrame()
+    {
+        bgfx::frame();
+    }
+
 }  // namespace Lorr
