@@ -10,7 +10,7 @@
 
 #include <bgfx/bgfx.h>
 
-#define TEXTURE_MAG_NEAREST ( BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT )
+#define TEXTURE_MAG_NEAREST (BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT)
 
 namespace Lorr
 {
@@ -34,7 +34,7 @@ namespace Lorr
     class Texture2D
     {
     public:
-        void Init( Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0 );
+        void Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0);
 
     private:
         Identifier m_Ident = EmptyIdentifier;

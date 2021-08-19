@@ -8,7 +8,7 @@ namespace Lorr
     class Timer
     {
     public:
-        Timer() : beg_( clock_::now() )
+        Timer(): beg_(clock_::now())
         {
         }
 
@@ -23,7 +23,7 @@ namespace Lorr
         }
         double elapsed() const
         {
-            return std::chrono::duration_cast<second_>( clock_::now() - beg_ ).count();
+            return std::chrono::duration_cast<second_>(clock_::now() - beg_).count();
         }
 
     private:

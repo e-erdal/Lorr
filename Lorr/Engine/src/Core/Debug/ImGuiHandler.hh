@@ -16,13 +16,13 @@ namespace Lorr
     public:
         ~ImGuiHandler();
 
-        void Init( Engine *pEngine );
+        void Init(Engine *pEngine);
 
         void BeginFrame();
         void EndFrame();
 
     private:
-        void InitImGui( PlatformWindow *pWindow );
+        void InitImGui(PlatformWindow *pWindow);
         void ImGui_ImplSurface_Shutdown();
         void ImGui_ImplSurface_NewFrame();
     };

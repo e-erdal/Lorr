@@ -18,20 +18,20 @@ namespace Lorr
         UP = 1 << 4,
         DOWN = 1 << 5
     };
-    BitFlags( Direction );
+    BitFlags(Direction);
 
     class Camera2D
     {
     public:
-        void Init( const glm::vec2 &v2Pos, const glm::vec2 &v2Size );
+        void Init(const glm::vec2 &v2Pos, const glm::vec2 &v2Size);
 
         void CalculateView();
         void CalculateProjection();
 
-        void SetPosition( const glm::vec2 &v2Pos );
-        void SetScale( const glm::vec2 &v2Size );
+        void SetPosition(const glm::vec2 &v2Pos);
+        void SetScale(const glm::vec2 &v2Size);
 
-        void SetUniformTransform( bgfx::ViewId view );
+        void SetUniformTransform(bgfx::ViewId view);
 
     public:
         const void *GetViewMatrixPtr() const
@@ -55,7 +55,7 @@ namespace Lorr
         }
 
     private:
-        void OnResolutionChanged( uint32_t uWidth, uint32_t uHeight );
+        void OnResolutionChanged(uint32_t uWidth, uint32_t uHeight);
 
         glm::mat4 m_Projection{};
         glm::mat4 m_View{};

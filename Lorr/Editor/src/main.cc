@@ -2,7 +2,7 @@
 
 #include "Layers/Main/MainLayer.hh"
 
-class EditorApp : public Lorr::BaseApp
+class EditorApp: public Lorr::BaseApp
 {
 public:
     void Init() override
@@ -10,7 +10,7 @@ public:
         m_MainLayer->Init();
     }
 
-    void Tick( float fDelta ) override
+    void Tick(float fDelta) override
     {
     }
 
@@ -36,7 +36,7 @@ int main()
     desc.eFlags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;  // WindowFlags::Resizable | WindowFlags::Centered
 
     app = new EditorApp;
-    app->Start( desc );
+    app->Start(desc);
     app->Run();
 
     return 0;

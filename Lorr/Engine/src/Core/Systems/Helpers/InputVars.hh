@@ -25,7 +25,7 @@ namespace Lorr
         CAPS_LOCK = 1 << 4,
         NUM_LOCK = 1 << 5,
     };
-    BitFlags( KeyMod );
+    BitFlags(KeyMod);
 
     enum class Key : uint8_t
     {
@@ -176,6 +176,6 @@ namespace Lorr
         BTN_RIGHT = BTN_3,
         BTN_MIDDLE = BTN_4,
     };
-    BitFlags( MouseButton );
+    BitFlags(MouseButton);
 
 }  // namespace Lorr

@@ -54,8 +54,8 @@ struct ItemInfo
     std::string ActiveAnim;
     std::string CustomPunchInfo;
 
-    bool Pack( uint32_t iItemDBVersion, Lorr::BufferStream &buffer );
-    bool Unpack( uint32_t iItemDBVersion, Lorr::BufferStream &buffer );
+    bool Pack(uint32_t iItemDBVersion, Lorr::BufferStream &buffer);
+    bool Unpack(uint32_t iItemDBVersion, Lorr::BufferStream &buffer);
 };
 
 class ItemInfoManager
@@ -64,11 +64,11 @@ public:
     ItemInfoManager(){};
     ~ItemInfoManager(){};
 
-    ItemInfo *GetItem( uint16_t uID );
+    ItemInfo *GetItem(uint16_t uID);
 
     // Network stuff
-    bool Pack( Lorr::BufferStream &buffer );
-    bool Unpack( Lorr::BufferStream &buffer );
+    bool Pack(Lorr::BufferStream &buffer);
+    bool Unpack(Lorr::BufferStream &buffer);
 
     std::vector<ItemInfo> m_vItems;
 

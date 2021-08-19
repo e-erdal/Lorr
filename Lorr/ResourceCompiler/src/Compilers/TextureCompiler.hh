@@ -4,8 +4,8 @@
 
 #pragma once
 
-class VertexBatcher
+class TextureCompiler
 {
 public:
-    VertexBatcher() = default;
+    
 };

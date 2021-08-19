@@ -7,7 +7,7 @@ namespace Lorr
         bgfx::shutdown();
     }
 
-    void Renderer2D::Init( PlatformWindow *pWindow )
+    void Renderer2D::Init(PlatformWindow *pWindow)
     {
         bgfx::Init init;
         init.type = bgfx::RendererType::Count;
@@ -17,9 +17,9 @@ namespace Lorr
         init.resolution.reset = m_ResetFlags;
         init.limits.transientVbSize = 134217728;
 
-        if ( !bgfx::init( init ) )
+        if (!bgfx::init(init))
         {
-            Console::Fatal( "Failed to initialize BGFX." );
+            Console::Fatal("Failed to initialize BGFX.");
             return;
         }
     }

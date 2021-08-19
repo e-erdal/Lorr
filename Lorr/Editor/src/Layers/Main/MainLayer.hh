@@ -13,7 +13,7 @@
 #include "Model/Model.hh"
 #include "WorldLayerWindow.hh"
 
-class MainLayer : Layer
+class MainLayer: Layer
 {
 public:
     void Init() override;
@@ -25,7 +25,7 @@ private:
     ResourceWindow m_ResourceWindow;
     WorldLayerWindow m_WorldLayerWindow;
 
-    void BuildDock( ImGuiID DockID );
+    void BuildDock(ImGuiID DockID);
 
     Lorr::Shader *m_pShader = new Lorr::Shader;
     ID3D11Buffer *m_pVConstantBuffer = 0;

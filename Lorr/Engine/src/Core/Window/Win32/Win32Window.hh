@@ -8,21 +8,21 @@
 
 namespace Lorr
 {
-    class Win32Window : public IWindow
+    class Win32Window: public IWindow
     {
     public:
         ~Win32Window();
 
-        void Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags ) override;
+        void Init(const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags) override;
         void Poll() override;
 
         int GetMonitorWidth() override;
         int GetMonitorHeight() override;
 
-        void SetCursor( Cursor eCursor ) override;
+        void SetCursor(Cursor eCursor) override;
 
     private:
-        static LRESULT CALLBACK WindowProc( HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam );
+        static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     public:
         bgfx::PlatformData GetPlatformData() override;

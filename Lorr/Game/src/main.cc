@@ -13,7 +13,7 @@ int main()
     desc.eFlags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;
 
     app = new GameApp;
-    app->Start( desc );
+    app->Start(desc);
     app->Run();
 
     return 0;

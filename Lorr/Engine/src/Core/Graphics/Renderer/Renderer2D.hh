@@ -15,7 +15,7 @@ namespace Lorr
     public:
         ~Renderer2D();
 
-        void Init( PlatformWindow *pWindow );
+        void Init(PlatformWindow *pWindow);
 
         void EndFrame();
 

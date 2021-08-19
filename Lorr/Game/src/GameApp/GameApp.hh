@@ -6,10 +6,10 @@
 
 #include "Engine.hh"
 
-class GameApp : public Lorr::BaseApp
+class GameApp: public Lorr::BaseApp
 {
 public:
     void Init() override;
-    void Tick( float fDelta ) override;
+    void Tick(float fDelta) override;
     void Draw() override;
 };

@@ -6,7 +6,7 @@
 
 #include "Layers/Layer.hh"
 
-class WorldLayerWindow : public LayerWindow
+class WorldLayerWindow: public LayerWindow
 {
 public:
     void Init() override;

@@ -36,30 +36,30 @@ namespace Lorr
         Centered = 1 << 2,  // Desktop dist. specific
         Resizable = 1 << 3
     };
-    BitFlags( WindowFlags );
+    BitFlags(WindowFlags);
 
     class IWindow
     {
     public:
         virtual ~IWindow(){};
 
-        virtual void Init( const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags ) = 0;
+        virtual void Init(const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags) = 0;
         virtual void Poll() = 0;
 
         virtual int GetMonitorWidth() = 0;
         virtual int GetMonitorHeight() = 0;
 
-        virtual void SetCursor( Cursor eCursor ) = 0;
+        virtual void SetCursor(Cursor eCursor) = 0;
 
     public:
-        signals::signal<void( Key, ButtonState, KeyMod )> OnSetKeyState;
-        signals::signal<void( KeyMod, MouseButton, ButtonState, const glm::ivec2 & )> OnSetMouseState;
-        signals::signal<void( glm::ivec2, glm::ivec2 )> OnSetMousePosition;
+        signals::signal<void(Key, ButtonState, KeyMod)> OnSetKeyState;
+        signals::signal<void(KeyMod, MouseButton, ButtonState, const glm::ivec2 &)> OnSetMouseState;
+        signals::signal<void(glm::ivec2, glm::ivec2)> OnSetMousePosition;
         signals::signal<void()> OnLoseFocus;
         signals::signal<void()> OnGainFocus;
-        signals::signal<void( uint32_t, uint32_t )> OnResolutionChanged;
+        signals::signal<void(uint32_t, uint32_t)> OnResolutionChanged;
 
-        signals::signal<void( uint32_t, KeyMod )> OnChar;  // Text input
+        signals::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
 
     public:
         virtual bgfx::PlatformData GetPlatformData() = 0;

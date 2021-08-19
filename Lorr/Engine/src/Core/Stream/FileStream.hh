@@ -11,26 +11,26 @@ namespace Lorr
     public:
         FileStream() = default;
 
-        FileStream( const std::string &path, bool write )
+        FileStream(const std::string &path, bool write)
         {
-            if ( write )
+            if (write)
             {
-                m_File = fopen( path.c_str(), "wb" );
+                m_File = fopen(path.c_str(), "wb");
             }
             else
             {
-                m_File = fopen( path.c_str(), "rb" );
+                m_File = fopen(path.c_str(), "rb");
             }
         }
 
         ~FileStream()
         {
-            fclose( m_File );
+            fclose(m_File);
         }
 
         inline void Close()
         {
-            fclose( m_File );
+            fclose(m_File);
         }
 
         template<typename T>
@@ -38,63 +38,63 @@ namespace Lorr
         {
             GetSize();
 
-            T *buffer = (T *) malloc( m_FileSize );
-            fread( buffer, 1, m_FileSize, m_File );
+            T *buffer = (T *)malloc(m_FileSize);
+            fread(buffer, 1, m_FileSize, m_File);
             return buffer;
         }
 
         template<typename T>
-        inline T *ReadPtr( size_t size = 0 )
+        inline T *ReadPtr(size_t size = 0)
         {
             T *buffer;
 
-            if ( size == 0 )
-                fread( buffer, 1, sizeof( T ), m_File );
+            if (size == 0)
+                fread(buffer, 1, sizeof(T), m_File);
             else
-                fread( buffer, 1, size, m_File );
+                fread(buffer, 1, size, m_File);
 
             return buffer;
         }
 
         template<typename T>
-        inline T &Read( size_t size = 0 )
+        inline T &Read(size_t size = 0)
         {
             T *buffer;
-            fread( buffer, 1, ( size == 0 ? sizeof( T ) : size ), m_File );
+            fread(buffer, 1, (size == 0 ? sizeof(T) : size), m_File);
             return *buffer;
         }
 
         template<typename T>
-        inline void Write( const T &t, size_t size = 0 )
+        inline void Write(const T &t, size_t size = 0)
         {
-            if ( size > 0 )
-                fwrite( &t, 1, size, m_File );
+            if (size > 0)
+                fwrite(&t, 1, size, m_File);
             else
-                fwrite( &t, 1, sizeof( T ), m_File );
+                fwrite(&t, 1, sizeof(T), m_File);
         }
 
         template<typename T>
-        inline void Write( const T *&t, size_t size = 0 )
+        inline void Write(const T *&t, size_t size = 0)
         {
-            if ( size > 0 )
-                fwrite( t, 1, size, m_File );
+            if (size > 0)
+                fwrite(t, 1, size, m_File);
             else
-                fwrite( t, 1, sizeof( T ), m_File );
+                fwrite(t, 1, sizeof(T), m_File);
         }
 
-        inline void WriteString( const std::string &val )
+        inline void WriteString(const std::string &val)
         {
-            fwrite( val.c_str(), 1, val.length(), m_File );
+            fwrite(val.c_str(), 1, val.length(), m_File);
         }
 
     private:
         inline void GetSize()
         {
-            if ( m_FileSize > 0 ) return;
+            if (m_FileSize > 0) return;
 
-            fseek( m_File, 0, SEEK_END );
-            m_FileSize = ftell( m_File );
-            rewind( m_File );
+            fseek(m_File, 0, SEEK_END);
+            m_FileSize = ftell(m_File);
+            rewind(m_File);
         }
 
     public:

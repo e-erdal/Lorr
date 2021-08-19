@@ -22,22 +22,22 @@ namespace Lorr
         // E.G file://Texture.png
         // E.G pkg://Texture.png
         // E.G http://Texture.png
-        constexpr Identifier( std::string_view const &svUri )
+        constexpr Identifier(std::string_view const &svUri)
         {
-            assert( svUri.size() < 64 && "An identifier must be under 64 bytes!" );
+            assert(svUri.size() < 64 && "An identifier must be under 64 bytes!");
 
             // No constexpr std::copy :c
-            for ( size_t i = 0; i < svUri.size(); i++ )
+            for (size_t i = 0; i < svUri.size(); i++)
             {
                 m_vString[i] = svUri[i];
             }
 
-            auto uri = std::string_view( m_vString.data() );
+            auto uri = std::string_view(m_vString.data());
 
-            constexpr std::string_view protoEnd( "://" );
+            constexpr std::string_view protoEnd("://");
 
-            auto proto_end = uri.find_first_of( protoEnd );
-            if ( proto_end == std::string_view::npos )
+            auto proto_end = uri.find_first_of(protoEnd);
+            if (proto_end == std::string_view::npos)
             {
                 return;
             }
@@ -46,29 +46,29 @@ namespace Lorr
             m_iProtoSize = protoEnd.size();
         }
 
-        constexpr Identifier( char *szUri ) : Identifier( std::string_view( szUri ) )
+        constexpr Identifier(char *szUri): Identifier(std::string_view(szUri))
         {
         }
-        constexpr Identifier( const char *szUri ) : Identifier( std::string_view( szUri ) )
+        constexpr Identifier(const char *szUri): Identifier(std::string_view(szUri))
         {
         }
-        Identifier( std::string const &szUri ) : Identifier( std::string_view( szUri ) )
+        Identifier(std::string const &szUri): Identifier(std::string_view(szUri))
         {
         }
 
         constexpr std::string_view const Protocol() const
         {
-            return std::string_view( m_vString.data(), m_iProtoEnd );
+            return std::string_view(m_vString.data(), m_iProtoEnd);
         }
 
         constexpr std::string_view const Path() const
         {
-            return std::string_view( m_vString.data() + m_iProtoEnd + m_iProtoSize );
+            return std::string_view(m_vString.data() + m_iProtoEnd + m_iProtoSize);
         }
 
         constexpr std::string_view const Raw() const
         {
-            return std::string_view( m_vString.data() );
+            return std::string_view(m_vString.data());
         }
 
         constexpr operator const char *() const
@@ -84,10 +84,10 @@ namespace Lorr
         // Dumb piece of shit
         operator std::span<uint8_t>() const
         {
-            return std::span<uint8_t>{ (uint8_t *) m_vString.data(), m_vString.size() };
+            return std::span<uint8_t>{(uint8_t *)m_vString.data(), m_vString.size()};
         }
 
-        constexpr bool operator==( const Identifier &other ) const
+        constexpr bool operator==(const Identifier &other) const
         {
             return m_vString == other.m_vString;
         }
@@ -105,9 +105,9 @@ namespace Lorr
     template<>
     struct std::hash<Identifier>
     {
-        size_t operator()( const Identifier &s ) const noexcept
+        size_t operator()(const Identifier &s) const noexcept
         {
-            size_t h1 = std::hash<std::string_view>{}( s.Raw() );
+            size_t h1 = std::hash<std::string_view>{}(s.Raw());
 
             return h1;
         }

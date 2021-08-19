@@ -16,17 +16,17 @@ namespace Lorr
         delete m_pCamera;
     }
 
-    bool Engine::Init( ApplicationDesc const &Description )
+    bool Engine::Init(ApplicationDesc const &Description)
     {
         ZoneScoped;
 
         Console::Init();
-        Console::Info( "Initializing Lorr..." );
+        Console::Info("Initializing Lorr...");
 
-        m_pWindow->Init( Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags );
-        m_pRenderer->Init( m_pWindow );
-        m_pCamera->Init( { 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() } );
-        m_pImGui->Init( this );
+        m_pWindow->Init(Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags);
+        m_pRenderer->Init(m_pWindow);
+        m_pCamera->Init({0, 0}, {m_pWindow->GetWidth(), m_pWindow->GetHeight()});
+        m_pImGui->Init(this);
 
         return true;
     }
@@ -35,7 +35,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_pCamera->SetUniformTransform( 0 );
+        m_pCamera->SetUniformTransform(0);
 
         m_pImGui->BeginFrame();
     }
@@ -48,7 +48,7 @@ namespace Lorr
         m_pRenderer->EndFrame();
     }
 
-    void Engine::Tick( float fDelta )
+    void Engine::Tick(float fDelta)
     {
         ZoneScoped;
     }
@@ -58,11 +58,11 @@ namespace Lorr
         ZoneScoped;
     }
 
-    void BaseApp::Start( ApplicationDesc const &Description )
+    void BaseApp::Start(ApplicationDesc const &Description)
     {
         ZoneScoped;
 
-        m_pEngine->Init( Description );
+        m_pEngine->Init(Description);
 
         Init();
     }
@@ -75,14 +75,14 @@ namespace Lorr
 
         Timer timer;
 
-        while ( !pWindow->ShouldClose() )
+        while (!pWindow->ShouldClose())
         {
             auto elapsed = timer.elapsed();
             timer.reset();
 
-            m_pEngine->Tick( elapsed );
+            m_pEngine->Tick(elapsed);
 
-            Tick( elapsed );
+            Tick(elapsed);
 
             m_pEngine->BeginFrame();
             Draw();
@@ -96,19 +96,19 @@ namespace Lorr
 }  // namespace Lorr
 
 #if TRACY_ENABLE
-void *operator new( size_t s )
+void *operator new(size_t s)
 {
-    void *p = malloc( s );
+    void *p = malloc(s);
 
-    TracySecureAlloc( p, s );
+    TracySecureAlloc(p, s);
 
     return p;
 }
 
-void operator delete( void *p ) noexcept
+void operator delete(void *p) noexcept
 {
-    TracySecureFree( p );
+    TracySecureFree(p);
 
-    free( p );
+    free(p);
 }
 #endif

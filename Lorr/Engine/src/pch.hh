@@ -23,28 +23,36 @@
     #define ENGINE_DEBUG 0
 #endif
 
-#define PrintError( err )                                                                                                                                                \
+#define PrintError(err)                                                                                                                                                  \
     {                                                                                                                                                                    \
         char *pszError;                                                                                                                                                  \
-        FormatMessage( FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, hr,                                            \
-                       MAKELANGID( LANG_NEUTRAL, SUBLANG_DEFAULT ), (LPTSTR) &pszError, 0, NULL );                                                                       \
-        Console::Fatal( err " HR: {}", pszError );                                                                                                                       \
+        FormatMessage(FORMAT_MESSAGE_ALLOCATE_BUFFER | FORMAT_MESSAGE_FROM_SYSTEM | FORMAT_MESSAGE_IGNORE_INSERTS, NULL, hr, MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),  \
+                      (LPTSTR)&pszError, 0, NULL);                                                                                                                       \
+        Console::Fatal(err " HR: {}", pszError);                                                                                                                         \
     }
 
-#define SAFE_DELETE( var )                                                                                                                                               \
-    if ( var )                                                                                                                                                           \
+#define SAFE_DELETE(var)                                                                                                                                                 \
+    if (var)                                                                                                                                                             \
     {                                                                                                                                                                    \
         delete var;                                                                                                                                                      \
         var = NULL;                                                                                                                                                      \
     }
 
-#define SAFE_RELEASE( var )                                                                                                                                              \
-    if ( var )                                                                                                                                                           \
+#define SAFE_RELEASE(var)                                                                                                                                                \
+    if (var)                                                                                                                                                             \
     {                                                                                                                                                                    \
         var->Release();                                                                                                                                                  \
         var = nullptr;                                                                                                                                                   \
     }
 
-#define _REALLOC( x, len ) (uint8_t *) realloc( (void *) x, len )
-#define _MALLOC( len ) (uint8_t *) malloc( len )
-#define _ZEROM( x, len ) memset( (void *) x, 0, len )
+#define _REALLOC(x, len) (uint8_t *)realloc((void *)x, len)
+#define _MALLOC(len) (uint8_t *)malloc(len)
+#define _ZEROM(x, len) memset((void *)x, 0, len)
+
+#define PACK_VERSION(major, minor, build) ((uint32_t)((uint8_t)major << 24 | (uint8_t)minor << 16 | _byteswap_ushort((uint16_t)build)))
+#define UNPACK_VERSION(packedVersion, major, minor, build)                                                                                                               \
+    {                                                                                                                                                                    \
+        major = (uint8_t)((uint32_t)packedVersion >> 24);                                                                                                                \
+        minor = (uint8_t)((uint32_t)packedVersion >> 16);                                                                                                                \
+        build = (uint16_t)_byteswap_ushort((uint16_t)packedVersion);                                                                                                     \
+    }

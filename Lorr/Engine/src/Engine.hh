@@ -27,7 +27,7 @@ namespace Lorr
     public:
         ~Engine();
 
-        bool Init( ApplicationDesc const &Description );
+        bool Init(ApplicationDesc const &Description);
         void Run();
 
         // Graphics
@@ -35,7 +35,7 @@ namespace Lorr
         void EndFrame();
 
         // Logic
-        void Tick( float fDelta );
+        void Tick(float fDelta);
 
     public:  // OOP :)
         PlatformWindow *GetWindow() const
@@ -68,7 +68,7 @@ namespace Lorr
     public:
         ~BaseApp();
 
-        void Start( ApplicationDesc const &Description );
+        void Start(ApplicationDesc const &Description);
         void Run();
 
     public:
@@ -79,7 +79,7 @@ namespace Lorr
 
         virtual void Init() = 0;
 
-        virtual void Tick( float fDelta ) = 0;
+        virtual void Tick(float fDelta) = 0;
         virtual void Draw() = 0;
 
     protected:

@@ -40,5 +40,5 @@ struct RTTextureHeader
 
 namespace RTTEX
 {
-    Lorr::Texture2D *ToTexture( const Lorr::Identifier &ident, const std::string &path );
+    Lorr::Texture2D *ToTexture(const Lorr::Identifier &ident, const std::string &path);
 }
