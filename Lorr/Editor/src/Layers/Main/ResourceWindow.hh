@@ -6,7 +6,7 @@
 
 #include "Layers/Layer.hh"
 
-class ResourceWindow : public LayerWindow
+class ResourceWindow: public LayerWindow
 {
 public:
     void Init() override;

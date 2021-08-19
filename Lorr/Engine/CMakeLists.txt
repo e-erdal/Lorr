@@ -3,19 +3,20 @@ set(ENGINE_VENDOR
     bgfx
     bx
     bimg
+    bgfx-imgui
     glm
     imgui
     lw
     spdlog
     tracy
+    zlib1
 )
 
 set(ENGINE_COMPONENTS
     LorrCoreDebug
     LorrCoreGraphics
     LorrCoreSystems
-
-    LorrModel
+    LorrCoreWindow
 )
 
 ######### Engine components ########
@@ -61,16 +62,16 @@ LorrComponent(
         ${ENGINE_VENDOR}
 )
 
-# Model
+# Window
 LorrComponent(
     NAME
-        LorrModel
+        LorrCoreWindow
     INCLUDE
         src/
     PCH
         src/pch.hh
     SOURCE
-        src/Model/*.cc
+        src/Core/Window/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

@@ -6,13 +6,13 @@
 // https://stackoverflow.com/a/59165784
 namespace Lorr
 {
-    template<std::intmax_t FPS>
+    template<intmax_t FPS>
     class FrameLimiter
     {
     public:
-        FrameLimiter() :
-            time_between_frames{ 1 },  // std::ratio<1, FPS> seconds
-            tp{ std::chrono::steady_clock::now() }
+        FrameLimiter():
+            time_between_frames{1},  // std::ratio<1, FPS> seconds
+            tp{std::chrono::steady_clock::now()}
         {
         }
 
@@ -22,7 +22,7 @@ namespace Lorr
             tp += time_between_frames;
 
             // and sleep until that time point
-            std::this_thread::sleep_until( tp );
+            std::this_thread::sleep_until(tp);
         }
 
     private:
@@ -30,6 +30,6 @@ namespace Lorr
         std::chrono::duration<double, std::ratio<1, FPS>> time_between_frames;
 
         // the time point we'll add to in every loop
-        std::chrono::time_point<std::chrono::steady_clock, decltype( time_between_frames )> tp;
+        std::chrono::time_point<std::chrono::steady_clock, decltype(time_between_frames)> tp;
     };
 }  // namespace Lorr

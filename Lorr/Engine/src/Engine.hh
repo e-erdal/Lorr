@@ -5,9 +5,9 @@
 #pragma once
 
 #include "Core/Debug/ImGuiHandler.hh"
-#include "Core/Graphics/API/D3D11API.hh"
-#include "Core/Graphics/Camera.hh"
-#include "Core/Graphics/Window.hh"
+#include "Core/Graphics/Camera2D.hh"
+#include "Core/Graphics/Renderer/Renderer2D.hh"
+#include "Core/Window/IWindow.hh"
 
 namespace Lorr
 {
@@ -27,37 +27,37 @@ namespace Lorr
     public:
         ~Engine();
 
-        bool Init( ApplicationDesc const &Description );
+        bool Init(ApplicationDesc const &Description);
         void Run();
 
         // Graphics
         void BeginFrame();
         void EndFrame();
-        
+
         // Logic
-        void Tick( float fDelta );
+        void Tick(float fDelta);
 
     public:  // OOP :)
-        Window *GetWindow() const
+        PlatformWindow *GetWindow() const
         {
             return m_pWindow;
         }
 
-        D3D11API *GetAPI() const
+        Renderer2D *GetRenderer() const
         {
-            return m_pAPI;
+            return m_pRenderer;
         }
 
-        Camera *GetCamera() const
+        Camera2D *GetCamera() const
         {
             return m_pCamera;
         }
 
     private:
         // Graphics
-        Window *m_pWindow = new Window;
-        D3D11API *m_pAPI = new D3D11API;
-        Camera *m_pCamera = new Camera;
+        PlatformWindow *m_pWindow = new PlatformWindow;
+        Renderer2D *m_pRenderer = new Renderer2D;
+        Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
 
         // Resources
@@ -68,7 +68,7 @@ namespace Lorr
     public:
         ~BaseApp();
 
-        void Start( ApplicationDesc const &Description );
+        void Start(ApplicationDesc const &Description);
         void Run();
 
     public:
@@ -79,7 +79,7 @@ namespace Lorr
 
         virtual void Init() = 0;
 
-        virtual void Tick( float fDelta ) = 0;
+        virtual void Tick(float fDelta) = 0;
         virtual void Draw() = 0;
 
     protected:
