@@ -158,6 +158,6 @@ namespace Lorr
 
         virtual void Init(const Identifier &identifier, SHADER_DESC *pShaderD, SHADER_DESC_SUBRESC *pShaderSRES = 0) = 0;
 
-        virtual void Use() = 0;
+        virtual void Use(uint16_t viewID = 0) = 0;
     };
 }  // namespace Lorr
