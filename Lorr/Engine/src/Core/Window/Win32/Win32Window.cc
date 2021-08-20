@@ -386,11 +386,8 @@ namespace Lorr
         return 0;
     }
 
-    bgfx::PlatformData Win32Window::GetPlatformData()
+    void *Win32Window::GetHandle()
     {
-        bgfx::PlatformData platformData;
-        platformData.nwh = (void *)m_Handle;
-
-        return platformData;
+        return m_Handle;
     }
 }  // namespace Lorr

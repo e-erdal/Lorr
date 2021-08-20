@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include "Core/Window/PlatformWindow.hh"
-
-#include <bgfx/bgfx.h>
+#include "Core/Graphics/API/RendererAPI.hh"
 
 namespace Lorr
 {

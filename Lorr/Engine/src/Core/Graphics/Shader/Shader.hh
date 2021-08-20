@@ -49,8 +49,8 @@ namespace Lorr
 
         VertexAttrib() = default;
 
-        VertexAttrib(VertexAttribType eType, const std::string &sName, bool bIsNormalized = false):
-            Name(sName), Type(eType), Size(VertexAttribTypeSize(eType)), Offset(0), IsNormalized(bIsNormalized)
+        VertexAttrib(VertexAttribType eType, const std::string &sName, bool bIsNormalized = false)
+            : Name(sName), Type(eType), Size(VertexAttribTypeSize(eType)), Offset(0), IsNormalized(bIsNormalized)
         {
         }
 

@@ -25,7 +25,7 @@ namespace Lorr
         static LRESULT CALLBACK WindowProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam);
 
     public:
-        bgfx::PlatformData GetPlatformData() override;
+        void *GetHandle() override;
 
     private:
         HWND m_Handle = 0;
