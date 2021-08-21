@@ -42,7 +42,7 @@ namespace Lorr
     class Texture2D
     {
     public:
-        static void Create(Texture2D **pOut, Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0);
+        static Texture2D *Create(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0);
 
     protected:
         virtual void Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0) = 0;

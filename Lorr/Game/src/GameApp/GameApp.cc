@@ -13,9 +13,9 @@ void GameApp::Init()
     texDesc.Filters = TEXTURE_FILTER_NEAREST;
     texDesc.Path = "tiles1.png";
 
-    Texture2D *tex;
+    Texture2D *tex = Texture2D::Create("texture://tiles1", &texDesc);
     
-    Texture2D::Create(&tex, "texture://tiles1", &texDesc);
+    
 }
 
 void GameApp::Tick(float fDelta)

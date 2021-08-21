@@ -51,9 +51,7 @@ Texture2D *RTTEX::ToTexture(const Lorr::Identifier &ident, const std::string &pa
     srDesc.Data = buffer.Get<uint8_t *>(textureDataSize);
     srDesc.DataSize = textureDataSize;
 
-    Texture2D *tex;
-
-    Texture2D::Create(&tex, ident, &texDesc, &srDesc);
+    Texture2D *tex = Texture2D::Create(ident, &texDesc, &srDesc);
 
     free(pData);
 
