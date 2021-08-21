@@ -6,8 +6,6 @@
 
 #include "Core/Window/IWindow.hh"
 
-#include <imgui_impl_bgfx.h>
-
 namespace Lorr
 {
     void ImGui_ImplSurface_KeyPress(Key eKey, ButtonState eState, KeyMod eMod)
@@ -172,15 +170,15 @@ namespace Lorr
 
         ImGui::StyleColorsDark();
 
-        ImGui_Implbgfx_Init(255);
-        InitImGui(pEngine->GetWindow());
+        // ImGui_Implbgfx_Init(255);
+        // InitImGui(pEngine->GetWindow());
     }
 
     void ImGuiHandler::BeginFrame()
     {
         ZoneScoped;
 
-        ImGui_Implbgfx_NewFrame();
+        // ImGui_Implbgfx_NewFrame();
         ImGui_ImplSurface_NewFrame();
         ImGui::NewFrame();
     }
@@ -190,7 +188,7 @@ namespace Lorr
         ZoneScopedN("ImGuiHandler::EndFrame");
 
         ImGui::Render();
-        ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
+        // ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
     }
 
     void ImGuiHandler::InitImGui(PlatformWindow *pWindow)
@@ -230,7 +228,7 @@ namespace Lorr
         io.BackendPlatformUserData = (void *)pWindow;
 
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        main_viewport->PlatformHandle = (void *)pWindow->GetPlatformData().nwh;
+        // main_viewport->PlatformHandle = (void *)pWindow->GetPlatformData().nwh;
 
         pWindow->OnSetKeyState.connect<&ImGui_ImplSurface_KeyPress>();
         pWindow->OnSetMouseState.connect<&ImGui_ImplSurface_MouseStateChange>();

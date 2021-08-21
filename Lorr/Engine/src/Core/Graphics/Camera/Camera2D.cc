@@ -6,7 +6,7 @@ namespace Lorr
 {
     void Camera2D::OnResolutionChanged(uint32_t uWidth, uint32_t uHeight)
     {
-        SetScale({uWidth, uHeight});
+        SetScale({ uWidth, uHeight });
     }
 
     void Camera2D::Init(const glm::vec2 &v2Pos, const glm::vec2 &v2Size)
@@ -56,8 +56,8 @@ namespace Lorr
         CalculateProjection();
     }
 
-    void Camera2D::SetUniformTransform(bgfx::ViewId view)
+    void Camera2D::SetUniformTransform()
     {
-        bgfx::setViewTransform(view, &m_View[0][0], &m_Projection[0][0]);
+        // bgfx::setViewTransform(view, &m_View[0][0], &m_Projection[0][0]);
     }
 }  // namespace Lorr

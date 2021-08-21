@@ -4,9 +4,7 @@
 
 #pragma once
 
-#include <bx/bx.h>
-
-#if BX_PLATFORM_WINDOWS
+#if _WIN32
     #include "Win32/Win32Window.hh"
 typedef Lorr::Win32Window PlatformWindow;
 #endif

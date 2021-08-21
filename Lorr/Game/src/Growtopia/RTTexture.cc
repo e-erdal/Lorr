@@ -42,19 +42,18 @@ Texture2D *RTTEX::ToTexture(const Lorr::Identifier &ident, const std::string &pa
     size_t textureDataSize = textureHeader.width * textureHeader.height * (textureHeader.alpha ? 4 : 3);
 
     TEXTURE2D_DESC texDesc;
-    texDesc.Filters = TEXTURE_MAG_NEAREST;
+    texDesc.Filters = TEXTURE_FILTER_NEAREST;
 
     TEXTURE2D_DESC_SUBRESC srDesc;
     srDesc.Width = textureHeader.width;
     srDesc.Height = textureHeader.height;
-    srDesc.Format = bgfx::TextureFormat::BGRA8;
+    // srDesc.Format = bgfx::TextureFormat::BGRA8;
     srDesc.Data = buffer.Get<uint8_t *>(textureDataSize);
     srDesc.DataSize = textureDataSize;
 
-    Texture2D *texture = new Texture2D;
-    texture->Init(ident, &texDesc, &srDesc);
+    Texture2D *tex = Texture2D::Create(ident, &texDesc, &srDesc);
 
     free(pData);
 
-    return texture;
+    return tex;
 }

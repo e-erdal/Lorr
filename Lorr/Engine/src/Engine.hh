@@ -5,7 +5,8 @@
 #pragma once
 
 #include "Core/Debug/ImGuiHandler.hh"
-#include "Core/Graphics/Camera2D.hh"
+#include "Core/Graphics/API/RendererAPI.hh"
+#include "Core/Graphics/Camera/Camera2D.hh"
 #include "Core/Graphics/Renderer/Renderer2D.hh"
 #include "Core/Window/IWindow.hh"
 
@@ -37,7 +38,7 @@ namespace Lorr
         // Logic
         void Tick(float fDelta);
 
-    public:  // OOP :)
+    public:
         PlatformWindow *GetWindow() const
         {
             return m_pWindow;
@@ -60,7 +61,7 @@ namespace Lorr
         Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
 
-        // Resources
+        friend RendererAPI;
     };
 
     class BaseApp

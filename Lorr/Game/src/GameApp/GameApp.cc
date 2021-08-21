@@ -3,29 +3,19 @@
 #include "Core/Stream/BufferStream.hh"
 #include "Core/Stream/FileStream.hh"
 
-#include "Growtopia/ItemInfoManager.hh"
+#include "Growtopia/RTTexture.hh"
 
 void GameApp::Init()
 {
     using namespace Lorr;
 
-    // RTTEX::ToTexture( "gt://game-tiles_page1", "tiles_page1.rttex" );
+    TEXTURE2D_DESC texDesc;
+    texDesc.Filters = TEXTURE_FILTER_NEAREST;
+    texDesc.Path = "tiles1.png";
 
-    // FileStream file( "items.dat", false );
-
-    // if ( !file.IsOK() )
-    // {
-    //     Console::Fatal( "Failed to load file 'items.dat'!" );
-    //     return;
-    // }
-
-    // uint8_t *pData = file.ReadAll<uint8_t>();
-    // size_t dataSize = file.Size();
-
-    // BufferStream buffer( pData, dataSize );
-
-    // ItemInfoManager iim;
-    // iim.Unpack( buffer );
+    Texture2D *tex = Texture2D::Create("texture://tiles1", &texDesc);
+    
+    
 }
 
 void GameApp::Tick(float fDelta)

@@ -1,9 +1,5 @@
 # Third party applications
 set(ENGINE_VENDOR
-    bgfx
-    bx
-    bimg
-    bgfx-imgui
     glm
     imgui
     lw

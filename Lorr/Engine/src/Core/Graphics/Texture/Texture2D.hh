@@ -8,15 +8,23 @@
 
 #include "Utils/Identifier.hh"
 
-#include <bgfx/bgfx.h>
-
-#define TEXTURE_MAG_NEAREST (BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT)
-
 namespace Lorr
 {
+    enum eTextureFormat
+    {
+        TEXTURE_FORMAT_RGB8,  // unsupported
+        TEXTURE_FORMAT_RGBA8,
+    };
+
+    enum eTextureFiltering
+    {
+        TEXTURE_FILTER_NEAREST,
+        TEXTURE_FILTER_LINEAR,
+    };
+
     struct TEXTURE2D_DESC
     {
-        uintptr_t Filters = 0;
+        eTextureFiltering Filters = TEXTURE_FILTER_LINEAR;
         std::string Path = "";
     };
 
@@ -25,7 +33,7 @@ namespace Lorr
         uint32_t Width = 0;
         uint32_t Height = 0;
 
-        bgfx::TextureFormat::Enum Format = bgfx::TextureFormat::RGBA8;
+        eTextureFormat Format = TEXTURE_FORMAT_RGBA8;
 
         uint8_t *Data = 0;
         size_t DataSize = 0;
@@ -34,9 +42,11 @@ namespace Lorr
     class Texture2D
     {
     public:
-        void Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0);
+        static Texture2D *Create(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0);
 
-    private:
+    protected:
+        virtual void Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES = 0) = 0;
+
         Identifier m_Ident = EmptyIdentifier;
 
         uint32_t m_Width = 0;
@@ -44,6 +54,6 @@ namespace Lorr
 
         uint32_t m_DataSize = 0;
 
-        bgfx::TextureHandle m_Handle = BGFX_INVALID_HANDLE;
+        // bgfx::TextureHandle m_Handle = BGFX_INVALID_HANDLE;
     };
 }  // namespace Lorr

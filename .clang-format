@@ -208,12 +208,12 @@ IncludeCategories:
 
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: true
-BreakConstructorInitializers: AfterColon
+BreakConstructorInitializers: BeforeColon
 BreakInheritanceList: BeforeColon
 BreakStringLiterals: true
 CompactNamespaces: true
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
-Cpp11BracedListStyle: true
+Cpp11BracedListStyle: false
 FixNamespaceComments: true
 IndentCaseLabels: false
 IndentGotoLabels: false
