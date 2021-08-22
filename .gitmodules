@@ -16,3 +16,6 @@
 [submodule "Vendor/EAThread"]
 	path = Vendor/EAThread
 	url = https://github.com/electronicarts/EAThread.git
+[submodule "Vendor/Vulkan-Headers"]
+	path = Vendor/Vulkan-Headers
+	url = https://github.com/KhronosGroup/Vulkan-Headers.git
