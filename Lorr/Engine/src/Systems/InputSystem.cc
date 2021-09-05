@@ -16,45 +16,45 @@ namespace Lorr
         // pSurface->OnSetMousePosition.connect<&InputSystem::OnSetMousePosition>( this );
     }
 
-    void InputSystem::OnSetKeyState(Key eKey, ButtonState eState, KeyMod eMod)
+    void InputSystem::OnSetKeyState(Key key, ButtonState state, KeyMod mod)
     {
         ZoneScoped;
 
-        if (eState == ButtonState::Pressed)
+        if (state == ButtonState::Pressed)
         {
-            OnKeyDown(eKey, eMod);
+            OnKeyDown(key, mod);
         }
         else
         {
-            OnKeyRelease(eKey, eMod);
+            OnKeyRelease(key, mod);
         }
     }
 
-    void InputSystem::OnChar(uint32_t uChar, KeyMod eMod)
+    void InputSystem::OnChar(uint32_t key, KeyMod mod)
     {
         ZoneScoped;
 
-        OnCharInput(uChar, eMod);
+        OnCharInput(key, mod);
     }
 
-    void InputSystem::OnSetMouseState(KeyMod eMod, MouseButton eKey, ButtonState eState, const glm::ivec2 &ivPos)
+    void InputSystem::OnSetMouseState(KeyMod mod, MouseButton key, ButtonState state, const glm::ivec2 &pos)
     {
         ZoneScoped;
 
-        if (eState == ButtonState::Pressed)
+        if (state == ButtonState::Pressed)
         {
-            OnMouseDown(eMod, eKey, ivPos);
+            OnMouseDown(mod, key, pos);
         }
         else
         {
-            OnMouseRelease(eMod, eKey, ivPos);
+            OnMouseRelease(mod, key, pos);
         }
     }
 
-    void InputSystem::OnSetMousePosition(const glm::ivec2 &ivPos)
+    void InputSystem::OnSetMousePosition(const glm::ivec2 &pos)
     {
         ZoneScoped;
 
-        OnMouseMove(ivPos);
+        OnMouseMove(pos);
     }
 }  // namespace Lorr

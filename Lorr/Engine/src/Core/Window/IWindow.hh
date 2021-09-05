@@ -4,9 +4,8 @@
 
 #pragma once
 
+#include "Systems/Helpers/InputVars.hh"
 #include "Utils/BitFlags.hh"
-
-#include "Core/Systems/Helpers/InputVars.hh"
 
 namespace Lorr
 {
@@ -41,13 +40,13 @@ namespace Lorr
     public:
         virtual ~IWindow(){};
 
-        virtual void Init(const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags) = 0;
+        virtual void Init(const std::string &title, uint32_t width, uint32_t height, WindowFlags flags) = 0;
         virtual void Poll() = 0;
 
         virtual int GetMonitorWidth() = 0;
         virtual int GetMonitorHeight() = 0;
 
-        virtual void SetCursor(Cursor eCursor) = 0;
+        virtual void SetCursor(Cursor cursor) = 0;
 
     public:
         signals::signal<void(Key, ButtonState, KeyMod)> OnSetKeyState;
@@ -60,7 +59,7 @@ namespace Lorr
         signals::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
 
     public:
-        virtual void *GetHandle() = 0;
+        virtual bgfx::PlatformData GetPlatformData() = 0;
 
         uint32_t GetWidth() const
         {

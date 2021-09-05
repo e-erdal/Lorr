@@ -4,8 +4,6 @@
 #include "Utils/Math.hh"
 #include "Utils/Timer.hh"
 
-#include "Core/Graphics/API/D3D11/D3D11API.hh"
-
 namespace Lorr
 {
     Engine::~Engine()
@@ -26,7 +24,7 @@ namespace Lorr
         Console::Info("Initializing Lorr...");
 
         m_pWindow->Init(Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags);
-        D3D11API::Get()->Init(m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight());
+        
         m_pRenderer->Init(m_pWindow);
         m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
         // m_pImGui->Init(this);
@@ -38,7 +36,6 @@ namespace Lorr
     {
         ZoneScoped;
 
-        D3D11API::Get()->SetClearColor({ 0.1, 0.1, 0.1, 1.0 });
         m_pCamera->SetUniformTransform();
 
         // m_pImGui->BeginFrame();
@@ -50,7 +47,6 @@ namespace Lorr
 
         // m_pImGui->EndFrame();
         m_pRenderer->EndFrame();
-        D3D11API::Get()->Frame(0);
     }
 
     void Engine::Tick(float fDelta)

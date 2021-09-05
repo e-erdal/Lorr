@@ -3,22 +3,7 @@
 	url = https://github.com/g-truc/glm.git
 [submodule "Vendor/spdlog"]
 	path = Vendor/spdlog
-	url = https://github.com/gabime/spdlog.git
-[submodule "Vendor/assimp"]
-	path = Vendor/assimp
-	url = https://github.com/assimp/assimp.git
+	url = https://github.com/e-erdal/spdlog.git
 [submodule "Vendor/bgfx.cmake"]
 	path = Vendor/bgfx.cmake
-	url = https://github.com/bkaradzic/bgfx.cmake.git
-[submodule "Vendor/EASTL"]
-	path = Vendor/EASTL
-	url = https://github.com/electronicarts/EASTL.git
-[submodule "Vendor/EAThread"]
-	path = Vendor/EAThread
-	url = https://github.com/electronicarts/EAThread.git
-[submodule "Vendor/Vulkan-Headers"]
-	path = Vendor/Vulkan-Headers
-	url = https://github.com/KhronosGroup/Vulkan-Headers.git
-[submodule "Vendor/--recursive"]
-	path = Vendor/--recursive
 	url = https://github.com/bkaradzic/bgfx.cmake.git

@@ -3,6 +3,7 @@
 #include "Engine.hh"
 
 #include "Utils/Timer.hh"
+#include "imgui_impl_bgfx.h"
 
 #include "Core/Window/IWindow.hh"
 
@@ -143,7 +144,7 @@ namespace Lorr
 
         if (io.WantSetMousePos)
         {
-            pSurface->OnSetMousePosition(glm::vec2{io.MousePos.x, io.MousePos.y}, glm::vec2{io.MouseDelta.x, io.MouseDelta.y});
+            pSurface->OnSetMousePosition(glm::vec2{ io.MousePos.x, io.MousePos.y }, glm::vec2{ io.MouseDelta.x, io.MouseDelta.y });
         }
 
         io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);

@@ -29,11 +29,11 @@ namespace Lorr
         signals::signal<void(uint32_t, KeyMod)> OnCharInput;
 
     private:
-        glm::vec2 m_v2MouseScrollAxis;
-        glm::vec2 m_v2MouseMoveDelta;
+        glm::vec2 m_MouseScrollAxis;
+        glm::vec2 m_MouseMoveDelta;
 
-        uint8_t m_eMouseButtonState;
-        KeyMod m_eKeyMods;
+        uint8_t m_MouseButtonState;
+        KeyMod m_KeyMods;
 
     private:
         void OnSetKeyState(Key, ButtonState, KeyMod);

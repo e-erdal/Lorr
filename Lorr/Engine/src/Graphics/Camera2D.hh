@@ -9,13 +9,13 @@ namespace Lorr
     class Camera2D
     {
     public:
-        void Init(const glm::vec2 &v2Pos, const glm::vec2 &v2Size);
+        void Init(const glm::vec2 &pos, const glm::vec2 &size);
 
         void CalculateView();
         void CalculateProjection();
 
-        void SetPosition(const glm::vec2 &v2Pos);
-        void SetScale(const glm::vec2 &v2Size);
+        void SetPosition(const glm::vec2 &pos);
+        void SetScale(const glm::vec2 &size);
 
         void SetUniformTransform();
 
@@ -41,7 +41,7 @@ namespace Lorr
         }
 
     private:
-        void OnResolutionChanged(uint32_t uWidth, uint32_t uHeight);
+        void OnResolutionChanged(uint32_t width, uint32_t height);
 
         glm::mat4 m_Projection{};
         glm::mat4 m_View{};

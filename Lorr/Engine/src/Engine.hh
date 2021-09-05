@@ -4,11 +4,10 @@
 
 #pragma once
 
-#include "Core/Debug/ImGuiHandler.hh"
-#include "Core/Graphics/API/RendererAPI.hh"
-#include "Core/Graphics/Camera/Camera2D.hh"
-#include "Core/Graphics/Renderer/Renderer2D.hh"
 #include "Core/Window/IWindow.hh"
+#include "Debug/ImGuiHandler.hh"
+#include "Graphics/Camera2D.hh"
+#include "Graphics/Renderer/Renderer2D.hh"
 
 namespace Lorr
 {
@@ -60,8 +59,6 @@ namespace Lorr
         Renderer2D *m_pRenderer = new Renderer2D;
         Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
-
-        friend RendererAPI;
     };
 
     class BaseApp

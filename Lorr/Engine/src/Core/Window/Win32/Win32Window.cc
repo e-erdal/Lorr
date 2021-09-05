@@ -85,17 +85,17 @@ namespace Lorr
     {
     }
 
-    void Win32Window::Init(const std::string &sTitle, uint32_t uWidth, uint32_t uHeight, WindowFlags eFlags)
+    void Win32Window::Init(const std::string &title, uint32_t width, uint32_t height, WindowFlags flags)
     {
         ZoneScoped;
 
-        if (uWidth == 0 && uHeight == 0)
+        if (width == 0 && height == 0)
         {
-            uWidth = GetMonitorWidth();
-            uHeight = GetMonitorHeight();
+            width = GetMonitorWidth();
+            height = GetMonitorHeight();
         }
 
-        Console::Log("Creating new window \"{}\"<{}, {}>", sTitle.c_str(), uWidth, uHeight);
+        Console::Log("Creating new window \"{}\"<{}, {}>", title.c_str(), width, height);
 
         // Getting ready for window
         WNDCLASSEX wc;
@@ -117,12 +117,12 @@ namespace Lorr
         RegisterClassEx(&wc);
 
         int windowFlags = g_defWindowStyle;
-        if (eFlags & WindowFlags::Fullscreen)
+        if (flags & WindowFlags::Fullscreen)
         {
             Console::Log("Getting ready for fullscreen state.");
 
             // actual holy shit moment
-            if ((uWidth != GetMonitorWidth()) && (uHeight != GetMonitorHeight()))
+            if ((width != GetMonitorWidth()) && (height != GetMonitorHeight()))
             {
                 // window will be fullscreen, no need to calculate other position and stuff
                 // just directly pass it over
@@ -130,8 +130,8 @@ namespace Lorr
                 ZeroMemory(&dm, sizeof(DEVMODE));
 
                 dm.dmSize = sizeof(DEVMODE);
-                dm.dmPelsWidth = uWidth;
-                dm.dmPelsHeight = uHeight;
+                dm.dmPelsWidth = width;
+                dm.dmPelsHeight = height;
                 dm.dmBitsPerPel = 32;
                 dm.dmFields = DM_BITSPERPEL | DM_PELSWIDTH | DM_PELSHEIGHT;
 
@@ -142,7 +142,7 @@ namespace Lorr
                 }
             }
 
-            m_Handle = CreateWindowEx(0, wc.lpszClassName, sTitle.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, GetMonitorWidth(),
+            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, GetMonitorWidth(),
                                       GetMonitorHeight(), 0, 0, 0, 0);
 
             m_IsFullscreen = true;
@@ -150,22 +150,22 @@ namespace Lorr
 
         else
         {
-            if (eFlags & WindowFlags::Resizable) windowFlags |= WS_MAXIMIZEBOX | WS_THICKFRAME;
+            if (flags & WindowFlags::Resizable) windowFlags |= WS_MAXIMIZEBOX | WS_THICKFRAME;
 
             int windowPosX = 0;
             int windowPosY = 0;
 
-            if (eFlags & WindowFlags::Centered)
+            if (flags & WindowFlags::Centered)
             {
-                windowPosX = (GetMonitorWidth() / 2) - (uWidth / 2);
-                windowPosY = (GetMonitorHeight() / 2) - (uHeight / 2);
+                windowPosX = (GetMonitorWidth() / 2) - (width / 2);
+                windowPosY = (GetMonitorHeight() / 2) - (height / 2);
             }
 
-            RECT rc = {0, 0, (long)uWidth, (long)uHeight};
+            RECT rc = { 0, 0, (long)width, (long)height };
 
             AdjustWindowRectEx(&rc, windowFlags, 0, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 
-            m_Handle = CreateWindowEx(0, wc.lpszClassName, sTitle.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top, 0, 0, 0, 0);
+            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top, 0, 0, 0, 0);
         }
 
         ShowWindow(m_Handle, SW_SHOW);
@@ -173,8 +173,8 @@ namespace Lorr
 
         Console::Log("Successfully created window.");
 
-        m_Width = uWidth;
-        m_Height = uHeight;
+        m_Width = width;
+        m_Height = height;
     }
 
     void Win32Window::Poll()
@@ -204,23 +204,23 @@ namespace Lorr
         return GetSystemMetrics(SM_CYSCREEN);
     }
 
-    void Win32Window::SetCursor(Cursor eCursor)
+    void Win32Window::SetCursor(Cursor cursor)
     {
         ZoneScoped;
 
         ::ShowCursor(TRUE);  // make sure that cursor is shown
 
-        static ::HCURSOR arrowCursor{LoadCursor(NULL, IDC_ARROW)};
-        static ::HCURSOR ibeamCursor{LoadCursor(NULL, IDC_IBEAM)};
-        static ::HCURSOR handCursor{LoadCursor(NULL, IDC_HAND)};
-        static ::HCURSOR sizeAllCursor{LoadCursor(NULL, IDC_SIZEALL)};
-        static ::HCURSOR sizeWECursor{LoadCursor(NULL, IDC_SIZEWE)};
-        static ::HCURSOR sizeNSCursor{LoadCursor(NULL, IDC_SIZENS)};
-        static ::HCURSOR sizeNESWCursor{LoadCursor(NULL, IDC_SIZENESW)};
-        static ::HCURSOR sizeNWSECursor{LoadCursor(NULL, IDC_SIZENWSE)};
-        static ::HCURSOR noCursor{LoadCursor(NULL, IDC_NO)};
+        static ::HCURSOR arrowCursor{ LoadCursor(NULL, IDC_ARROW) };
+        static ::HCURSOR ibeamCursor{ LoadCursor(NULL, IDC_IBEAM) };
+        static ::HCURSOR handCursor{ LoadCursor(NULL, IDC_HAND) };
+        static ::HCURSOR sizeAllCursor{ LoadCursor(NULL, IDC_SIZEALL) };
+        static ::HCURSOR sizeWECursor{ LoadCursor(NULL, IDC_SIZEWE) };
+        static ::HCURSOR sizeNSCursor{ LoadCursor(NULL, IDC_SIZENS) };
+        static ::HCURSOR sizeNESWCursor{ LoadCursor(NULL, IDC_SIZENESW) };
+        static ::HCURSOR sizeNWSECursor{ LoadCursor(NULL, IDC_SIZENWSE) };
+        static ::HCURSOR noCursor{ LoadCursor(NULL, IDC_NO) };
 
-        switch (eCursor)
+        switch (cursor)
         {
         case Cursor::Arrow: ::SetCursor(arrowCursor); break;
         case Cursor::TextInput: ::SetCursor(ibeamCursor); break;
@@ -234,7 +234,7 @@ namespace Lorr
         case Cursor::Hidden: ::ShowCursor(FALSE); break;
         }
 
-        m_CurrentCursor = eCursor;
+        m_CurrentCursor = cursor;
     }
 
     LRESULT CALLBACK Win32Window::WindowProc(HWND hHwnd, UINT uMSG, WPARAM wParam, LPARAM lParam)
@@ -386,8 +386,11 @@ namespace Lorr
         return 0;
     }
 
-    void *Win32Window::GetHandle()
+    bgfx::PlatformData Win32Window::GetPlatformData()
     {
-        return m_Handle;
+        bgfx::PlatformData platformData;
+        platformData.nwh = (void *)m_Handle;
+
+        return platformData;
     }
 }  // namespace Lorr

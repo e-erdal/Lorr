@@ -6,16 +6,19 @@
 
 #include <vector>
 
-#include "Utils/BitFlags.hh"
-#include "Utils/Logger.hh"
-#include "Utils/Math.hh"
-
+#include <bgfx/bgfx.h>
+#include <bimg/bimg.h>
+#include <bx/bx.h>
 #include <glm/glm.hpp>
 
 #include <Tracy.hpp>
 #include <Windows.h>
 #include <signals.h>
 #include <stdint.h>
+
+#include "Utils/BitFlags.hh"
+#include "Utils/Logger.hh"
+#include "Utils/Math.hh"
 
 #ifndef NDEBUG
     #define ENGINE_DEBUG 1

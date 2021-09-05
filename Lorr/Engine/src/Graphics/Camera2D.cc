@@ -4,19 +4,19 @@
 
 namespace Lorr
 {
-    void Camera2D::OnResolutionChanged(uint32_t uWidth, uint32_t uHeight)
+    void Camera2D::OnResolutionChanged(uint32_t width, uint32_t height)
     {
-        SetScale({ uWidth, uHeight });
+        SetScale({ width, height });
     }
 
-    void Camera2D::Init(const glm::vec2 &v2Pos, const glm::vec2 &v2Size)
+    void Camera2D::Init(const glm::vec2 &pos, const glm::vec2 &size)
     {
         ZoneScoped;
 
         GetEngine()->GetWindow()->OnResolutionChanged.connect<&Camera2D::OnResolutionChanged>(this);
 
-        m_Pos = v2Pos;
-        m_Scale = v2Size;
+        m_Pos = pos;
+        m_Scale = size;
 
         CalculateView();
         CalculateProjection();
@@ -38,20 +38,20 @@ namespace Lorr
         m_Projection[3].z = 1.f;
     }
 
-    void Camera2D::SetPosition(const glm::vec2 &v2Pos)
+    void Camera2D::SetPosition(const glm::vec2 &pos)
     {
         ZoneScoped;
 
-        m_Pos = v2Pos;
+        m_Pos = pos;
 
         CalculateView();
     }
 
-    void Camera2D::SetScale(const glm::vec2 &v2Size)
+    void Camera2D::SetScale(const glm::vec2 &size)
     {
         ZoneScoped;
 
-        m_Scale = v2Size;
+        m_Scale = size;
 
         CalculateProjection();
     }
