@@ -23,7 +23,7 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
         m_Height = pTextureSRES->Height;
         m_DataSize = pTextureSRES->DataSize;
 
-        Console::Info("Loading a Texture2D from memory <{}>({}, {})", m_Ident, m_Width, m_Height);
+        LOG_TRACE("Loading a Texture2D from memory <{}>({}, {})", m_Ident, m_Width, m_Height);
 
         const auto *const pixelData = bgfx::copy(pTextureSRES->Data, pTextureSRES->DataSize);
         m_Handle = bgfx::createTexture2D(m_Width, m_Height, false, 1, pTextureSRES->Format, pTextureD->Filters, pixelData);
@@ -34,7 +34,7 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
 
         if (!file.IsOK())
         {
-            Console::Error("File not found! {}", pTextureD->Path);
+            LOG_ERROR("File not found! {}", pTextureD->Path);
             return;
         }
 
@@ -47,11 +47,11 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
         auto *imageContainer = bimg::imageParse(bgfx::g_allocator, pData, dataSize);
         if (imageContainer == nullptr || !bgfx::isTextureValid(0, false, imageContainer->m_numLayers, (bgfx::TextureFormat::Enum)imageContainer->m_format, 0))
         {
-            Console::Error("Cannot load image \"{}\"!", pTextureD->Path);
+            LOG_ERROR("Cannot load image \"{}\"!", pTextureD->Path);
             return;
         }
 
-        Console::Info("Loading a Texture2D from file <{}>({}, {})", m_Ident, imageContainer->m_width, imageContainer->m_height);
+        LOG_TRACE("Loading a Texture2D from file <{}>({}, {})", m_Ident, imageContainer->m_width, imageContainer->m_height);
 
         m_Width = imageContainer->m_width;
         m_Height = imageContainer->m_height;
@@ -64,7 +64,7 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
         free(pData);
     }
 
-    Console::Info("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
+    LOG_TRACE("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
 
     std::string_view bgfxName = m_Ident.Raw();
     bgfx::setName(m_Handle, bgfxName.data(), bgfxName.length());

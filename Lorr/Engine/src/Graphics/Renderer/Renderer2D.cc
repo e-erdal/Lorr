@@ -18,7 +18,7 @@ namespace Lorr
 
         if (!bgfx::init(init))
         {
-            Console::Fatal("Failed to initialize BGFX.");
+            LOG_ERROR("Failed to initialize BGFX.");
             return;
         }
     }

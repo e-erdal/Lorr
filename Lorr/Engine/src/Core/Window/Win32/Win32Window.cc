@@ -95,7 +95,7 @@ namespace Lorr
             height = GetMonitorHeight();
         }
 
-        Console::Log("Creating new window \"{}\"<{}, {}>", title.c_str(), width, height);
+        LOG_TRACE("Creating new window \"{}\"<{}, {}>", title.c_str(), width, height);
 
         // Getting ready for window
         WNDCLASSEX wc;
@@ -119,7 +119,7 @@ namespace Lorr
         int windowFlags = g_defWindowStyle;
         if (flags & WindowFlags::Fullscreen)
         {
-            Console::Log("Getting ready for fullscreen state.");
+            LOG_TRACE("Getting ready for fullscreen state.");
 
             // actual holy shit moment
             if ((width != GetMonitorWidth()) && (height != GetMonitorHeight()))
@@ -138,7 +138,7 @@ namespace Lorr
                 if (ChangeDisplaySettingsA(&dm, CDS_FULLSCREEN) != DISP_CHANGE_SUCCESSFUL)
                 {
                     // throw error
-                    Console::Error("Fullscreen is not supported by the GPU.");
+                    LOG_ERROR("Fullscreen is not supported by the GPU.");
                 }
             }
 
@@ -171,7 +171,7 @@ namespace Lorr
         ShowWindow(m_Handle, SW_SHOW);
         UpdateWindow(m_Handle);
 
-        Console::Log("Successfully created window.");
+        LOG_TRACE("Successfully created window.");
 
         m_Width = width;
         m_Height = height;
@@ -255,7 +255,7 @@ namespace Lorr
         {
             if (pWindow->m_SizeEnded)
             {
-                Console::Log("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
+                LOG_TRACE("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
                 pWindow->OnResolutionChanged((uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
                 pWindow->m_Width = (uint32_t)LOWORD(lParam);
                 pWindow->m_Height = (uint32_t)HIWORD(lParam);
@@ -267,7 +267,7 @@ namespace Lorr
             pWindow->m_SizeEnded = true;
             RECT rc;
             GetClientRect(pWindow->m_Handle, &rc);
-            Console::Log("Window size changed to {}, {}", rc.right, rc.bottom);
+            LOG_TRACE("Window size changed to {}, {}", rc.right, rc.bottom);
             pWindow->OnResolutionChanged((uint32_t)rc.right, (uint32_t)rc.bottom);
             pWindow->m_Width = (uint32_t)rc.right;
             pWindow->m_Height = (uint32_t)rc.bottom;

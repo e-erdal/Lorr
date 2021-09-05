@@ -21,10 +21,10 @@ namespace Lorr
         ZoneScoped;
 
         Console::Init();
-        Console::Info("Initializing Lorr...");
+        LOG_INFO("Initializing Lorr...");
 
         m_pWindow->Init(Description.sTitle, Description.uWidth, Description.uHeight, Description.eFlags);
-        
+
         m_pRenderer->Init(m_pWindow);
         m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
         // m_pImGui->Init(this);

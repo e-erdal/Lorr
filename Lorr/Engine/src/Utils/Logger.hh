@@ -11,6 +11,23 @@
 #define CHECK(expr, fail_msg, ...)                                                                                                                                       \
     if (!(expr)) Console::Fatal(fail_msg, ##__VA_ARGS__);
 
+#define ENABLE_LOG_TRACE
+#ifdef ENABLE_LOG_TRACE
+    #define LOG_TRACE(...) Console::GetCoreLogger()->trace(__VA_ARGS__)
+#else
+    #define LOG_TRACE(...) (void *)0
+#endif
+
+#define LOG_INFO(...) Console::GetCoreLogger()->info(__VA_ARGS__)
+#define LOG_WARN(...) Console::GetCoreLogger()->warn(__VA_ARGS__)
+#define LOG_ERROR(...)                                                                                                                                                   \
+    {                                                                                                                                                                    \
+        Console::GetCoreLogger()->error(__VA_ARGS__);                                                                                                                    \
+        Console::GetCoreLogger()->dump_backtrace();                                                                                                                      \
+        Console::GetCoreLogger()->flush();                                                                                                                               \
+        abort();                                                                                                                                                         \
+    }
+
 namespace Lorr
 {
     class Console
@@ -35,8 +52,8 @@ namespace Lorr
             logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
             logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("lorr.log", true));
 
-            logSinks[0]->set_pattern("%Y-%m-%d_%T.%e | %5^%l%$\t  | %v");
-            logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %l\t  | %v");
+            logSinks[0]->set_pattern("%Y-%m-%d_%T.%e | %5^%L%$\t  | %v");
+            logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %L\t  | %v");
 #endif
 
             s_pCoreLogger = std::make_shared<spdlog::logger>("Engine", begin(logSinks), end(logSinks));
@@ -45,77 +62,6 @@ namespace Lorr
             s_pCoreLogger->flush_on(spdlog::level::trace);
 
             g_LoggerInitialized = true;
-        }
-
-        template<typename T>
-        static void Log(const T &msg)
-        {
-            s_pCoreLogger->debug(msg);
-        }
-
-        template<typename T>
-        static void Trace(const T &msg)
-        {
-            s_pCoreLogger->trace(msg);
-        }
-
-        template<typename T>
-        static void Warn(const T &msg)
-        {
-            s_pCoreLogger->warn(msg);
-        }
-
-        template<typename T>
-        static void Error(const T &msg)
-        {
-            s_pCoreLogger->error(msg);
-        }
-
-        template<typename T>
-        static void Fatal(const T &msg)
-        {
-            s_pCoreLogger->critical(msg);
-            s_pCoreLogger->dump_backtrace();
-            s_pCoreLogger->flush();
-            abort();
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Log(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->debug(fmt, std::forward<Args>(args)...);
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Trace(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->trace(fmt, std::forward<Args>(args)...);
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Info(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->info(fmt, std::forward<Args>(args)...);
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Warn(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->warn(fmt, std::forward<Args>(args)...);
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Error(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->error(fmt, std::forward<Args>(args)...);
-        }
-
-        template<typename FormatString, typename... Args>
-        static void Fatal(const FormatString &fmt, Args &&...args)
-        {
-            s_pCoreLogger->error(fmt, std::forward<Args>(args)...);
-            s_pCoreLogger->flush();
-            abort();
         }
 
         static std::shared_ptr<spdlog::logger> &GetCoreLogger()
