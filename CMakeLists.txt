@@ -23,3 +23,4 @@ endif()
 
 add_subdirectory(Vendor)
 add_subdirectory(Lorr)
+add_subdirectory(Game)

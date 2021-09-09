@@ -26,11 +26,11 @@ LorrComponent(
     NAME
         LorrCore
     INCLUDE
-        src/
+        ../
     PCH
-        src/pch.hh
+        App/pch.hh
     SOURCE
-        src/Core/*.cc
+        Core/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )
@@ -40,11 +40,11 @@ LorrComponent(
     NAME
         LorrDebug
     INCLUDE
-        src/
+        ../
     PCH
-        src/pch.hh
+        App/pch.hh
     SOURCE
-        src/Debug/*.cc
+        Debug/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )
@@ -54,11 +54,11 @@ LorrComponent(
     NAME
         LorrGraphics
     INCLUDE
-        src/
+        ../
     PCH
-        src/pch.hh
+        App/pch.hh
     SOURCE
-        src/Graphics/*.cc
+        Graphics/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )
@@ -68,11 +68,11 @@ LorrComponent(
     NAME
         LorrManagers
     INCLUDE
-        src/
+        ../
     PCH
-        src/pch.hh
+        App/pch.hh
     SOURCE
-        src/Managers/*.cc
+        Managers/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )
@@ -82,11 +82,11 @@ LorrComponent(
     NAME
         LorrSystems
     INCLUDE
-        src/
+        ../
     PCH
-        src/pch.hh
+        App/pch.hh
     SOURCE
-        src/Systems/*.cc
+        Systems/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )
@@ -95,7 +95,7 @@ LorrComponent(
     NAME
         Lorr
     SOURCE
-        src/Engine.cc
+        App/*.cc
     VENDOR
         ${ENGINE_COMPONENTS}
 )

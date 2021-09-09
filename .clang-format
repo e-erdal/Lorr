@@ -148,29 +148,7 @@ BraceWrapping:
   SplitEmptyRecord: true
   SplitEmptyNamespace: true
 
-SortIncludes: true
-IncludeBlocks: Regroup
-IncludeCategories:
-  # Libraries with Directories
-  - Regex:           '<.*\/.*\.(h.*)'
-    Priority:        50
-    SortPriority:    50
-
-  # Libraries
-  - Regex:           '^<.*\.(h.*)'
-    Priority:        500
-    SortPriority:    500
-  
-  # Standard Libraries
-  - Regex:           '<[[:alnum:_].]+>'
-    Priority:        5000
-    SortPriority:    5000
-
-  # Precompiled Headers
-  - Regex:           '^<|"(pch|stdafx)'
-    Priority:        -1
-    SortPriority:    -1
-
+SortIncludes: false
 
 BreakBeforeBinaryOperators: NonAssignment
 BreakBeforeTernaryOperators: true
@@ -181,7 +159,7 @@ CompactNamespaces: true
 ConstructorInitializerAllOnOneLineOrOnePerLine: false
 Cpp11BracedListStyle: false
 FixNamespaceComments: true
-IndentCaseLabels: false
+IndentCaseLabels: true
 IndentGotoLabels: false
 IndentPPDirectives: BeforeHash
 KeepEmptyLinesAtTheStartOfBlocks: false
@@ -193,7 +171,7 @@ SpaceAfterLogicalNot: false
 SpaceAfterTemplateKeyword: false
 SpaceBeforeAssignmentOperators: true
 SpaceBeforeCpp11BracedList: false
-SpaceBeforeCtorInitializerColon: false
+SpaceBeforeCtorInitializerColon: true
 SpaceBeforeInheritanceColon: true
 SpaceBeforeParens: ControlStatements
 SpaceBeforeRangeBasedForLoopColon: true
