@@ -4,6 +4,10 @@
 
 #pragma once
 
+#include <fstream>
+#include <streambuf>
+#include <string>
+
 namespace Lorr
 {
     class FileStream
@@ -23,9 +27,25 @@ namespace Lorr
             }
         }
 
-        ~FileStream()
+        void Reopen(const std::string &path, bool write)
         {
-            fclose(m_File);
+            if (IsOK()) Close();
+
+            if (write)
+            {
+                m_File = fopen(path.c_str(), "wb");
+            }
+            else
+            {
+                m_File = fopen(path.c_str(), "rb");
+            }
+        }
+
+        static std::string ReadAsString(const char *path)
+        {
+            std::ifstream i(path);
+
+            return std::string((std::istreambuf_iterator<char>(i)), std::istreambuf_iterator<char>());
         }
 
         inline void Close()
@@ -73,13 +93,9 @@ namespace Lorr
                 fwrite(&t, 1, sizeof(T), m_File);
         }
 
-        template<typename T>
-        inline void Write(const T *&t, size_t size = 0)
+        inline void WritePtr(const uint8_t *t, size_t size = 0)
         {
-            if (size > 0)
-                fwrite(t, 1, size, m_File);
-            else
-                fwrite(t, 1, sizeof(T), m_File);
+            fwrite(t, 1, size, m_File);
         }
 
         inline void WriteString(const std::string &val)

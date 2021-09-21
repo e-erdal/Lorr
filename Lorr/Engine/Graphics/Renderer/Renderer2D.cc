@@ -21,11 +21,31 @@ namespace Lorr
             LOG_ERROR("Failed to initialize BGFX.");
             return;
         }
+
+        m_ResWidth = pWindow->GetWidth();
+        m_ResHeight = pWindow->GetHeight();
+
+        m_Batcher.Init();
+    }
+
+    void Renderer2D::BeginFrame()
+    {
+        bgfx::touch(0);
     }
 
     void Renderer2D::EndFrame()
     {
         bgfx::frame();
+    }
+
+    void Renderer2D::SetVSyncState(bool VSync)
+    {
+        m_ResetFlags |= BGFX_RESET_VSYNC;
+    }
+
+    void Renderer2D::Reset()
+    {
+        bgfx::reset(m_ResWidth, m_ResHeight, m_ResetFlags);
     }
 
 }  // namespace Lorr

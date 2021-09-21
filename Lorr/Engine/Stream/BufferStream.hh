@@ -17,21 +17,21 @@ namespace Lorr
 
         BufferStream(size_t dataLen)
         {
-            Expand(dataLen);
+            InsertZero(dataLen);
             StartOver();
         }
 
         BufferStream(uint8_t *pData, size_t dataLen)
         {
             Expand(dataLen);
-            Assign(pData, dataLen);
+            AssignPtr(pData, dataLen);
             StartOver();
         }
 
         BufferStream(std::vector<uint8_t> &data)
         {
             Expand(data.size());
-            Assign(&data[0], data.size());
+            AssignPtr(&data[0], data.size());
             StartOver();
         }
 
@@ -41,6 +41,18 @@ namespace Lorr
         }
 
     public:
+        inline void Dump()
+        {
+            printf("========= BufferStream memory dump =========\n");
+
+            for (size_t i = 0; i < m_DataLen; i++)
+            {
+                printf("%x ", m_Data[i]);
+            }
+
+            printf("\n");
+        }
+
         inline void Expand(size_t len)
         {
             m_DataLen += len;
@@ -50,20 +62,63 @@ namespace Lorr
 
         // Copies input into buffer's data. Also increases offset.
         template<typename T>
-        inline void Assign(T *pData, size_t dataLen)
+        inline void Assign(T &&pData, size_t dataLen = 0)
         {
-            assert(m_Data != NULL);            // Our data has to be valid
-            assert(m_DataLen > 0);             // Our data has to be allocated
-            assert((uint8_t *)pData != NULL);  // Data has to be vaild
-            assert(m_DataLen >= dataLen);      // Input data cannot be larger than data we have
+            uint8_t *pRaw = (uint8_t *)&pData;
+            size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
 
-            memcpy(m_Data + m_Offset, (uint8_t *)pData, dataLen);
-            m_Offset += dataLen;
+            assert(m_Data != NULL);     // Our data has to be valid
+            assert(m_DataLen > 0);      // Our data has to be allocated
+            assert(pRaw != NULL);       // Data has to be vaild
+            assert(m_DataLen >= size);  // Input data cannot be larger than data we have
+
+            memcpy(m_Data + m_Offset, pRaw, size);
+            m_Offset += size;
+        }
+
+        template<typename T>
+        inline void AssignPtr(T *pData, size_t dataLen = 0)
+        {
+            uint8_t *pRaw = (uint8_t *)pData;
+            size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
+
+            assert(m_Data != NULL);     // Our data has to be valid
+            assert(m_DataLen > 0);      // Our data has to be allocated
+            assert(pRaw != NULL);       // Data has to be vaild
+            assert(m_DataLen >= size);  // Input data cannot be larger than data we have
+
+            memcpy(m_Data + m_Offset, pRaw, size);
+            m_Offset += size;
+        }
+
+        inline void AssignZero(size_t dataSize)
+        {
+            memset(m_Data + m_Offset, 0, dataSize);
+            m_Offset += dataSize;
+        }
+
+        template<typename T>
+        inline void AssignStringLen(const std::string &val)
+        {
+            auto lenT = sizeof(T);
+            size_t len = val.length();
+
+            Assign(len, lenT);
+
+            if (val.length()) AssignPtr(val.c_str(), val.length());
         }
 
         inline void AssignString(const std::string &val)
         {
-            Assign(val.data(), val.length());
+            if (val.length()) AssignPtr(val.c_str(), val.length());
+        }
+
+        inline void InsertZero(size_t dataLen)
+        {
+            Expand(dataLen);
+
+            memset(m_Data + m_Offset, 0, dataLen);
+            m_Offset += dataLen;
         }
 
         // Copies input into buffer's data.
@@ -74,8 +129,21 @@ namespace Lorr
 
             Expand(size);
 
-            memcpy(m_Data + m_Offset, (uint8_t *)pData, size);
+            memcpy(m_Data + m_Offset, (uint8_t *)&pData, size);
             m_Offset += size;
+        }
+
+        // Inserts string into block with size
+        template<typename T>
+        inline void InsertStringLen(const std::string &val)
+        {
+            auto lenT = sizeof(T);
+            size_t len = val.length();
+
+            Expand(val.length() + lenT);
+
+            Assign(len, lenT);
+            if (val.length()) AssignPtr(val.c_str(), val.length());
         }
 
         inline void InsertString(const std::string &val)
@@ -83,7 +151,8 @@ namespace Lorr
             size_t len = val.length();
 
             Expand(val.length());
-            Assign(val.data(), val.length());
+
+            if (val.length()) AssignPtr(val.c_str(), val.length());
         }
 
         template<typename T>
@@ -94,8 +163,10 @@ namespace Lorr
             return data;
         }
 
-        inline std::string GetString(size_t strLen)
+        template<typename T>
+        inline std::string GetString(size_t dataLen = 0)
         {
+            size_t strLen = (dataLen == 0 ? Get<T>() : dataLen);
             char *data = (char *)(m_Data + m_Offset);
             m_Offset += strLen;
 
@@ -107,23 +178,33 @@ namespace Lorr
             m_Offset = 0;
         }
 
-        // UNTRUSTED
+        // ! UNTRUSTED SECTION
         // Decompress tool for buffer
-        void Decompress(size_t compressedSize, size_t decompressedSize)
+        void Decompress(size_t decompressedSize)
         {
-            m_DataLen -= compressedSize;
-            m_DataLen += decompressedSize;
-
-            auto data = (m_Data + m_Offset);
-            auto dcmp = zLibInflateToMemory(data, compressedSize, decompressedSize);
+            uint8_t *dcompData = zLibInflateToMemory(m_Data, m_DataLen, decompressedSize);
 
             m_Data = _REALLOC(m_Data, m_DataLen);
+            memcpy(m_Data, dcompData, decompressedSize);
 
-            memcpy(m_Data + m_Offset, dcmp, decompressedSize);
+            free(dcompData);
+        }
+
+        void Compress()
+        {
+            uint32_t outSize = 0;
+            uint8_t *compData = zlibDeflateToMemory(m_Data, m_DataLen, &outSize);
+
+            m_DataLen = outSize;
+
+            m_Data = _REALLOC(m_Data, m_DataLen);
+            memcpy(m_Data, compData, m_DataLen);
+
+            free(compData);
         }
 
     public:
-        inline const uint8_t *GetData() const
+        inline uint8_t *GetData()
         {
             return m_Data;
         }
@@ -139,7 +220,7 @@ namespace Lorr
         }
 
     private:
-        static uint8_t *zlibDeflateToMemory(uint8_t *input, int sizeBytes, int *outDataSize)
+        static uint8_t *zlibDeflateToMemory(uint8_t *input, int sizeBytes, uint32_t *outDataSize)
         {
             z_stream strm;
             int ret;
