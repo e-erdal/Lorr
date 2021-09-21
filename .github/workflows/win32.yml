@@ -25,7 +25,7 @@ jobs:
         run: |
           MAJOR=$(grep -Eo "ENGINE_VERSION_MAJOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           MINOR=$(grep -Eo "ENGINE_VERSION_MINOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
-          TAG=$(grep -Eo "ENGINE_VERSION_TAG \"(.*?)\"" Lorr/Engine/App/Common.hh | grep -Eo "\"(.*?)\"" | tail -1)
+          TAG=$(grep -Eo "ENGINE_VERSION_TAG \"(.*?)\"" Lorr/Engine/App/Common.hh | grep -Eo "(.*?)" | tail -1)
           REVISION=$(git rev-list HEAD --count)
           SHA=$(git rev-parse HEAD)
           SHA7="${GITHUB_SHA::7}"
@@ -55,7 +55,7 @@ jobs:
           platform: x64
 
       - name: Generate Build Files
-        run: cmake -B "${{ env.CMAKE_BUILD_DIR }}" -DCMAKE_INSTALL_PREFIX="${{ env.CMAKE_INSTALL_DIR }}" -DENGINE_VERSION_GITHASH:STRING=${{ steps.version.outputs.sha }} -G Ninja
+        run: cmake -B "${{ env.CMAKE_BUILD_DIR }}" -DCMAKE_INSTALL_PREFIX="${{ env.CMAKE_INSTALL_DIR }}" -DENGINE_VERSION_GITHASH:STRING=$(git rev-parse --short HEAD) -G Ninja
 
       - name: Build Release
         run: cmake --build "${{ env.CMAKE_BUILD_DIR }}" --config Release --target all -j 14 --
