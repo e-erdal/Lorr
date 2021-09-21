@@ -17,17 +17,12 @@ jobs:
           submodules: recursive
           fetch-depth: 0
 
-      - name: Get branch
-        shell: bash
-        run: echo "##[set-output name=branch;]$(echo ${GITHUB_REF#refs/heads/})"
-        id: branch_name
-
       - id: version
         run: |
           MAJOR=$(grep -Eo "ENGINE_VERSION_MAJOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           MINOR=$(grep -Eo "ENGINE_VERSION_MINOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           TAG=$(grep -Eo "ENGINE_VERSION_TAG \"([^\"]*)\"" Lorr/Engine/App/Common.hh | grep -Eo "([^\"]*)" | tail -1)
-          REVISION=$(git rev-list --count HEAD ^${{ steps.branch_name.outputs.branch }})
+          REVISION=$(git rev-list HEAD ^origin --count)
           SHA=$(git rev-parse HEAD)
           SHA7="${GITHUB_SHA::7}"
           FULLVER="v${MAJOR}.${MINOR}.${REVISION}-${TAG}"
