@@ -45,7 +45,9 @@ jobs:
       CXX: clang++
 
     steps:
-      - uses: actions/checkout@v2
+      - uses: actions/checkout@v2        
+        with:
+          submodules: recursive
       - uses: lukka/get-cmake@latest
       - uses: egor-tensin/setup-clang@v1
         with:
