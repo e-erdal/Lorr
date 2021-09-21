@@ -1,3 +1,13 @@
+if (NOT "${ENGINE_VERSION_GITHASH}" STREQUAL "")
+    add_definitions(-DENGINE_VERSION_GITHASH="${ENGINE_VERSION_GITHASH}")
+    message("Current commit is ${ENGINE_VERSION_GITHASH}.")
+endif()
+
+if (NOT "${ENGINE_VERSION_PATCH}" STREQUAL "")
+    add_definitions(-DENGINE_VERSION_PATCH="${ENGINE_VERSION_PATCH}")
+    message("Current patch(rev) is ${ENGINE_VERSION_PATCH}.")
+endif()
+
 # Third party applications
 set(ENGINE_VENDOR
     bgfx
