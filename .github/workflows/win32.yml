@@ -22,7 +22,7 @@ jobs:
           MAJOR=$(grep -Eo "ENGINE_VERSION_MAJOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           MINOR=$(grep -Eo "ENGINE_VERSION_MINOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           TAG=$(grep -Eo "ENGINE_VERSION_TAG \"([^\"]*)\"" Lorr/Engine/App/Common.hh | grep -Eo "([^\"]*)" | tail -1)
-          REVISION=$(git rev-list --branches ^origin --count)
+          REVISION=$(git rev-list --branches ^master --count)
           SHA=$(git rev-parse HEAD)
           SHA7="${GITHUB_SHA::7}"
           FULLVER="v${MAJOR}.${MINOR}.${REVISION}-${TAG}"
