@@ -18,7 +18,7 @@ jobs:
 
       - id: version
         run: |
-          echo "git branch -a"
+          git branch -a
           git remote set-head origin master
           MAJOR=$(grep -Eo "ENGINE_VERSION_MAJOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
           MINOR=$(grep -Eo "ENGINE_VERSION_MINOR [0-9]+" Lorr/Engine/App/Common.hh | grep -Eo "[0-9]+" | tail -1)
