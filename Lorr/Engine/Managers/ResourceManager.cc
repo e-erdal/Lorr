@@ -12,6 +12,7 @@ namespace Lorr
             LOG_WARN("Failed to load Texture2D, continue as placeholder.");
             return 0;
         }
+        
         buf.StartOver();
         TEXTURE2D_DESC_SUBRESC subresc = {
             .Width = buf.Get<uint32_t>(),

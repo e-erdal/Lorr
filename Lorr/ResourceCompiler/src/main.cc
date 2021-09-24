@@ -44,7 +44,10 @@ int main(int argc, char **argv)
     w.WritePtr(buf.GetData(), buf.GetSize());
     w.Close();
 
-    // Lorr::GetEngine()->GetResourceMan()->LoadFromFile<Lorr::Texture2D>("const Identifier &ident", "test.a");
+    Lorr::TEXTURE2D_DESC tdesc;
+    tdesc.Filters = TEXTURE_MAG_NEAREST;
+
+    Lorr::GetEngine()->GetResourceMan()->LoadFromFile<Lorr::Texture2D>("const Identifier &ident", &tdesc, "test.a");
 
     return 1;
 

@@ -19,6 +19,13 @@
         var = NULL;                                                                                                                                                      \
     }
 
+#define SAFE_FREE(var)                                                                                                                                                   \
+    if (var)                                                                                                                                                             \
+    {                                                                                                                                                                    \
+        free(var);                                                                                                                                                       \
+        var = NULL;                                                                                                                                                      \
+    }
+
 #define SAFE_RELEASE(var)                                                                                                                                                \
     if (var)                                                                                                                                                             \
     {                                                                                                                                                                    \
@@ -46,11 +53,11 @@
 #define ENGINE_VERSION_MINOR 0
 
 #ifndef ENGINE_VERSION_PATCH
-#define ENGINE_VERSION_PATCH 0
+    #define ENGINE_VERSION_PATCH 0
 #endif
 
 #ifndef ENGINE_VERSION_GITHASH
-#define ENGINE_VERSION_GITHASH "ffffffff"
+    #define ENGINE_VERSION_GITHASH "ffffffff"
 #endif
 
 #define ENGINE_VERSION_TAG "alpha"

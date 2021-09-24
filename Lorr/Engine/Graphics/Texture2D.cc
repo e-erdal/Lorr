@@ -78,6 +78,7 @@ void Lorr::Texture2D::ParseMemory(TEXTURE2D_DESC_SUBRESC *pSubResc, BufferStream
     pSubResc->Width = imageContainer->m_width;
     pSubResc->Height = imageContainer->m_height;
     pSubResc->Format = (bgfx::TextureFormat::Enum)imageContainer->m_format;
+    pSubResc->DataSize = imageContainer->m_size;
 
     buffer.InsertPtr((uint8_t *)imageContainer->m_data, imageContainer->m_size);
 }

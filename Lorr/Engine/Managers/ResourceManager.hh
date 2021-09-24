@@ -50,10 +50,10 @@ namespace Lorr
 
             ResourceHeader header;
             header.Type = T::m_Type;
-            // header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
+            header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
             header.OriginalSize = compBuf.GetSize();
 
-            // compBuf.Compress();
+            compBuf.Compress();
             buf.Insert(header);
             buf.InsertPtr(compBuf.GetData(), compBuf.GetSize());
         }
@@ -80,7 +80,7 @@ namespace Lorr
 
                     TEXTURE2D_DESC_SUBRESC sresc;
                     sresc.Data = fileData;
-                    sresc.DataSize = fileLen;
+                    sresc.DataSize = fileLen; // This var will be changed by ->ParseMemory
 
                     buf.InsertZero(sizeof(TEXTURE2D_DESC_SUBRESC) - sizeof(size_t));
                     resource->ParseMemory(&sresc, buf);

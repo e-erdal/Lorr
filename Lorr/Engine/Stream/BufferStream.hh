@@ -37,10 +37,47 @@ namespace Lorr
 
         ~BufferStream()
         {
-            free(m_Data);
+            SAFE_FREE(m_Data);
         }
 
     public:
+        inline void Reset()
+        {
+            SAFE_FREE(m_Data);
+            m_DataLen = 0;
+
+            StartOver();
+        }
+
+        inline void Reset(size_t dataLen)
+        {
+            SAFE_FREE(m_Data);
+            m_DataLen = 0;
+            
+            InsertZero(dataLen);
+            StartOver();
+        }
+
+        inline void Reset(uint8_t *pData, size_t dataLen)
+        {
+            SAFE_FREE(m_Data);
+            m_DataLen = 0;
+
+            Expand(dataLen);
+            AssignPtr(pData, dataLen);
+            StartOver();
+        }
+
+        inline void Reset(std::vector<uint8_t> &data)
+        {
+            SAFE_FREE(m_Data);
+            m_DataLen = 0;
+
+            Expand(data.size());
+            AssignPtr(&data[0], data.size());
+            StartOver();
+        }
+
         inline void Dump()
         {
             printf("========= BufferStream memory dump =========\n");
@@ -203,8 +240,10 @@ namespace Lorr
         {
             uint8_t *dcompData = zLibInflateToMemory(m_Data, m_DataLen, decompressedSize);
 
+            m_DataLen = decompressedSize;
+
             m_Data = _REALLOC(m_Data, m_DataLen);
-            memcpy(m_Data, dcompData, decompressedSize);
+            memcpy(m_Data, dcompData, m_DataLen);
 
             free(dcompData);
         }

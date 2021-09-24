@@ -17,12 +17,14 @@ set(ENGINE_VENDOR
     imgui
     bgfx-imgui
     lw
+    OpenAL
     spdlog
     tracy
     zlib1
 )
 
 set(ENGINE_COMPONENTS
+    LorrAudio
     LorrCore
     LorrDebug
     LorrGraphics
@@ -31,6 +33,20 @@ set(ENGINE_COMPONENTS
 )
 
 ######### Engine components ########
+# Audio
+LorrComponent(
+    NAME
+        LorrAudio
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Audio/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
 # Core
 LorrComponent(
     NAME
