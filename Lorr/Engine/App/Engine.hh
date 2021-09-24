@@ -10,6 +10,7 @@
 #include "Engine/Debug/ImGuiHandler.hh"
 #include "Engine/Graphics/Camera2D.hh"
 #include "Engine/Graphics/Renderer/Renderer2D.hh"
+#include "Engine/Managers/ResourceManager.hh"
 
 namespace Lorr
 {
@@ -44,12 +45,18 @@ namespace Lorr
             return m_pCamera;
         }
 
+        ResourceManager *GetResourceMan() const
+        {
+            return m_pResourceMan;
+        }
+
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
         Renderer2D *m_pRenderer = new Renderer2D;
         Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
+        ResourceManager *m_pResourceMan = new ResourceManager;
     };
 
     inline Engine *GetEngine()

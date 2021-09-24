@@ -133,6 +133,17 @@ namespace Lorr
             m_Offset += size;
         }
 
+        template<typename T>
+        inline void InsertPtr(T *pData, size_t dataLen)
+        {
+            size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
+
+            Expand(size);
+
+            memcpy(m_Data + m_Offset, (uint8_t *)pData, size);
+            m_Offset += size;
+        }
+
         // Inserts string into block with size
         template<typename T>
         inline void InsertStringLen(const std::string &val)
@@ -159,6 +170,14 @@ namespace Lorr
         inline T &Get(size_t dataLen = 0)
         {
             T &data = *(T *)(m_Data + m_Offset);
+            m_Offset += (dataLen == 0 ? sizeof(T) : dataLen);
+            return data;
+        }
+
+        template<typename T>
+        inline T *GetPtr(size_t dataLen)
+        {
+            T *data = (T *)(m_Data + m_Offset);
             m_Offset += (dataLen == 0 ? sizeof(T) : dataLen);
             return data;
         }

@@ -10,31 +10,31 @@ namespace bgfx
     extern bx::AllocatorI *g_allocator;
 }  // namespace bgfx
 
-void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, TEXTURE2D_DESC_SUBRESC *pTextureSRES)
+void Lorr::Texture2D::Init(const Identifier &ident, TEXTURE2D_DESC *pDesc, TEXTURE2D_DESC_SUBRESC *pSubRes)
 {
-    if (!pTextureD) return;
+    if (!pDesc) return;
 
-    m_Ident = Ident;
+    m_Ident = ident;
 
     // We have resource to process, no need to read file
-    if (pTextureSRES)
+    if (pSubRes)
     {
-        m_Width = pTextureSRES->Width;
-        m_Height = pTextureSRES->Height;
-        m_DataSize = pTextureSRES->DataSize;
+        m_Width = pSubRes->Width;
+        m_Height = pSubRes->Height;
+        m_DataSize = pSubRes->DataSize;
 
         LOG_TRACE("Loading a Texture2D from memory <{}>({}, {})", m_Ident, m_Width, m_Height);
 
-        const auto *const pixelData = bgfx::copy(pTextureSRES->Data, pTextureSRES->DataSize);
-        m_Handle = bgfx::createTexture2D(m_Width, m_Height, false, 1, pTextureSRES->Format, pTextureD->Filters, pixelData);
+        const auto *const pixelData = bgfx::copy(pSubRes->Data, pSubRes->DataSize);
+        m_Handle = bgfx::createTexture2D(m_Width, m_Height, false, 1, pSubRes->Format, pDesc->Filters, pixelData);
     }
     else
     {
-        Lorr::FileStream file(pTextureD->Path, false);
+        Lorr::FileStream file(pDesc->Path, false);
 
         if (!file.IsOK())
         {
-            LOG_ERROR("File not found! {}", pTextureD->Path);
+            LOG_ERROR("File not found! {}", pDesc->Path);
             return;
         }
 
@@ -47,7 +47,7 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
         auto *imageContainer = bimg::imageParse(bgfx::g_allocator, pData, dataSize);
         if (imageContainer == nullptr || !bgfx::isTextureValid(0, false, imageContainer->m_numLayers, (bgfx::TextureFormat::Enum)imageContainer->m_format, 0))
         {
-            LOG_ERROR("Cannot load image \"{}\"!", pTextureD->Path);
+            LOG_ERROR("Cannot load image \"{}\"!", pDesc->Path);
             return;
         }
 
@@ -55,6 +55,7 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
 
         m_Width = imageContainer->m_width;
         m_Height = imageContainer->m_height;
+        m_Format = (bgfx::TextureFormat::Enum)imageContainer->m_format;
         m_DataSize = dataSize;
 
         const auto *const pixelData = bgfx::copy(imageContainer->m_data, imageContainer->m_size);
@@ -68,4 +69,15 @@ void Lorr::Texture2D::Init(Identifier const &Ident, TEXTURE2D_DESC *pTextureD, T
 
     std::string_view bgfxName = m_Ident.Raw();
     bgfx::setName(m_Handle, bgfxName.data(), bgfxName.length());
+}
+
+void Lorr::Texture2D::ParseMemory(TEXTURE2D_DESC_SUBRESC *pSubResc, BufferStream &buffer)
+{
+    auto *imageContainer = bimg::imageParse(bgfx::g_allocator, pSubResc->Data, pSubResc->DataSize);
+
+    pSubResc->Width = imageContainer->m_width;
+    pSubResc->Height = imageContainer->m_height;
+    pSubResc->Format = (bgfx::TextureFormat::Enum)imageContainer->m_format;
+
+    buffer.InsertPtr((uint8_t *)imageContainer->m_data, imageContainer->m_size);
 }

@@ -100,16 +100,16 @@ namespace Lorr
     };
 
     inline static Identifier EmptyIdentifier = "engine://empty";
-
-    // std::unordered_map support
-    template<>
-    struct std::hash<Identifier>
-    {
-        size_t operator()(const Identifier &s) const noexcept
-        {
-            size_t h1 = std::hash<std::string_view>{}(s.Raw());
-
-            return h1;
-        }
-    };
 }  // namespace Lorr
+
+// std::unordered_map support
+template<>
+struct std::hash<Lorr::Identifier>
+{
+    size_t operator()(const Lorr::Identifier &s) const noexcept
+    {
+        size_t h1 = std::hash<std::string_view>{}(s.Raw());
+
+        return h1;
+    }
+};

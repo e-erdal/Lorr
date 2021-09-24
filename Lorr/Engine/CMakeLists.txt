@@ -4,7 +4,7 @@ if (NOT "${ENGINE_VERSION_GITHASH}" STREQUAL "")
 endif()
 
 if (NOT "${ENGINE_VERSION_PATCH}" STREQUAL "")
-    add_definitions(-DENGINE_VERSION_PATCH="${ENGINE_VERSION_PATCH}")
+    add_definitions(-DENGINE_VERSION_PATCH=${ENGINE_VERSION_PATCH})
     message("Current patch(rev) is ${ENGINE_VERSION_PATCH}.")
 endif()
 
