@@ -22,7 +22,7 @@ public:
 
         BufferStream buf;
 
-        GetEngine()->GetResourceMan()->MakeResourceFromFile<Texture2D>(path, buf);
+        GetEngine()->GetResourceMan()->ExportResource(ResourceType::Texture, path, buf);
 
         FileStream w(out, true);
         w.WritePtr(buf.GetData(), buf.GetSize());

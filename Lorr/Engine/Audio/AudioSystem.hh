@@ -5,16 +5,34 @@
 
 #pragma once
 
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+
 #include "Engine/Stream/BufferStream.hh"
+#include "Engine/Core/FileSystem.hh"
+
+#include "Audio.hh"
+#include "AudioChannel.hh"
 
 namespace Lorr
 {
-    struct AudioData
+    class AudioSystem
     {
-        bool Mono = false;
-        
-        BufferStream LeftBuffer;
-        BufferStream RightBuffer;
+    public:
+        ~AudioSystem();
+
+        void Init();
+
+        void CreateChannel(Identifier const &ident, AudioChannel *pChannel);
+
+        void LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioChannel *pChannel, AudioData *pData);
+
+    private:
+        std::vector<AudioChannel *> m_AudioChannels;
+
+        ALCdevice *m_alDevice;    // Active Audio Device
+        ALCcontext *m_alContext;  // Active OpenAL Context (once per thread)
     };
 
 }  // namespace Lorr

@@ -24,6 +24,7 @@ namespace Lorr
         m_pRenderer->Init(m_pWindow);
         m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
         m_pImGui->Init(this);
+        m_pAudioSystem->Init();
 
         return true;
     }

@@ -8,8 +8,11 @@
 
 #pragma once
 
+#include "Audio.hh"
+
 namespace Lorr
 {
+    class AudioSystem;
     class AudioChannel
     {
     public:
@@ -17,7 +20,7 @@ namespace Lorr
 
         void Init(const Identifier &ident);
 
-        // void CreateAudio(Audio *pAudioOut, uint32_t hSrcLeft, uint32_t hSrcRight, uint32_t hBufferLeft, uint32_t hBufferRight);
+        void Add(Audio *pAudio);
 
         float GetVolume();
         void SetVolume(float volume);
@@ -27,7 +30,7 @@ namespace Lorr
 
         float m_Volume = 1.0f;
 
-        // std::vector<Audio *> m_vLinkedAudio;
+        std::vector<Audio *> m_LinkedAudio;
     };
-    
+
 }  // namespace Lorr

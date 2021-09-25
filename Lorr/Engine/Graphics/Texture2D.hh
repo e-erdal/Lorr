@@ -12,13 +12,7 @@
 
 namespace Lorr
 {
-    struct TEXTURE2D_DESC : IRESOURCE_DESC
-    {
-        uint32_t Filters = 0;
-        std::string Path = "";
-    };
-
-    struct TEXTURE2D_DESC_SUBRESC : IRESOURCE_DESC_SUBRESC
+    struct Texture2DData
     {
         uint32_t Width = 0;
         uint32_t Height = 0;
@@ -29,11 +23,12 @@ namespace Lorr
         uint8_t *Data = 0;
     };
 
-    class Texture2D : public IResource<TEXTURE2D_DESC, TEXTURE2D_DESC_SUBRESC>
+    class Texture2D : public IResource
     {
     public:
-        void Init(const Identifier &ident, TEXTURE2D_DESC *pDesc, TEXTURE2D_DESC_SUBRESC *pSubRes = 0) override;
-        void ParseMemory(TEXTURE2D_DESC_SUBRESC *pSubResc, BufferStream &buffer) override;
+        void Init(const Identifier &ident, uint32_t Filters);
+        void InitFromMem(Texture2DData *pData);
+        static void ParseMemory(Texture2DData *pOutData, BufferStream &imageBuffer);
 
         static constexpr ResourceType m_Type = ResourceType::Texture;
 
@@ -59,11 +54,10 @@ namespace Lorr
         }
 
     private:
-        Identifier m_Ident = EmptyIdentifier;
-
         uint32_t m_Width = 0;
         uint32_t m_Height = 0;
         uint32_t m_DataSize = 0;
+        uint32_t m_Filters = 0;
 
         bgfx::TextureFormat::Enum m_Format = bgfx::TextureFormat::RGBA8;
 

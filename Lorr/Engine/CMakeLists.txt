@@ -20,6 +20,8 @@ set(ENGINE_VENDOR
     OpenAL
     spdlog
     tracy
+    vorbis
+    vorbisfile
     zlib1
 )
 

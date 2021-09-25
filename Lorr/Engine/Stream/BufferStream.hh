@@ -53,7 +53,7 @@ namespace Lorr
         {
             SAFE_FREE(m_Data);
             m_DataLen = 0;
-            
+
             InsertZero(dataLen);
             StartOver();
         }
@@ -88,6 +88,16 @@ namespace Lorr
             }
 
             printf("\n");
+        }
+
+        inline void Seek(uint8_t seekTo)
+        {
+            switch (seekTo)
+            {
+                case SEEK_END: m_Offset = m_DataLen; break;
+                case SEEK_SET: m_Offset = 0; break;
+                default: break;
+            }
         }
 
         inline void Expand(size_t len)

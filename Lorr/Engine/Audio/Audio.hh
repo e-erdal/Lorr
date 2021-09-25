@@ -5,15 +5,27 @@
 
 #pragma once
 
+#include "Engine/Resource/IResource.hh"
+
 namespace Lorr
 {
+    struct AudioData
+    {
+        uint32_t PCMFrequency;
+        uint32_t PCMFormat;
+
+        BufferStream PCMFrames;
+    };
+
     class AudioChannel;
-    class Audio
+    class Audio : public IResource
     {
     public:
         Audio() = default;
 
-        void Init(AudioChannel *pChannel, uint32_t srcLeft, uint32_t srcRight, uint32_t bufferLeft, uint32_t bufferRight);
+        void Init(const Identifier &ident, AudioChannel *pChannel);
+        void InitFromMemory(AudioData *pData);
+        static void ParseToMemory(AudioData *outData, BufferStream &audioBuffer);
 
         void Play();
         void Stop();
@@ -28,17 +40,16 @@ namespace Lorr
 
         void SetPosition(glm::vec3 position);
 
+        static constexpr ResourceType m_Type = ResourceType::Audio;
+
     private:
         AudioChannel *m_pChannel;
 
         float m_Volume = 1.0f;
         float m_Pitch = 1.0f;
 
-        uint32_t m_BufferLeft;
-        uint32_t m_BufferRight;
-
-        uint32_t m_SourceLeft;
-        uint32_t m_SourceRight;
+        uint32_t m_Buffer;
+        uint32_t m_Source;
 
         void __SetVolume(float volume);
     };

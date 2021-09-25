@@ -6,6 +6,7 @@
 
 #include "BaseApp.hh"
 
+#include "Engine/Audio/AudioSystem.hh"
 #include "Engine/Core/Window/IWindow.hh"
 #include "Engine/Debug/ImGuiHandler.hh"
 #include "Engine/Graphics/Camera2D.hh"
@@ -50,6 +51,11 @@ namespace Lorr
             return m_pResourceMan;
         }
 
+        AudioSystem *GetAudioSys() const
+        {
+            return m_pAudioSystem;
+        }
+
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
@@ -57,6 +63,7 @@ namespace Lorr
         Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
         ResourceManager *m_pResourceMan = new ResourceManager;
+        AudioSystem *m_pAudioSystem = new AudioSystem;
     };
 
     inline Engine *GetEngine()

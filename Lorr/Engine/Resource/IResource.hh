@@ -11,25 +11,23 @@ namespace Lorr
     enum class ResourceType : uint8_t
     {
         Invalid,
-        Texture
+        Texture,
+        Audio
     };
 
-    struct IRESOURCE_DESC
-    {
-    };
-
-    struct IRESOURCE_DESC_SUBRESC
-    {
-    };
-
-    template<typename TDesc = IRESOURCE_DESC, typename TSubResc = IRESOURCE_DESC_SUBRESC>
     class IResource
     {
     public:
-        virtual void Init(const Identifier &ident, TDesc *pDesc, TSubResc *pSubResc = 0) = 0;
-        virtual void ParseMemory(TSubResc *pSubResc, BufferStream &buffer) = 0;
-
         static constexpr ResourceType m_Type = ResourceType::Invalid;
+
+    public:
+        const Identifier &GetIdentifier() const
+        {
+            return m_Ident;
+        }
+
+    protected:
+        Identifier m_Ident = EmptyIdentifier;
     };
 
 }  // namespace Lorr

@@ -38,16 +38,14 @@ int main(int argc, char **argv)
     app->Start(desc);
 
     Lorr::BufferStream buf;
-    Lorr::GetEngine()->GetResourceMan()->MakeResourceFromFile<Lorr::Texture2D>("texture.png", buf);
+    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "theme.mp3", buf);
 
-    Lorr::FileStream w("test.a", true);
+    Lorr::FileStream w("test.lr", true);
     w.WritePtr(buf.GetData(), buf.GetSize());
     w.Close();
 
-    Lorr::TEXTURE2D_DESC tdesc;
-    tdesc.Filters = TEXTURE_MAG_NEAREST;
-
-    Lorr::GetEngine()->GetResourceMan()->LoadFromFile<Lorr::Texture2D>("const Identifier &ident", &tdesc, "test.a");
+    Lorr::AudioData data;
+    Lorr::GetEngine()->GetResourceMan()->ImportAudioData("test.lr", data);
 
     return 1;
 

@@ -9,7 +9,7 @@
 #include <spdlog/spdlog.h>
 
 #define CHECK(expr, fail_msg, ...)                                                                                                                                       \
-    if (!(expr)) Console::Fatal(fail_msg, ##__VA_ARGS__);
+    if (!(expr)) LOG_ERROR(fail_msg, ##__VA_ARGS__);
 
 #define ENABLE_LOG_TRACE
 #ifdef ENABLE_LOG_TRACE
