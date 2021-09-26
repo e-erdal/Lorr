@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     app->Start(desc);
 
     Lorr::BufferStream buf;
-    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "theme.mp3", buf);
+    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "test.mp3", buf);
 
     Lorr::FileStream w("test.lr", true);
     w.WritePtr(buf.GetData(), buf.GetSize());
@@ -68,11 +68,9 @@ int main(int argc, char **argv)
         }
         else if (parser.HasArg("texture"))
         {
-            printf("%d\n", __LINE__);
             std::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
-                printf("%d\n", __LINE__);
                 TextureCompiler c(path, targetPath);
             }
             else

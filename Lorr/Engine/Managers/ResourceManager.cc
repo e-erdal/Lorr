@@ -13,10 +13,10 @@ namespace Lorr
 
         ResourceHeader header;
         header.Type = type;
-        header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
+        // header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
         header.OriginalSize = compBuf.GetSize();
 
-        compBuf.Compress();
+        // compBuf.Compress();
         buf.Insert(header);
         buf.InsertPtr(compBuf.GetData(), compBuf.GetSize());
 

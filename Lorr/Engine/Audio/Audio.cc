@@ -35,19 +35,18 @@ namespace Lorr
     {
         const uint32_t kWavSig = 1179011410;
         const uint32_t kOggSig = 1399285583;
+        
+        uint32_t curSig = audioBuffer.Get<uint32_t>();
+        audioBuffer.StartOver();
 
         AudioLoader::AudioLoaderType type;
-        if (audioBuffer.Get<uint32_t>() == kWavSig)
-        {
+
+        if (curSig == kWavSig)
             type = AudioLoader::AudioLoaderType::WAV;
-        }
-        audioBuffer.StartOver();
-        if (audioBuffer.Get<uint32_t>() == kOggSig)
-        {
+        else if (curSig == kOggSig)
             type = AudioLoader::AudioLoaderType::OGG;
-        }
-        audioBuffer.StartOver();
-        type = AudioLoader::AudioLoaderType::MP3;
+        else
+            type = AudioLoader::AudioLoaderType::MP3;
 
         AudioLoader::LoadAudio(type, outData, audioBuffer);
     }
