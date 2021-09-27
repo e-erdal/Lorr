@@ -32,6 +32,8 @@ namespace Lorr
         void Pause();
         void Destroy();
 
+        void SetLooping(bool loop);
+
         float GetPitch();
         void SetPitch(float pitch);
 
@@ -50,6 +52,8 @@ namespace Lorr
 
         uint32_t m_Buffer;
         uint32_t m_Source;
+
+        bool m_Looping = false;
 
         void __SetVolume(float volume);
     };

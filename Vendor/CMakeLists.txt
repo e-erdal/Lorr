@@ -59,6 +59,7 @@ add_subdirectory(tracy)
 
 ###############################################################################################
 
+set(BUILD_TESTING OFF)
 add_subdirectory(ogg)
 add_subdirectory(vorbis)
 

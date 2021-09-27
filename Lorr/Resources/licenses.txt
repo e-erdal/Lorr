@@ -1,0 +1,7 @@
+Legal notices of third party libraries used in Lorr.
+
+----------------------------------
+Library name
+----------------------------------
+
+License text

@@ -35,7 +35,7 @@ namespace Lorr
     {
         const uint32_t kWavSig = 1179011410;
         const uint32_t kOggSig = 1399285583;
-        
+
         uint32_t curSig = audioBuffer.Get<uint32_t>();
         audioBuffer.StartOver();
 
@@ -72,6 +72,13 @@ namespace Lorr
     void Audio::Pause()
     {
         alSourcePause(m_Source);
+    }
+
+    void Audio::SetLooping(bool loop)
+    {
+        m_Looping = loop;
+
+        alSourcei(m_Source, AL_LOOPING, loop);
     }
 
     float Audio::GetPitch()

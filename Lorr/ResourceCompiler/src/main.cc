@@ -9,8 +9,8 @@ class RCApp : public Lorr::BaseApp
 {
 public:
     void Init() override{};
-    void Tick(float fDelta){};
-    void Draw(){};
+    void Tick(float fDelta) override{};
+    void Draw() override{};
 };
 
 RCApp *app;
@@ -38,7 +38,7 @@ int main(int argc, char **argv)
     app->Start(desc);
 
     Lorr::BufferStream buf;
-    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "test.mp3", buf);
+    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "theme.ogg", buf);
 
     Lorr::FileStream w("test.lr", true);
     w.WritePtr(buf.GetData(), buf.GetSize());

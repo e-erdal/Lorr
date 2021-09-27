@@ -10,12 +10,12 @@ namespace Lorr::AudioLoader
         drwav wav;
         CHECK(drwav_init_memory(&wav, buf.GetData(), buf.GetSize(), NULL), "Failed to load WAV File!");
 
-        std::vector<uint8_t> frames;
-        frames.resize(wav.totalPCMFrameCount * wav.channels * wav.bitsPerSample);
+        size_t dataLen = wav.totalPCMFrameCount * wav.channels * wav.bitsPerSample;
+        uint8_t *data = (uint8_t *)malloc(dataLen);
 
-        size_t numberOfSamplesActuallyDecoded = drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, (void *)frames.data());
+        drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, data);
 
-        audioData->PCMFrames.Reset(frames);
+        audioData->PCMFrames.Reset(data, dataLen);
         audioData->PCMFrequency = wav.sampleRate;
 
         switch (wav.channels)
@@ -26,6 +26,7 @@ namespace Lorr::AudioLoader
         }
 
         drwav_uninit(&wav);
+        free(data);
 
         return true;
     }

@@ -15,6 +15,7 @@ void GameApp::Init()
     GetEngine()->GetAudioSys()->CreateChannel("", channel);
     GetEngine()->GetAudioSys()->LoadAudio("", audio, channel, &data);
     audio->Play();
+    audio->SetLooping(true);
 }
 
 void GameApp::Tick(float fDelta)
