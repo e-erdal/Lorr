@@ -9,14 +9,11 @@
 
 namespace Lorr
 {
-    void Audio::Init(const Identifier &ident, AudioChannel *pChannel)
+    void Audio::Init(const Identifier &ident, AudioChannel *pChannel, AudioData *pData)
     {
         m_Ident = ident;
         m_pChannel = pChannel;
-    }
 
-    void Audio::InitFromMemory(AudioData *pData)
-    {
         alGenSources(1, &m_Source);
         alGenBuffers(1, &m_Buffer);
         alBufferData(m_Buffer, pData->PCMFormat, pData->PCMFrames.GetData(), pData->PCMFrames.GetSize(), pData->PCMFrequency);
@@ -45,7 +42,7 @@ namespace Lorr
             type = AudioLoader::AudioLoaderType::WAV;
         else if (curSig == kOggSig)
             type = AudioLoader::AudioLoaderType::OGG;
-        else
+        else // Give it a try
             type = AudioLoader::AudioLoaderType::MP3;
 
         AudioLoader::LoadAudio(type, outData, audioBuffer);

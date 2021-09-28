@@ -90,14 +90,20 @@ namespace Lorr
             printf("\n");
         }
 
-        inline void Seek(uint8_t seekTo)
+        inline void Seek(uint8_t seekTo, intptr_t pos)
         {
             switch (seekTo)
             {
-                case SEEK_END: m_Offset = m_DataLen; break;
-                case SEEK_SET: m_Offset = 0; break;
+                case SEEK_END: m_Offset = m_DataLen - pos; break;
+                case SEEK_SET: m_Offset = pos; break;
+                case SEEK_CUR: m_Offset += pos; break;
                 default: break;
             }
+
+            if (m_Offset < 0)
+                m_Offset = 0;
+            else if (m_Offset > m_DataLen)
+                m_Offset = m_DataLen;
         }
 
         inline void Expand(size_t len)
@@ -226,6 +232,16 @@ namespace Lorr
         {
             T *data = (T *)(m_Data + m_Offset);
             m_Offset += (dataLen == 0 ? sizeof(T) : dataLen);
+            return data;
+        }
+
+        template<typename T>
+        inline T *GetPtrNew(size_t dataLen)
+        {
+            size_t lenW = (dataLen == 0 ? sizeof(T) : dataLen);
+            T *data = (T *)malloc(lenW);
+            memcpy(data, m_Data + m_Offset, lenW);
+            m_Offset += lenW;
             return data;
         }
 

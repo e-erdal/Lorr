@@ -8,9 +8,13 @@ namespace Lorr::AudioLoader
     bool MP3AudioLoader::LoadBinary(AudioData *audioData, BufferStream &buf)
     {
         drmp3 mp3;
-        CHECK(drmp3_init_memory(&mp3, buf.GetData(), buf.GetSize(), NULL), "Failed to load MP3 File!");
-        uint64_t frameCount = drmp3_get_pcm_frame_count(&mp3);
+        if (!drmp3_init_memory(&mp3, buf.GetData(), buf.GetSize(), nullptr))
+        {
+            LOG_WARN("Failed to load MP3 file.");
+            return false;
+        }
 
+        uint64_t frameCount = drmp3_get_pcm_frame_count(&mp3);
         size_t dataLen = frameCount * mp3.channels * sizeof(uint16_t);
         drmp3_int16 *data = (drmp3_int16 *)malloc(dataLen);
 
@@ -23,7 +27,7 @@ namespace Lorr::AudioLoader
         {
             case 1: audioData->PCMFormat = AL_FORMAT_MONO16; break;
             case 2: audioData->PCMFormat = AL_FORMAT_STEREO16; break;
-            default: CHECK(false, "Unsupported Audio Channel count %i!", mp3.channels); break;
+            default: LOG_ERROR("Unsupported Audio Channel count %i!", mp3.channels); break;
         }
 
         drmp3_uninit(&mp3);

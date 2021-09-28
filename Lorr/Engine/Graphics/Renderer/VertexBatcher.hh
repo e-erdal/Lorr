@@ -10,6 +10,7 @@ struct VBInput
 {
     glm::vec3 Pos;
     glm::vec2 UV;
+    glm::vec3 Normal;
     glm::vec4 Color;
 };
 
@@ -43,6 +44,8 @@ private:
     void AllocRectangle(uint32_t count);
 
 private:
+    bgfx::VertexLayout m_Layout;
+
     BatcherVertices m_Vertices;
     BatcherIndices m_Indices;
     uint32_t m_Indexes = 0;

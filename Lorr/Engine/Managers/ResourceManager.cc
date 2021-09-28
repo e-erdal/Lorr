@@ -8,15 +8,17 @@ namespace Lorr
 
     bool ResourceManager::ExportResource(ResourceType type, const std::string &path, BufferStream &buf)
     {
+        buf.Reset();
+
         BufferStream compBuf;
         if (!ParseToBuffer(type, path, compBuf)) return false;
 
         ResourceHeader header;
         header.Type = type;
-        // header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
+        header.Flags |= RESOURCE_FILE_FLAGS_COMPRESSED;
         header.OriginalSize = compBuf.GetSize();
 
-        // compBuf.Compress();
+        compBuf.Compress();
         buf.Insert(header);
         buf.InsertPtr(compBuf.GetData(), compBuf.GetSize());
 
@@ -37,12 +39,26 @@ namespace Lorr
         return ParseAudioDataFromFile(outData, resourceBuf);
     }
 
+    bool ResourceManager::ImportShaderData(const std::string &path, ShaderData &outData)
+    {
+        BufferStream resourceBuf;
+        if (!ResourceManager::LoadResourceFile(path, resourceBuf))
+        {
+            LOG_WARN("Failed to load Shader resource.");
+            return false;
+        }
+
+        resourceBuf.StartOver();
+
+        return ParseShaderDataFromFile(outData, resourceBuf);
+    }
+
     bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
     {
         BufferStream fileBuf;
         if (!FileSystem::ReadBinaryFile(path, fileBuf))
         {
-            LOG_WARN("Failed to load Texture2D, continue as placeholder.");
+            LOG_WARN("Failed to load resource {}.", path.c_str());
             return false;
         }
 
@@ -52,6 +68,7 @@ namespace Lorr
         {
             case ResourceType::Texture: return ParseTextureToBuffer(fileBuf, outBuf);
             case ResourceType::Audio: return ParseAudioToBuffer(fileBuf, outBuf);
+            case ResourceType::Shader: return ParseShaderToBuffer(fileBuf, outBuf);
             default: return false;
         }
     }
@@ -99,6 +116,10 @@ namespace Lorr
 
     /// PARSERS
 
+    // ********************
+    // * To file section
+    // ********************
+
     bool ResourceManager::ParseTextureDataFromFile(Texture2DData &outData, BufferStream &resourceBuf)
     {
         resourceBuf.StartOver();
@@ -106,7 +127,7 @@ namespace Lorr
         outData.Height = resourceBuf.Get<uint32_t>();
         outData.Format = (bgfx::TextureFormat::Enum)resourceBuf.Get<uint32_t>();
         outData.DataSize = resourceBuf.Get<uint32_t>();
-        outData.Data = resourceBuf.GetPtr<uint8_t>(outData.DataSize);
+        outData.Data = resourceBuf.GetPtrNew<uint8_t>(outData.DataSize);
 
         return true;
     }
@@ -122,31 +143,62 @@ namespace Lorr
         return true;
     }
 
-    bool ResourceManager::ParseTextureToBuffer(BufferStream &inBuf, BufferStream &buf)
+    bool ResourceManager::ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf)
     {
-        Texture2DData data;
-        Texture2D::ParseMemory(&data, inBuf);
+        resourceBuf.StartOver();
+        outData.TypeCount = resourceBuf.Get<uint8_t>();
+        outData.Shaders.resize(outData.TypeCount * kShaderRenderers.size());
 
-        buf.Reset(sizeof(Texture2DData) - sizeof(size_t) + data.DataSize);
-        buf.Assign(data.Width);
-        buf.Assign(data.Height);
-        buf.Assign(data.Format);
-        buf.Assign(data.DataSize);
-        buf.AssignPtr(data.Data, data.DataSize);
+        for (auto &shader : outData.Shaders)
+        {
+            shader.Renderer = (bgfx::RendererType::Enum)resourceBuf.Get<uint8_t>();
+            shader.Type = resourceBuf.Get<ShaderType>();
+            shader.Len = resourceBuf.Get<uint32_t>();
+            shader.pData = resourceBuf.GetPtrNew<uint8_t>(shader.Len);
+        }
 
         return true;
     }
 
-    bool ResourceManager::ParseAudioToBuffer(BufferStream &inBuf, BufferStream &buf)
+    // ********************
+    // * To memory section
+    // ********************
+
+    bool ResourceManager::ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf)
+    {
+        Texture2DData data;
+        Texture2D::ParseToMemory(&data, inBuf);
+
+        outBuf.Reset();
+        outBuf.Insert(data.Width);
+        outBuf.Insert(data.Height);
+        outBuf.Insert(data.Format);
+        outBuf.Insert(data.DataSize);
+        outBuf.InsertPtr(data.Data, data.DataSize);
+
+        return true;
+    }
+
+    bool ResourceManager::ParseAudioToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         AudioData data;
         Audio::ParseToMemory(&data, inBuf);
 
-        buf.Reset();
-        buf.Insert(data.PCMFrequency);
-        buf.Insert(data.PCMFormat);
-        buf.Insert<uint32_t>(data.PCMFrames.GetSize());
-        buf.InsertPtr(data.PCMFrames.GetData(), data.PCMFrames.GetSize());
+        outBuf.Reset();
+        outBuf.Insert(data.PCMFrequency);
+        outBuf.Insert(data.PCMFormat);
+        outBuf.Insert<uint32_t>((uint32_t)data.PCMFrames.GetSize());
+        outBuf.InsertPtr(data.PCMFrames.GetData(), data.PCMFrames.GetSize());
+
+        return true;
+    }
+
+    bool ResourceManager::ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf)
+    {
+        ShaderData data;
+        Shader::ParseToMemory(&data, inBuf);
+
+        outBuf.Reset(inBuf.GetData(), inBuf.GetSize());
 
         return true;
     }

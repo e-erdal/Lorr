@@ -23,8 +23,7 @@ namespace Lorr
     public:
         Audio() = default;
 
-        void Init(const Identifier &ident, AudioChannel *pChannel);
-        void InitFromMemory(AudioData *pData);
+        void Init(const Identifier &ident, AudioChannel *pChannel, AudioData *pData);
         static void ParseToMemory(AudioData *outData, BufferStream &audioBuffer);
 
         void Play();

@@ -4,36 +4,37 @@
 
 #pragma once
 
+#include "Engine/App/Engine.hh"
 #include "Engine/Graphics/Shader.hh"
 #include "Engine/Stream/FileStream.hh"
 #include "Engine/Stream/BufferStream.hh"
 
-#include <array>
-
-const std::unordered_map<std::string, bgfx::RendererType::Enum> kRenderers = {
-    { "glc", bgfx::RendererType::OpenGL },    { "met", bgfx::RendererType::Metal },      { "spv", bgfx::RendererType::Vulkan },
-    { "vs3", bgfx::RendererType::Direct3D9 }, { "vs4", bgfx::RendererType::Direct3D11 }, { "vs5", bgfx::RendererType::Direct3D12 },
-};
+#include "Engine/Core/FileSystem.hh"
 
 class ShaderCompiler
 {
 public:
     ShaderCompiler(const std::string &path, const std::string &out)
     {
-        std::vector<Lorr::FileShader> shaders;
+        using namespace Lorr;
 
-        for (const auto &r : kRenderers)
+        printf("Loading Shader %s -> %s\n", path.c_str(), out.c_str());
+
+        std::vector<ShaderInfo> shaders;
+        bool hasVertex = false;
+        bool hasFragment = false;
+        bool hasCompute = false;
+
+        for (const auto &r : kShaderRenderers)
         {
-            printf("Selected renderer: %s\n", bgfx::getRendererName((bgfx::RendererType::Enum)r.second));
-
-            Lorr::FileStream vf(path + ".v." + r.first, false);
+            FileStream vf(path + ".v." + r.first, false);
             if (vf.IsOK())
             {
-                printf("Reading %s.v.%s\n", path.c_str(), r.first.c_str());
+                hasVertex = true;
 
-                Lorr::FileShader shader;
+                ShaderInfo shader;
                 shader.Renderer = r.second;
-                shader.Type = Lorr::ShaderType::Vertex;
+                shader.Type = ShaderType::Vertex;
                 shader.pData = vf.ReadAll<uint8_t>();
                 shader.Len = vf.Size();
                 shaders.push_back(shader);
@@ -41,14 +42,14 @@ public:
                 vf.Close();
             }
 
-            Lorr::FileStream ff(path + ".f." + r.first, false);
+            FileStream ff(path + ".f." + r.first, false);
             if (ff.IsOK())
             {
-                printf("Reading %s.f.%s\n", path.c_str(), r.first.c_str());
+                hasFragment = true;
 
-                Lorr::FileShader shader;
+                ShaderInfo shader;
                 shader.Renderer = r.second;
-                shader.Type = Lorr::ShaderType::Fragment;
+                shader.Type = ShaderType::Fragment;
                 shader.pData = ff.ReadAll<uint8_t>();
                 shader.Len = ff.Size();
                 shaders.push_back(shader);
@@ -56,14 +57,14 @@ public:
                 ff.Close();
             }
 
-            Lorr::FileStream cf(path + ".c." + r.first, false);
+            FileStream cf(path + ".c." + r.first, false);
             if (cf.IsOK())
             {
-                printf("Reading %s.c.%s\n", path.c_str(), r.first.c_str());
+                hasCompute = true;
 
-                Lorr::FileShader shader;
+                ShaderInfo shader;
                 shader.Renderer = r.second;
-                shader.Type = Lorr::ShaderType::Compute;
+                shader.Type = ShaderType::Compute;
                 shader.pData = cf.ReadAll<uint8_t>();
                 shader.Len = cf.Size();
                 shaders.push_back(shader);
@@ -72,28 +73,20 @@ public:
             }
         }
 
-        Lorr::BufferStream buf;
-        buf.Insert<uint8_t>(shaders.size());
+        BufferStream buf;
+        buf.Insert<uint8_t>(hasVertex + hasFragment + hasCompute);
 
         for (const auto &s : shaders)
         {
-            buf.Insert(s.Type);
+            printf("Renderer: %s(%d), type: %d\n", bgfx::getRendererName(s.Renderer), s.Renderer, (int)s.Type);
             buf.Insert<uint8_t>(s.Renderer);
-
-            Lorr::BufferStream shaderBuf(s.pData, s.Len);
-            shaderBuf.Compress();
-            const auto &len = shaderBuf.GetSize();
-
+            buf.Insert(s.Type);
             buf.Insert(s.Len);
-            buf.Insert(len);
-            buf.Expand(len);
-            buf.AssignPtr(shaderBuf.GetData(), len);
-
-            printf("%d, %d(%s), %d\n", (int)s.Type, s.Renderer, bgfx::getRendererName((bgfx::RendererType::Enum)s.Renderer), s.Len);
+            buf.InsertPtr(s.pData, s.Len);
         }
 
-        Lorr::FileStream w(out, true);
-        w.WritePtr(buf.GetData(), buf.GetSize());
-        w.Close();
+        FileSystem::WriteBinaryFile(out, buf);
+        if (!GetEngine()->GetResourceMan()->ExportResource(ResourceType::Shader, out, buf)) LOG_ERROR("Unable to compile resource.");
+        FileSystem::WriteBinaryFile(out, buf);
     }
 };

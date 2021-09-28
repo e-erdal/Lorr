@@ -1,0 +1,6 @@
+2021-09-29_01:56:18.428 | I | Initializing Lorr...
+2021-09-29_01:56:18.429 | T | Creating new window "Lorr: Resource compiler"<1, 1>
+2021-09-29_01:56:18.434 | T | Window size changed to 1, 1
+2021-09-29_01:56:18.450 | T | Successfully created window.
+2021-09-29_01:56:18.713 | I | Audio Device: OpenAL Soft on Hoparlör (USB PnP Sound Device)
+2021-09-29_01:56:18.714 | I | Successfully Initialized Audio System!

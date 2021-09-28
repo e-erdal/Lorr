@@ -9,13 +9,8 @@ AudioChannel *channel = new AudioChannel;
 
 void GameApp::Init()
 {
-    AudioData data;
-    GetEngine()->GetResourceMan()->ImportAudioData("test.lr", data);
-
-    GetEngine()->GetAudioSys()->CreateChannel("", channel);
-    GetEngine()->GetAudioSys()->LoadAudio("", audio, channel, &data);
-    audio->Play();
-    audio->SetLooping(true);
+    ShaderData data;
+    GetEngine()->GetResourceMan()->ImportShaderData("batch.lr", data);
 }
 
 void GameApp::Tick(float fDelta)

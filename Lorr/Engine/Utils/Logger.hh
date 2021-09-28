@@ -52,8 +52,8 @@ namespace Lorr
             logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
             logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("lorr.log", true));
 
-            logSinks[0]->set_pattern("%Y-%m-%d_%T.%e | %5^%L%$\t  | %v");
-            logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %L\t  | %v");
+            logSinks[0]->set_pattern("%Y-%m-%d_%T.%e | %5^%L%$ | %v");
+            logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %L | %v");
 #endif
 
             s_pCoreLogger = std::make_shared<spdlog::logger>("Engine", begin(logSinks), end(logSinks));

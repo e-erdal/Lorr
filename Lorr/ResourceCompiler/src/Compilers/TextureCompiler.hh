@@ -11,6 +11,8 @@
 #include "Engine/Stream/FileStream.hh"
 #include "Engine/Stream/BufferStream.hh"
 
+#include "Engine/Core/FileSystem.hh"
+
 class TextureCompiler
 {
 public:
@@ -21,11 +23,7 @@ public:
         printf("Loading Texture2D %s -> %s\n", path.c_str(), out.c_str());
 
         BufferStream buf;
-
         GetEngine()->GetResourceMan()->ExportResource(ResourceType::Texture, path, buf);
-
-        FileStream w(out, true);
-        w.WritePtr(buf.GetData(), buf.GetSize());
-        w.Close();
+        FileSystem::WriteBinaryFile(out, buf);
     }
 };

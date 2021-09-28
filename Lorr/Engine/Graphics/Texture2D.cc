@@ -10,14 +10,11 @@ namespace bgfx
     extern bx::AllocatorI *g_allocator;
 }  // namespace bgfx
 
-void Lorr::Texture2D::Init(const Identifier &ident, uint32_t Filters)
+void Lorr::Texture2D::Init(const Identifier &ident, uint32_t Filters, Texture2DData *pData)
 {
     m_Ident = ident;
     m_Filters = Filters;
-}
 
-void Lorr::Texture2D::InitFromMem(Texture2DData *pData)
-{
     m_Width = pData->Width;
     m_Height = pData->Height;
     m_DataSize = pData->DataSize;
@@ -33,7 +30,7 @@ void Lorr::Texture2D::InitFromMem(Texture2DData *pData)
     bgfx::setName(m_Handle, bgfxName.data(), bgfxName.length());
 }
 
-void Lorr::Texture2D::ParseMemory(Texture2DData *pOutData, BufferStream &imageBuffer)
+void Lorr::Texture2D::ParseToMemory(Texture2DData *pOutData, BufferStream &imageBuffer)
 {
     auto *imageContainer = bimg::imageParse(bgfx::g_allocator, imageBuffer.GetData(), imageBuffer.GetSize());
 

@@ -26,9 +26,8 @@ namespace Lorr
     class Texture2D : public IResource
     {
     public:
-        void Init(const Identifier &ident, uint32_t Filters);
-        void InitFromMem(Texture2DData *pData);
-        static void ParseMemory(Texture2DData *pOutData, BufferStream &imageBuffer);
+        void Init(const Identifier &ident, uint32_t Filters, Texture2DData *pData);
+        static void ParseToMemory(Texture2DData *pOutData, BufferStream &imageBuffer);
 
         static constexpr ResourceType m_Type = ResourceType::Texture;
 

@@ -8,7 +8,11 @@ namespace Lorr::AudioLoader
     bool WavAudioLoader::LoadBinary(AudioData *audioData, BufferStream &buf)
     {
         drwav wav;
-        CHECK(drwav_init_memory(&wav, buf.GetData(), buf.GetSize(), NULL), "Failed to load WAV File!");
+        if (!drwav_init_memory(&wav, buf.GetData(), buf.GetSize(), nullptr))
+        {
+            LOG_WARN("Failed to load MP3 file.");
+            return false;
+        }
 
         size_t dataLen = wav.totalPCMFrameCount * wav.channels * wav.bitsPerSample;
         uint8_t *data = (uint8_t *)malloc(dataLen);
@@ -22,7 +26,7 @@ namespace Lorr::AudioLoader
         {
             case 1: audioData->PCMFormat = AL_FORMAT_MONO16; break;
             case 2: audioData->PCMFormat = AL_FORMAT_STEREO16; break;
-            default: CHECK(false, "Unsupported Audio Channel count %i!", wav.channels); break;
+            default: LOG_ERROR("Unsupported Audio Channel count %i!", wav.channels); break;
         }
 
         drwav_uninit(&wav);

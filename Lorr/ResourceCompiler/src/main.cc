@@ -1,9 +1,10 @@
 #include "Engine/App/BaseApp.hh"
 #include "Engine/Utils/ArgParser.hh"
+#include "Engine/Stream/BufferStream.hh"
 
 #include "Compilers/ShaderCompiler.hh"
 #include "Compilers/TextureCompiler.hh"
-#include "Engine/Stream/BufferStream.hh"
+#include "Compilers/AudioCompiler.hh"
 
 class RCApp : public Lorr::BaseApp
 {
@@ -30,24 +31,11 @@ int main(int argc, char **argv)
 {
     Lorr::ApplicationDesc desc;
     desc.Title = "Lorr: Resource compiler";
-    desc.Width = 10;
-    desc.Height = 10;
-    desc.Flags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;
+    desc.Width = 1;
+    desc.Height = 1;
 
     app = new RCApp;
     app->Start(desc);
-
-    Lorr::BufferStream buf;
-    Lorr::GetEngine()->GetResourceMan()->ExportResource(Lorr::ResourceType::Audio, "theme.ogg", buf);
-
-    Lorr::FileStream w("test.lr", true);
-    w.WritePtr(buf.GetData(), buf.GetSize());
-    w.Close();
-
-    Lorr::AudioData data;
-    Lorr::GetEngine()->GetResourceMan()->ImportAudioData("test.lr", data);
-
-    return 1;
 
     Lorr::ArgParser parser(argc, argv);
 
@@ -72,6 +60,18 @@ int main(int argc, char **argv)
             if (parser.GetConfig("o", &targetPath))
             {
                 TextureCompiler c(path, targetPath);
+            }
+            else
+            {
+                PERROR("You have to specifiy the output path.");
+            }
+        }
+        else if (parser.HasArg("audio"))
+        {
+            std::string targetPath = "";
+            if (parser.GetConfig("o", &targetPath))
+            {
+                AudioCompiler c(path, targetPath);
             }
             else
             {
