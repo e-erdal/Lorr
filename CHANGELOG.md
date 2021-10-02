@@ -4,6 +4,9 @@
     - Able to decode Ogg.
     - Able to decode MP3.
 - Rework on ResourceMan.
+- Batched rendering system.
+- Console Application mode(no rendering).
+- ImGui rendering.
 
 # v1.0-alpha
 - Win32 window handling.

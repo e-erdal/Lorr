@@ -36,6 +36,8 @@ namespace Lorr
 
         m_Projection = glm::ortho(0.0f, glm::ceil(m_Scale.x), glm::ceil(m_Scale.y), .0f, 0.1f, 10000.f);
         m_Projection[3].z = 1.f;
+
+        GetEngine()->GetRenderer()->Reset();
     }
 
     void Camera2D::SetPosition(const glm::vec2 &pos)

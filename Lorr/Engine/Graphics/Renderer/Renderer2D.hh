@@ -26,14 +26,12 @@ namespace Lorr
 
         void Submit(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color);
 
+        void Reset();
     public:
         const auto &GetPlaceholder() const
         {
             return m_pPlaceholderTexture;
         }
-
-    private:
-        void Reset();
 
     private:
         Texture2D *m_pPlaceholderTexture = 0;

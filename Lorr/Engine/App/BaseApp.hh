@@ -17,6 +17,8 @@ namespace Lorr
 
         uint32_t Width = 0;
         uint32_t Height = 0;
+
+        bool ResourceCompilerMode = false;
     };
 
     class Engine;
@@ -43,6 +45,7 @@ namespace Lorr
 
     protected:
         Engine *m_pEngine = 0;
+        bool m_ConsoleApp = false;
     };
 
     extern BaseApp *GetApp();

@@ -18,12 +18,15 @@ namespace Lorr
         ZoneScoped;
 
         m_pEngine->Init(Description);
+        m_ConsoleApp = Description.ResourceCompilerMode;
 
         Init();
     }
 
     void BaseApp::Run()
     {
+        if (m_ConsoleApp) return;
+        
         ZoneScoped;
 
         PlatformWindow *pWindow = m_pEngine->GetWindow();

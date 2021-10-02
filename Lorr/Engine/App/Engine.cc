@@ -19,6 +19,13 @@ namespace Lorr
         Console::Init();
         LOG_INFO("Initializing Lorr...");
 
+        if (Description.ResourceCompilerMode)
+        {
+            m_pResourceMan->Init();
+            m_pAudioSystem->Init();
+            return true;
+        }
+
         //* Core features
         m_pWindow->Init(Description.Title, Description.Width, Description.Height, Description.Flags);
 

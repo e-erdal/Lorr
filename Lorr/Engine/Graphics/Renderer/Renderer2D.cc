@@ -72,6 +72,7 @@ namespace Lorr
     void Renderer2D::Reset()
     {
         bgfx::reset(m_ResWidth, m_ResHeight, m_ResetFlags);
+        bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
     }
 
 }  // namespace Lorr

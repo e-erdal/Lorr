@@ -8,7 +8,7 @@ namespace Lorr::AudioLoader
     bool MP3AudioLoader::LoadBinary(AudioData *audioData, BufferStream &buf)
     {
         drmp3 mp3;
-        if (!drmp3_init_memory(&mp3, buf.GetData(), buf.GetSize(), nullptr))
+        if (!drmp3_init_file(&mp3, "theme.mp3", nullptr))
         {
             LOG_WARN("Failed to load MP3 file.");
             return false;

@@ -31,8 +31,7 @@ int main(int argc, char **argv)
 {
     Lorr::ApplicationDesc desc;
     desc.Title = "Lorr: Resource compiler";
-    desc.Width = 1;
-    desc.Height = 1;
+    desc.ResourceCompilerMode = true;
 
     app = new RCApp;
     app->Start(desc);
