@@ -34,7 +34,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_Projection = glm::ortho(0.0f, glm::ceil(m_Scale.x), glm::ceil(m_Scale.y), .0f, 0.1f, 1.f);
+        m_Projection = glm::ortho(0.0f, glm::ceil(m_Scale.x), glm::ceil(m_Scale.y), .0f, 0.1f, 10000.f);
         m_Projection[3].z = 1.f;
     }
 
@@ -56,8 +56,4 @@ namespace Lorr
         CalculateProjection();
     }
 
-    void Camera2D::SetUniformTransform()
-    {
-        // bgfx::setViewTransform(view, &m_View[0][0], &m_Projection[0][0]);
-    }
 }  // namespace Lorr

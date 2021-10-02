@@ -6,5 +6,5 @@ SAMPLER2D(s_Texture, 0);
 
 void main()
 {
-    gl_FragColor = vec4(1.0, 1.0, 1.0, 1.0);
+    gl_FragColor = texture2D(s_Texture, v_texcoord0) * v_color0;
 }

@@ -10,7 +10,7 @@ namespace bgfx
     extern bx::AllocatorI *g_allocator;
 }  // namespace bgfx
 
-void Lorr::Texture2D::Init(const Identifier &ident, uint32_t Filters, Texture2DData *pData)
+void Lorr::Texture2D::Init(const Identifier &ident, Texture2DData *pData, uint32_t Filters)
 {
     m_Ident = ident;
     m_Filters = Filters;

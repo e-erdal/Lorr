@@ -25,7 +25,18 @@ namespace Lorr
         m_ResWidth = pWindow->GetWidth();
         m_ResHeight = pWindow->GetHeight();
 
-        m_Batcher.Init();
+        bgfx::setViewClear(0, BGFX_CLEAR_COLOR | BGFX_CLEAR_DEPTH, 0x000000FF, 1.0f);
+        bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
+
+        constexpr uint32_t whiteColor = 0xffffffff;
+        Texture2DData data;
+        data.Width = 1;
+        data.Height = 1;
+        data.DataSize = sizeof(uint32_t);
+        data.Data = (uint8_t *)&whiteColor;
+
+        m_pPlaceholderTexture = new Texture2D;
+        m_pPlaceholderTexture->Init("", &data, TEXTURE_MAG_NEAREST);
     }
 
     void Renderer2D::BeginFrame()
@@ -38,9 +49,24 @@ namespace Lorr
         bgfx::frame();
     }
 
+    void Renderer2D::SetViewTransform(uint32_t viewID, const glm::mat4 &proj, const glm::mat4 &view)
+    {
+        bgfx::setViewTransform(viewID, &proj[0][0], &view[0][0]);
+    }
+
+    void Renderer2D::SetTexture(Texture2D *pTexture, const bgfx::UniformHandle &uniform)
+    {
+        bgfx::setTexture(0, uniform, pTexture->GetHandle());
+    }
+
     void Renderer2D::SetVSyncState(bool VSync)
     {
         m_ResetFlags |= BGFX_RESET_VSYNC;
+        Reset();
+    }
+
+    void Renderer2D::Submit(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
+    {
     }
 
     void Renderer2D::Reset()

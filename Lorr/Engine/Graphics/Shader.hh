@@ -37,7 +37,7 @@ namespace Lorr
     class Shader : public IResource
     {
     public:
-        void Init(const Identifier &ident, ShaderData *pData, ShaderType type);
+        void Init(const Identifier &ident, ShaderData *pData, bool isCompute = false);
         static void ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer);
 
         static constexpr ResourceType m_Type = ResourceType::Shader;
@@ -48,10 +48,15 @@ namespace Lorr
             return m_Ident;
         }
 
+        const auto &GetHandle() const
+        {
+            return m_Handle;
+        }
+
     protected:
         Identifier m_Ident = EmptyIdentifier;
 
-        bgfx::ShaderHandle m_Handle;
+        bgfx::ProgramHandle m_Handle;
     };
 
 }  // namespace Lorr

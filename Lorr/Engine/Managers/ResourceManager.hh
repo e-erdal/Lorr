@@ -24,9 +24,43 @@ namespace Lorr
 
         void Init();
 
+        template<typename... Args>
+        inline Texture2D *LoadTexture2D(const Identifier &ident, const std::string &path, Args &&...args)
+        {
+            Texture2DData data;
+            if (!ImportTexture2DData(path, data)) return 0;
+
+            Texture2D *resource = new Texture2D;
+            resource->Init(ident, &data, std::forward<Args>(args)...);
+            m_Resources.emplace(ident, resource);
+
+            return resource;
+        }
+
+        template<typename... Args>
+        inline Shader *LoadShader(const Identifier &ident, const std::string &path, Args &&...args)
+        {
+            ShaderData data;
+            if (!ImportShaderData(path, data)) return 0;
+
+            Shader *resource = new Shader;
+            resource->Init(ident, &data, std::forward<Args>(args)...);
+            m_Resources.emplace(ident, resource);
+
+            return resource;
+        }
+
+        template<typename T = IResource>
+        inline T *GetResource(const Identifier &ident)
+        {
+            auto found = m_Resources.find(ident);
+            return (found == m_Resources.end() ? 0 : (T *)found->second);
+        }
+
         // Export original data to something that Lorr can read
         bool ExportResource(ResourceType type, const std::string &path, BufferStream &buf);
-        //
+
+        bool ImportTextureData(const std::string &path, Texture2DData &outData);
         bool ImportAudioData(const std::string &path, AudioData &outData);
         bool ImportShaderData(const std::string &path, ShaderData &outData);
 

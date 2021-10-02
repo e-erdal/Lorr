@@ -186,6 +186,8 @@ namespace Lorr
     {
         ZoneScopedN("ImGuiHandler::EndFrame");
 
+        ImGui::EndFrame();
+        
         ImGui::Render();
         ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData());
     }

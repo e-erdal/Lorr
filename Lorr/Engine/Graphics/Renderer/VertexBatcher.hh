@@ -6,49 +6,78 @@
 
 #include "Engine/Graphics/Texture2D.hh"
 
-struct VBInput
+namespace Lorr
 {
-    glm::vec3 Pos;
-    glm::vec2 UV;
-    glm::vec3 Normal;
-    glm::vec4 Color;
-};
+    // The idea behind using glm functions:
+    //
+    // (pos)
+    // vec4[4] =
+    //     X X X X (X, Y, Z, W)
+    //     X X X X
+    //     X X X X
+    //     X X X X = mat4x4
+    //
+    // (uv)
+    // vec2[4] =
+    //     X X . . (U, V)
+    //     X X . .
+    //     X X . .
+    //     X X . . = mat4x2
 
-typedef std::vector<VBInput> BatcherVertices;
-typedef std::vector<uint32_t> BatcherIndices;
+    constexpr glm::mat4 kVertexPos = {
+        1, 1, 1, 1,  // V1
+        1, 0, 1, 1,  // V2
+        0, 0, 1, 1,  // V3
+        0, 1, 1, 1   // V4
+    };
 
-class VertexBatcher
-{
-public:
-    VertexBatcher() = default;
+    constexpr glm::mat4x2 kVertexUV = {
+        1, 1,  // V1
+        1, 0,  // V2
+        0, 0,  // V3
+        0, 1,  // V4
+    };
 
-    void Init();
-
-    void Begin(uint32_t preAllocRect = 0);
-    void End();
-
-    void PushRect();
-
-public:
-    BatcherVertices *GetVertices()
+    struct BatcherVertex
     {
-        return &m_Vertices;
-    }
+        glm::vec3 Pos;
+        glm::vec2 UV;
+        glm::vec4 Color;
+    };
+    typedef std::vector<BatcherVertex> BatcherVertices;
 
-    BatcherIndices *GetIndices()
+    struct BatcherEvent
     {
-        return &m_Indices;
-    }
+        BatcherVertices Vertices;
+        uint32_t Indexes = 0;
+    };
+    typedef std::vector<std::pair<Texture2D *, BatcherEvent>> BatcherQueue;
 
-private:
-    void AllocRectangle(uint32_t count);
+    class VertexBatcher
+    {
+    public:
+        VertexBatcher() = default;
 
-private:
-    bgfx::VertexLayout m_Layout;
+        void Init();
 
-    BatcherVertices m_Vertices;
-    BatcherIndices m_Indices;
-    uint32_t m_Indexes = 0;
+        void Begin();
+        void End();
 
-    bool m_Active = false;
-};
+        void Flush();
+        void Reset();
+
+        void PushRect(Texture2D *pTexture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+
+    private:
+        BatcherEvent &GetEvent(Texture2D *pTexture);
+
+    private:
+        bgfx::VertexLayout m_Layout;
+        bgfx::IndexBufferHandle m_IndexBuffer;
+        bgfx::ProgramHandle m_ShaderProgram;
+        bgfx::UniformHandle m_TextureUniform;
+
+        BatcherQueue m_Queue;
+    };
+
+}  // namespace Lorr

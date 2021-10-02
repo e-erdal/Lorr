@@ -17,20 +17,13 @@ namespace Lorr
         void SetPosition(const glm::vec2 &pos);
         void SetScale(const glm::vec2 &size);
 
-        void SetUniformTransform();
-
     public:
-        const void *GetViewMatrixPtr() const
-        {
-            return &m_View[0][0];
-        }
-
-        const glm::mat4 GetProjection() const
+        const glm::mat4 &GetProjection() const
         {
             return m_Projection;
         }
 
-        const glm::mat4 GetView() const
+        const glm::mat4 &GetView() const
         {
             return m_View;
         }

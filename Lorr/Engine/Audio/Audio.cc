@@ -9,7 +9,7 @@
 
 namespace Lorr
 {
-    void Audio::Init(const Identifier &ident, AudioChannel *pChannel, AudioData *pData)
+    void Audio::Init(const Identifier &ident, AudioData *pData, AudioChannel *pChannel)
     {
         m_Ident = ident;
         m_pChannel = pChannel;
@@ -42,7 +42,7 @@ namespace Lorr
             type = AudioLoader::AudioLoaderType::WAV;
         else if (curSig == kOggSig)
             type = AudioLoader::AudioLoaderType::OGG;
-        else // Give it a try
+        else  // Give it a try
             type = AudioLoader::AudioLoaderType::MP3;
 
         AudioLoader::LoadAudio(type, outData, audioBuffer);

@@ -6,7 +6,7 @@
 
 #include "Engine/Core/Window/PlatformWindow.hh"
 
-#include "VertexBatcher.hh"
+#include "Engine/Graphics/Texture2D.hh"
 
 namespace Lorr
 {
@@ -20,17 +20,29 @@ namespace Lorr
         void BeginFrame();
         void EndFrame();
 
+        void SetViewTransform(uint32_t viewID, const glm::mat4 &proj, const glm::mat4 &view);
+        void SetTexture(Texture2D *pTexture, const bgfx::UniformHandle &uniform);
         void SetVSyncState(bool VSync);
+
+        void Submit(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color);
+
+    public:
+        const auto &GetPlaceholder() const
+        {
+            return m_pPlaceholderTexture;
+        }
 
     private:
         void Reset();
 
     private:
+        Texture2D *m_pPlaceholderTexture = 0;
+
         uint32_t m_ResetFlags = 0;
         uint32_t m_ResWidth = 0;
         uint32_t m_ResHeight = 0;
 
-        VertexBatcher m_Batcher;
+        uintptr_t m_State = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_BLEND_ALPHA;
     };
 
 }  // namespace Lorr

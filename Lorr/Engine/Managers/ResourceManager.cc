@@ -25,6 +25,20 @@ namespace Lorr
         return true;
     }
 
+    bool ResourceManager::ImportTextureData(const std::string &path, Texture2DData &outData)
+    {
+        BufferStream resourceBuf;
+        if (!ResourceManager::LoadResourceFile(path, resourceBuf))
+        {
+            LOG_WARN("Failed to load Texture2D resource.");
+            return false;
+        }
+
+        resourceBuf.StartOver();
+
+        return ParseTextureDataFromFile(outData, resourceBuf);
+    }
+
     bool ResourceManager::ImportAudioData(const std::string &path, AudioData &outData)
     {
         BufferStream resourceBuf;

@@ -42,7 +42,7 @@ namespace Lorr
 
     void AudioSystem::LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioChannel *pChannel, AudioData *pData)
     {
-        pAudioOut->Init(ident, pChannel, pData);
+        pAudioOut->Init(ident, pData, pChannel);
         
         pChannel->Add(pAudioOut);
     }
