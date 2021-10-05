@@ -13,3 +13,6 @@
 [submodule "Vendor/ogg"]
 	path = Vendor/ogg
 	url = https://github.com/xiph/ogg.git
+[submodule "Vendor/tiny-utf8"]
+	path = Vendor/tiny-utf8
+	url = https://github.com/DuffsDevice/tiny-utf8.git
