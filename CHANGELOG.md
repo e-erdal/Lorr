@@ -1,5 +1,10 @@
+# v1.2-alpha
+- OOP Entity Component System.
+    - Transform component.
+    - Renderable component.
+
 # v1.1-alpha
-- Audio system
+- Audio system.
     - Able to decode Wav.
     - Able to decode Ogg.
     - Able to decode MP3.

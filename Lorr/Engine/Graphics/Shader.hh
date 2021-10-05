@@ -54,7 +54,7 @@ namespace Lorr
         }
 
     protected:
-        Identifier m_Ident = EmptyIdentifier;
+        Identifier m_Ident = kEmptyIdentifier;
 
         bgfx::ProgramHandle m_Handle;
     };

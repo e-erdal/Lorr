@@ -26,10 +26,10 @@ namespace Lorr
 
         void CreateChannel(Identifier const &ident, AudioChannel *pChannel);
 
-        void LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioChannel *pChannel, AudioData *pData);
+        void LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioData *pData, const Identifier &channelIdent);
 
     private:
-        std::vector<AudioChannel *> m_AudioChannels;
+        std::unordered_map<Identifier, AudioChannel *> m_AudioChannels;
 
         ALCdevice *m_alDevice;    // Active Audio Device
         ALCcontext *m_alContext;  // Active OpenAL Context (once per thread)

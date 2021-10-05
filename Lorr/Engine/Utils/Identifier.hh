@@ -99,7 +99,7 @@ namespace Lorr
         uint32_t m_iProtoSize = 0;
     };
 
-    inline static Identifier EmptyIdentifier = "engine://empty";
+    constexpr Identifier kEmptyIdentifier = "engine://empty";
 }  // namespace Lorr
 
 // std::unordered_map support

@@ -29,6 +29,7 @@ set(ENGINE_COMPONENTS
     LorrAudio
     LorrCore
     LorrDebug
+    LorrECS
     LorrGraphics
     LorrManagers
     LorrSystems
@@ -73,6 +74,20 @@ LorrComponent(
         App/pch.hh
     SOURCE
         Debug/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# ECS
+LorrComponent(
+    NAME
+        LorrECS
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        ECS/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

@@ -37,14 +37,25 @@ namespace Lorr
     void AudioSystem::CreateChannel(Identifier const &ident, AudioChannel *pChannel)
     {
         pChannel->Init(ident);
-        m_AudioChannels.emplace_back(pChannel);
+        m_AudioChannels[ident] = pChannel;
     }
 
-    void AudioSystem::LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioChannel *pChannel, AudioData *pData)
+    void AudioSystem::LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioData *pData, const Identifier &channelIdent)
     {
-        pAudioOut->Init(ident, pData, pChannel);
-        
-        pChannel->Add(pAudioOut);
+        AudioChannel *pTargetChannel = 0;
+        auto itChannel = m_AudioChannels.find(channelIdent);
+
+        if (itChannel == m_AudioChannels.end())
+        {
+            pTargetChannel = new AudioChannel;
+            CreateChannel(channelIdent, pTargetChannel);
+        }
+        else
+        {
+            pTargetChannel = itChannel->second;
+        }
+
+        pAudioOut->Init(ident, pData, pTargetChannel);
     }
 
 }  // namespace Lorr
