@@ -75,4 +75,11 @@ namespace Lorr
         bgfx::setViewRect(0, 0, 0, bgfx::BackbufferRatio::Equal);
     }
 
+    void Renderer2D::SetView(uint32_t width, uint32_t height)
+    {
+        m_ResWidth = width;
+        m_ResHeight = height;
+        Reset();
+    }
+
 }  // namespace Lorr

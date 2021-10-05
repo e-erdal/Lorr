@@ -13,12 +13,12 @@ namespace Lorr
         ZoneScoped;
     }
 
-    void BaseApp::Start(ApplicationDesc const &Description)
+    void BaseApp::Start(ApplicationDesc const &description)
     {
         ZoneScoped;
 
-        m_pEngine->Init(Description);
-        m_ConsoleApp = Description.ResourceCompilerMode;
+        m_pEngine->Init(description);
+        m_ConsoleApp = description.ConsoleApp;
 
         Init();
     }

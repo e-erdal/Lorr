@@ -18,7 +18,7 @@ namespace Lorr
         uint32_t Width = 0;
         uint32_t Height = 0;
 
-        bool ResourceCompilerMode = false;
+        bool ConsoleApp = false;
     };
 
     class Engine;
@@ -29,7 +29,7 @@ namespace Lorr
 
         ~BaseApp();
 
-        void Start(ApplicationDesc const &Description);
+        void Start(ApplicationDesc const &description);
         void Run();
 
     public:
@@ -40,7 +40,7 @@ namespace Lorr
 
         virtual void Init() = 0;
 
-        virtual void Tick(float fDelta) = 0;
+        virtual void Tick(float deltaTime) = 0;
         virtual void Draw() = 0;
 
     protected:

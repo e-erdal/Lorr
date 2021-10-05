@@ -12,14 +12,14 @@ namespace Lorr
         delete m_pCamera;
     }
 
-    bool Engine::Init(ApplicationDesc const &Description)
+    bool Engine::Init(ApplicationDesc const &description)
     {
         ZoneScoped;
 
         Console::Init();
         LOG_INFO("Initializing Lorr...");
 
-        if (Description.ResourceCompilerMode)
+        if (description.ConsoleApp)
         {
             m_pResourceMan->Init();
             m_pAudioSystem->Init();
@@ -27,7 +27,7 @@ namespace Lorr
         }
 
         //* Core features
-        m_pWindow->Init(Description.Title, Description.Width, Description.Height, Description.Flags);
+        m_pWindow->Init(description.Title, description.Width, description.Height, description.Flags);
 
         //* High priority stuff
         m_pResourceMan->Init();
@@ -62,7 +62,7 @@ namespace Lorr
         m_pRenderer->EndFrame();
     }
 
-    void Engine::Tick(float fDelta)
+    void Engine::Tick(float deltaTime)
     {
         ZoneScoped;
     }
