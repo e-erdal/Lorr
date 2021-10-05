@@ -82,6 +82,8 @@ namespace Lorr
 
     void VertexBatcher::PushRect(Texture2D *pTexture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
     {
+        const glm::mat4x2 rUV = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
+
         BatcherEvent &event = GetEvent(!pTexture ? GetEngine()->GetRenderer()->GetPlaceholder() : pTexture);
         BatcherVertices &vertices = event.Vertices;
         vertices.resize(vertices.size() + 4);
@@ -91,7 +93,7 @@ namespace Lorr
         for (size_t i = 0; i < 4; i++)
         {
             info->Pos = transform * kVertexPos[i];
-            info->UV = kVertexUV[i];
+            info->UV = rUV[i];
             info->Color = (glm::vec4)color / 255.f;
             info++;
         }

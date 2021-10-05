@@ -19,10 +19,12 @@ set(ENGINE_VENDOR
     lw
     OpenAL
     spdlog
+    tinyutf8
     tracy
     vorbis
     vorbisfile
     zlib1
+    freetype-bgfx
 )
 
 set(ENGINE_COMPONENTS

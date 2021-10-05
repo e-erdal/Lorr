@@ -2,6 +2,8 @@
 - OOP Entity Component System.
     - Transform component.
     - Renderable component.
+- Font rendering.
+    - Basic UTF8 implementation.
 
 # v1.1-alpha
 - Audio system.

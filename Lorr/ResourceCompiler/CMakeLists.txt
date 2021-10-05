@@ -19,6 +19,6 @@ set(RC_COMPONENTS
 #         ${GAME_VENDOR}
 # )
 
-add_executable(RC src/main.cc)
-    target_link_libraries(RC PUBLIC ${RC_VENDOR} ${RC_COMPONENTS})
-    target_include_directories(RC PUBLIC src/)
+add_executable(ResComp src/main.cc)
+    target_link_libraries(ResComp PUBLIC ${RC_VENDOR} ${RC_COMPONENTS})
+    target_include_directories(ResComp PUBLIC src/)

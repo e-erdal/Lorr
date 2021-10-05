@@ -13,7 +13,8 @@ namespace Lorr
         Invalid,
         Texture,
         Audio,
-        Shader
+        Shader,
+        Font
     };
 
     class IResource

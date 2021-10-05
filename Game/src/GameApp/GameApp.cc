@@ -5,9 +5,14 @@
 #include "Engine/ECS/Components/RenderableComponent.hh"
 #include "Engine/ECS/Components/TransformComponent.hh"
 
+#include "Engine/Graphics/Font.hh"
+
 using namespace Lorr;
 
 Audio *audio = new Audio;
+Font *font = new Font;
+
+std::vector<CharInfo> chars;
 
 void GameApp::Init()
 {
@@ -28,6 +33,14 @@ void GameApp::Init()
     GetEngine()->GetAudioSys()->LoadAudio("music://theme", audio, &data, "channel://default");
 
     audio->Play();
+
+    FontData fdata;
+    FileSystem::ReadBinaryFile("font.ttf", fdata.TTFData);
+
+    font->Init("", &fdata, 32);
+
+    glm::vec2 t;
+    TextEngine::AlignAll(font, "brö][üğğşşı", chars, t, 0);
 }
 
 void GameApp::Tick(float fDelta)
@@ -40,10 +53,15 @@ void GameApp::Draw()
     ImGui::Begin("asd", nullptr);
     ImGui::End();
 
-    glm::mat4 transform = glm::translate(glm::mat4(1.f), { 0, 0, 1 }) * glm::scale(glm::mat4(1.f), { 100, 100, 1 });
-
     GetEngine()->GetBatcher()->Begin();
-    GetEngine()->GetBatcher()->PushRect(0, transform, { 1, 1, 1, 1 });
+
+    glm::vec2 line = { 10, 10 };
+    for (const auto &c : chars)
+    {
+        glm::mat4 transform = glm::translate(glm::mat4(1.f), { 10 + c.Pos.x, 10 + c.Pos.y, 1 }) * glm::scale(glm::mat4(1.f), { c.Size.x, c.Size.y, 1 });
+        GetEngine()->GetBatcher()->PushRect(font->GetTexture(), transform, c.UV);
+    }
+
     GetEngine()->GetBatcher()->End();
 
     m_pCurrentScene->Draw();
