@@ -4,6 +4,7 @@
 
 #include "Engine/ECS/Components/TransformComponent.hh"
 #include "Engine/ECS/Components/RenderableComponent.hh"
+#include "Engine/ECS/Components/TextComponent.hh"
 
 namespace Lorr::System
 {
@@ -13,16 +14,30 @@ namespace Lorr::System
 
     void RendererSystem::Draw()
     {
+        glm::mat4 matrix(1.0f);
+
         VertexBatcher *pBatcher = GetEngine()->GetBatcher();
         pBatcher->Begin();
 
-        auto group = m_pRegistry->view<Component::Transform, Component::Renderable>();
-        for (auto entity : group)
-        {
-            auto &&[transform, renderable] = group.get<Component::Transform, Component::Renderable>(entity);
+        m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
 
-            if (renderable.IsBatch) pBatcher->PushRect(renderable.pTexture, transform.Matrix, renderable.TextureCoords, renderable.Color);
-        }
+            if (m_pRegistry->has<Component::Renderable>(entity))
+            {
+                auto &renderable = m_pRegistry->get<Component::Renderable>(entity);
+                if (renderable.IsBatch) pBatcher->PushRect(renderable.pTexture, transform.Matrix, renderable.TextureCoords, renderable.Color);
+            }
+
+            if (m_pRegistry->has<Component::Text>(entity))
+            {
+                auto &text = m_pRegistry->get<Component::Text>(entity);
+                for (const auto &c : text.Chars)
+                {
+                    Math::SetPos(matrix, glm::vec3(transform.Position.x + c.Pos.x, transform.Position.y + c.Pos.y, transform.Position.z));
+                    Math::SetSize(matrix, glm::vec3(c.Size.x, c.Size.y, 1));
+                    pBatcher->PushRect(text.pTexture, matrix, c.UV, { 255, 255, 255, 255 });
+                }
+            }
+        });
 
         pBatcher->End();
     }

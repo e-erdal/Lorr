@@ -67,6 +67,12 @@ namespace Lorr
         return ParseShaderDataFromFile(outData, resourceBuf);
     }
 
+    bool ResourceManager::ImportFontData(const std::string &path, FontData &outData)
+    {
+        FileSystem::ReadBinaryFile(path, outData.TTFData);
+        return true;
+    }
+
     bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
     {
         BufferStream fileBuf;
@@ -174,6 +180,12 @@ namespace Lorr
         return true;
     }
 
+    bool ResourceManager::ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf)
+    {
+        //* No.
+        return true;
+    }
+
     // ********************
     // * To memory section
     // ********************
@@ -211,6 +223,16 @@ namespace Lorr
     {
         ShaderData data;
         Shader::ParseToMemory(&data, inBuf);
+
+        outBuf.Reset(inBuf.GetData(), inBuf.GetSize());
+
+        return true;
+    }
+
+    bool ResourceManager::ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf)
+    {
+        FontData data;
+        Font::ParseToMemory(&data, inBuf);
 
         outBuf.Reset(inBuf.GetData(), inBuf.GetSize());
 

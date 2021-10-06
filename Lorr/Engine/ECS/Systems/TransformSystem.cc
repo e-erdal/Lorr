@@ -6,16 +6,17 @@ namespace Lorr::System
 {
     void TransformSystem::Tick(float deltaTime)
     {
-        auto group = m_pRegistry->view<Component::Transform>();
+        glm::mat4 matrix(1.0f);
+        auto view = m_pRegistry->view<Component::Transform>();
 
-        for (auto entity : group)
+        for (auto entity : view)
         {
-            auto &transform = group.get<Component::Transform>(entity);
+            auto &transform = view.get<Component::Transform>(entity);
 
-            transform.Matrix = glm::mat4{ 1.0f };
-            transform.Matrix = glm::translate(transform.Matrix, transform.Position);
-            transform.Matrix = glm::rotate(transform.Matrix, glm::radians(transform.Rotation), glm::vec3(0.f, 0.f, 1.f));
-            transform.Matrix = glm::scale(transform.Matrix, transform.Size);
+            Math::SetPos(matrix, transform.Position);
+            matrix = glm::rotate(matrix, glm::radians(transform.Rotation), glm::vec3(0.f, 0.f, 1.f));
+            Math::SetSize(matrix, transform.Size);
+            transform.Matrix = matrix;
         }
     }
 

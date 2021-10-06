@@ -13,9 +13,25 @@ namespace Lorr::Math
     constexpr float PIDIV2 = 1.570796327f;
     constexpr float E = 2.71828182846f;
 
-    inline glm::mat4 CalcTransform(const glm::vec3 &v3Position, const glm::vec3 &v3Size, float fRotation = 0.f, const glm::vec3 &v3RotationAxis = {0, 0, 1})
+    inline glm::mat4 CalcTransform(const glm::vec3 &v3Position, const glm::vec3 &v3Size, float fRotation = 0.f, const glm::vec3 &v3RotationAxis = { 0, 0, 1 })
     {
         return glm::translate(glm::mat4(1.f), v3Position) * glm::rotate(glm::mat4(1.f), fRotation, v3RotationAxis) * glm::scale(glm::mat4(1.f), v3Size);
+    }
+
+    inline void SetPos(glm::mat4 &matrix, const glm::vec3 &pos)
+    {
+        matrix[3].x = pos.x;
+        matrix[3].y = pos.y;
+        matrix[3].z = pos.z;
+        matrix[3].w = 1;
+    }
+
+    inline void SetSize(glm::mat4 &matrix, const glm::vec3 &size)
+    {
+        matrix[0].x = size.x;
+        matrix[1].y = size.y;
+        matrix[2].z = size.z;
+        matrix[3].w = 1;
     }
 
     inline constexpr float Approach(float target, float current, float delta)

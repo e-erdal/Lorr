@@ -14,6 +14,7 @@
 #include "Engine/Audio/AudioSystem.hh"
 #include "Engine/Graphics/Shader.hh"
 #include "Engine/Graphics/Texture2D.hh"
+#include "Engine/Graphics/Font.hh"
 
 namespace Lorr
 {
@@ -50,6 +51,19 @@ namespace Lorr
             return resource;
         }
 
+        template<typename... Args>
+        inline Font *LoadFont(const Identifier &ident, const std::string &path, Args &&...args)
+        {
+            FontData data;
+            if (!ImportFontData(path, data)) return 0;
+
+            Font *resource = new Font;
+            resource->Init(ident, &data, std::forward<Args>(args)...);
+            m_Resources.emplace(ident, resource);
+
+            return resource;
+        }
+
         template<typename T = IResource>
         inline T *GetResource(const Identifier &ident)
         {
@@ -63,6 +77,7 @@ namespace Lorr
         bool ImportTextureData(const std::string &path, Texture2DData &outData);
         bool ImportAudioData(const std::string &path, AudioData &outData);
         bool ImportShaderData(const std::string &path, ShaderData &outData);
+        bool ImportFontData(const std::string &path, FontData &outData);
 
     public:
         static bool LoadResourceFile(const std::string &path, BufferStream &buf);
@@ -74,11 +89,13 @@ namespace Lorr
         bool ParseTextureDataFromFile(Texture2DData &outData, BufferStream &resourceBuf);
         bool ParseAudioDataFromFile(AudioData &outData, BufferStream &resourceBuf);
         bool ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf);
+        bool ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf);
 
         // Out
         bool ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf);
         bool ParseAudioToBuffer(BufferStream &inBuf, BufferStream &outBuf);
         bool ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf);
+        bool ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf);
 
     private:
         std::unordered_map<Identifier, IResource *> m_Resources;

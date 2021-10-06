@@ -78,6 +78,16 @@ namespace Lorr
             StartOver();
         }
 
+        inline void Reset(BufferStream &data)
+        {
+            SAFE_FREE(m_Data);
+            m_DataLen = 0;
+
+            Expand(data.GetSize());
+            AssignPtr(data.GetData(), data.GetSize());
+            StartOver();
+        }
+
         inline void Dump()
         {
             printf("========= BufferStream memory dump =========\n");

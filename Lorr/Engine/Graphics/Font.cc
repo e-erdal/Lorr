@@ -33,7 +33,7 @@ namespace Lorr
         data.Data = m_pAtlas->data;
 
         m_pTexture = new Texture2D;
-        m_pTexture->Init("", &data, 0);
+        m_pTexture->Init("", &data, TEXTURE_MAG_NEAREST);
     }
 
     void Font::ParseToMemory(FontData *pOutData, BufferStream &imageBuffer)
