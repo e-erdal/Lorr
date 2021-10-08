@@ -41,6 +41,10 @@ namespace Lorr
         //* Audio system
         m_pAudioSystem->Init();
 
+        //* Physics system
+        b2Vec2 gravity(0.0f, 9.89f);
+        m_World = new b2World(gravity);
+
         return true;
     }
 

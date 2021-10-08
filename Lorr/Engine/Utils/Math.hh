@@ -20,6 +20,11 @@ namespace Lorr::Math
 
     inline void SetPos(glm::mat4 &matrix, const glm::vec3 &pos)
     {
+        matrix[0].x = 1.f;
+        matrix[1].y = 1.f;
+        matrix[2].z = 1.f;
+        // matrix[3].w = 1.f;
+
         matrix[3].x = pos.x;
         matrix[3].y = pos.y;
         matrix[3].z = pos.z;

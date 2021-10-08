@@ -4,6 +4,7 @@
 
 #include "Systems/TransformSystem.hh"
 #include "Systems/RendererSystem.hh"
+#include "Systems/PhysicsSystem.hh"
 
 namespace Lorr
 {
@@ -16,6 +17,7 @@ namespace Lorr
     {
         m_Identifier = ident;
 
+        RegisterSystem<System::PhysicsSystem>();
         RegisterSystem<System::TransformSystem>();
         RegisterSystem<System::RendererSystem>();
     }

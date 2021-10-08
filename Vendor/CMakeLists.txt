@@ -76,3 +76,10 @@ add_subdirectory(freetype)
 add_subdirectory(freetype-bgfx)
 
 ###############################################################################################
+
+option(BOX2D_BUILD_UNIT_TESTS "Build the Box2D unit tests" OFF)
+option(BOX2D_BUILD_TESTBED "Build the Box2D testbed" OFF)
+option(BOX2D_BUILD_DOCS "Build the Box2D documentation" OFF)
+option(BOX2D_USER_SETTINGS "Override Box2D settings with b2UserSettings.h" OFF)
+
+add_subdirectory(box2d)

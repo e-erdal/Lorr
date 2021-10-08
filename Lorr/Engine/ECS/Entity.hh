@@ -61,4 +61,10 @@ namespace Lorr
         EntityHandle m_Handle = kInvalidEntity;
     };
 
+    namespace ECSUtils
+    {
+        Entity &AttachDynamicBox(Entity &target, float destiny, float friction);
+        Entity &AttachStaticBox(Entity &target, float destiny = 0.f);
+    };
+
 }  // namespace Lorr

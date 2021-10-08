@@ -4,6 +4,7 @@
     - Renderable component.
 - Font rendering.
     - Basic UTF8 implementation.
+- 2D Box2D physics (Broken/no MKR handling)
 
 # v1.1-alpha
 - Audio system.

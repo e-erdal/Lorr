@@ -25,6 +25,7 @@ set(ENGINE_VENDOR
     vorbisfile
     zlib1
     freetype-bgfx
+    box2d
 )
 
 set(ENGINE_COMPONENTS

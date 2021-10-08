@@ -14,6 +14,8 @@
 #include "Engine/Graphics/Renderer/VertexBatcher.hh"
 #include "Engine/Managers/ResourceManager.hh"
 
+#include <box2d/box2d.h>
+
 namespace Lorr
 {
     class Engine
@@ -62,6 +64,11 @@ namespace Lorr
             return m_pBatcher;
         }
 
+        b2World *GetPhyWorld()
+        {
+            return m_World;
+        }
+
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
@@ -71,6 +78,8 @@ namespace Lorr
         ImGuiHandler *m_pImGui = new ImGuiHandler;
         ResourceManager *m_pResourceMan = new ResourceManager;
         AudioSystem *m_pAudioSystem = new AudioSystem;
+
+        b2World *m_World = 0;
     };
 
     inline Engine *GetEngine()

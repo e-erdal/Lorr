@@ -38,7 +38,7 @@ namespace Lorr
     private:
         Texture2D *m_pPlaceholderTexture = 0;
 
-        uint32_t m_ResetFlags = 0;
+        uint32_t m_ResetFlags = BGFX_RESET_MSAA_X16;
         uint32_t m_ResWidth = 0;
         uint32_t m_ResHeight = 0;
 
