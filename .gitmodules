@@ -19,3 +19,12 @@
 [submodule "Vendor/box2d"]
 	path = Vendor/box2d
 	url = https://github.com/erincatto/box2d.git
+[submodule "Vendor/bx-cmake"]
+	path = Vendor/bx-cmake
+	url = https://github.com/e-erdal/bx-cmake.git
+[submodule "Vendor/--recursive"]
+	path = Vendor/--recursive
+	url = https://github.com/e-erdal/bimg-cmake.git
+[submodule "Vendor/bimg-cmake"]
+	path = Vendor/bimg-cmake
+	url = https://github.com/e-erdal/bimg-cmake.git
