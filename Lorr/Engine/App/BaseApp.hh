@@ -5,6 +5,7 @@
 #pragma once
 
 #include "Engine/Core/Window/IWindow.hh"
+#include "Engine/ECS/Scene.hh"
 
 namespace Lorr
 {
@@ -43,8 +44,12 @@ namespace Lorr
         virtual void Tick(float deltaTime) = 0;
         virtual void Draw() = 0;
 
+        void SetCurrentScene(Scene *pScene);
+
     protected:
         Engine *m_pEngine = 0;
+        Scene *m_pCurrentScene = 0;
+        
         bool m_ConsoleApp = false;
     };
 

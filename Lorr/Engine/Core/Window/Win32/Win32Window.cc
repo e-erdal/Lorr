@@ -15,67 +15,67 @@ namespace Lorr
 
         switch (wParam)
         {
-        case VK_ESCAPE: return Key::Key_ESCAPE;
-        case VK_TAB: return Key::Key_TAB;
-        case VK_LSHIFT: return Key::Key_LEFT_SHIFT;
-        case VK_RSHIFT: return Key::Key_RIGHT_SHIFT;
-        case VK_LCONTROL: return Key::Key_LEFT_CONTROL;
-        case VK_RCONTROL: return Key::Key_RIGHT_CONTROL;
-        case VK_LMENU: return Key::Key_LEFT_ALT;
-        case VK_RMENU: return Key::Key_RIGHT_ALT;
-        case VK_NUMLOCK: return Key::Key_NUM_LOCK;
-        case VK_CAPITAL: return Key::Key_CAPS_LOCK;
-        case VK_SNAPSHOT: return Key::Key_PRINT_SCREEN;
-        case VK_SCROLL: return Key::Key_SCROLL_LOCK;
-        case VK_PAUSE: return Key::Key_PAUSE;
-        case VK_DELETE: return Key::Key_DELETE;
-        case VK_BACK: return Key::Key_BACKSPACE;
-        case VK_RETURN: return Key::Key_ENTER;
-        case VK_HOME: return Key::Key_HOME;
-        case VK_END: return Key::Key_END;
-        case VK_PRIOR: return Key::Key_PAGE_UP;
-        case VK_NEXT: return Key::Key_PAGE_DOWN;
-        case VK_LEFT: return Key::Key_LEFT;
-        case VK_RIGHT: return Key::Key_RIGHT;
-        case VK_DOWN: return Key::Key_DOWN;
-        case VK_UP: return Key::Key_UP;
-        case VK_SPACE: return Key::Key_SPACE;
-        case VK_LWIN: return Key::Key_LEFT_SUPER;
-        case VK_RWIN: return Key::Key_RIGHT_SUPER;
-        case VK_APPS: return Key::Key_MENU;
-        case VK_INSERT: return Key::Key_INSERT;
+            case VK_ESCAPE: return Key::Key_ESCAPE;
+            case VK_TAB: return Key::Key_TAB;
+            case VK_LSHIFT: return Key::Key_LEFT_SHIFT;
+            case VK_RSHIFT: return Key::Key_RIGHT_SHIFT;
+            case VK_LCONTROL: return Key::Key_LEFT_CONTROL;
+            case VK_RCONTROL: return Key::Key_RIGHT_CONTROL;
+            case VK_LMENU: return Key::Key_LEFT_ALT;
+            case VK_RMENU: return Key::Key_RIGHT_ALT;
+            case VK_NUMLOCK: return Key::Key_NUM_LOCK;
+            case VK_CAPITAL: return Key::Key_CAPS_LOCK;
+            case VK_SNAPSHOT: return Key::Key_PRINT_SCREEN;
+            case VK_SCROLL: return Key::Key_SCROLL_LOCK;
+            case VK_PAUSE: return Key::Key_PAUSE;
+            case VK_DELETE: return Key::Key_DELETE;
+            case VK_BACK: return Key::Key_BACKSPACE;
+            case VK_RETURN: return Key::Key_ENTER;
+            case VK_HOME: return Key::Key_HOME;
+            case VK_END: return Key::Key_END;
+            case VK_PRIOR: return Key::Key_PAGE_UP;
+            case VK_NEXT: return Key::Key_PAGE_DOWN;
+            case VK_LEFT: return Key::Key_LEFT;
+            case VK_RIGHT: return Key::Key_RIGHT;
+            case VK_DOWN: return Key::Key_DOWN;
+            case VK_UP: return Key::Key_UP;
+            case VK_SPACE: return Key::Key_SPACE;
+            case VK_LWIN: return Key::Key_LEFT_SUPER;
+            case VK_RWIN: return Key::Key_RIGHT_SUPER;
+            case VK_APPS: return Key::Key_MENU;
+            case VK_INSERT: return Key::Key_INSERT;
 
-        case VK_ADD: return Key::Key_KP_ADD;
-        case VK_DECIMAL:
-        case VK_SEPARATOR: return Key::Key_KP_DECIMAL;
-        case VK_DIVIDE: return Key::Key_KP_DIVIDE;
-        case VK_MULTIPLY: return Key::Key_KP_MULTIPLY;
-        case VK_SUBTRACT: return Key::Key_KP_SUBTRACT;
+            case VK_ADD: return Key::Key_KP_ADD;
+            case VK_DECIMAL:
+            case VK_SEPARATOR: return Key::Key_KP_DECIMAL;
+            case VK_DIVIDE: return Key::Key_KP_DIVIDE;
+            case VK_MULTIPLY: return Key::Key_KP_MULTIPLY;
+            case VK_SUBTRACT: return Key::Key_KP_SUBTRACT;
 
-        case VK_F1: return Key::Key_F1;
-        case VK_F2: return Key::Key_F2;
-        case VK_F3: return Key::Key_F3;
-        case VK_F4: return Key::Key_F4;
-        case VK_F5: return Key::Key_F5;
-        case VK_F6: return Key::Key_F6;
-        case VK_F7: return Key::Key_F7;
-        case VK_F8: return Key::Key_F8;
-        case VK_F9: return Key::Key_F9;
-        case VK_F10: return Key::Key_F10;
-        case VK_F11: return Key::Key_F11;
-        case VK_F12: return Key::Key_F12;
-        case VK_F13: return Key::Key_F13;
-        case VK_F14: return Key::Key_F14;
-        case VK_F15: return Key::Key_F15;
-        case VK_F16: return Key::Key_F16;
-        case VK_F17: return Key::Key_F17;
-        case VK_F18: return Key::Key_F18;
-        case VK_F19: return Key::Key_F19;
-        case VK_F20: return Key::Key_F20;
-        case VK_F21: return Key::Key_F21;
-        case VK_F22: return Key::Key_F22;
-        case VK_F23: return Key::Key_F23;
-        case VK_F24: return Key::Key_F24;
+            case VK_F1: return Key::Key_F1;
+            case VK_F2: return Key::Key_F2;
+            case VK_F3: return Key::Key_F3;
+            case VK_F4: return Key::Key_F4;
+            case VK_F5: return Key::Key_F5;
+            case VK_F6: return Key::Key_F6;
+            case VK_F7: return Key::Key_F7;
+            case VK_F8: return Key::Key_F8;
+            case VK_F9: return Key::Key_F9;
+            case VK_F10: return Key::Key_F10;
+            case VK_F11: return Key::Key_F11;
+            case VK_F12: return Key::Key_F12;
+            case VK_F13: return Key::Key_F13;
+            case VK_F14: return Key::Key_F14;
+            case VK_F15: return Key::Key_F15;
+            case VK_F16: return Key::Key_F16;
+            case VK_F17: return Key::Key_F17;
+            case VK_F18: return Key::Key_F18;
+            case VK_F19: return Key::Key_F19;
+            case VK_F20: return Key::Key_F20;
+            case VK_F21: return Key::Key_F21;
+            case VK_F22: return Key::Key_F22;
+            case VK_F23: return Key::Key_F23;
+            case VK_F24: return Key::Key_F24;
         }
 
         return Key::Key_UNKNOWN;
@@ -222,16 +222,16 @@ namespace Lorr
 
         switch (cursor)
         {
-        case Cursor::Arrow: ::SetCursor(arrowCursor); break;
-        case Cursor::TextInput: ::SetCursor(ibeamCursor); break;
-        case Cursor::ResizeAll: ::SetCursor(sizeAllCursor); break;
-        case Cursor::ResizeEW: ::SetCursor(sizeWECursor); break;
-        case Cursor::ResizeNS: ::SetCursor(sizeNSCursor); break;
-        case Cursor::ResizeNESW: ::SetCursor(sizeNESWCursor); break;  // FIXME:
-        case Cursor::ResizeNWSE: ::SetCursor(sizeNWSECursor); break;
-        case Cursor::Hand: ::SetCursor(handCursor); break;
-        case Cursor::NotAllowed: ::SetCursor(noCursor); break;
-        case Cursor::Hidden: ::ShowCursor(FALSE); break;
+            case Cursor::Arrow: ::SetCursor(arrowCursor); break;
+            case Cursor::TextInput: ::SetCursor(ibeamCursor); break;
+            case Cursor::ResizeAll: ::SetCursor(sizeAllCursor); break;
+            case Cursor::ResizeEW: ::SetCursor(sizeWECursor); break;
+            case Cursor::ResizeNS: ::SetCursor(sizeNSCursor); break;
+            case Cursor::ResizeNESW: ::SetCursor(sizeNESWCursor); break;  // FIXME:
+            case Cursor::ResizeNWSE: ::SetCursor(sizeNWSECursor); break;
+            case Cursor::Hand: ::SetCursor(handCursor); break;
+            case Cursor::NotAllowed: ::SetCursor(noCursor); break;
+            case Cursor::Hidden: ::ShowCursor(FALSE); break;
         }
 
         m_CurrentCursor = cursor;
@@ -249,148 +249,145 @@ namespace Lorr
 
         switch (uMSG)
         {
-        case WM_DESTROY:
-        case WM_CLOSE: pWindow->m_ShouldClose = true; break;
-        case WM_SIZE:
-        {
-            if (pWindow->m_SizeEnded)
+            case WM_DESTROY:
+            case WM_CLOSE: pWindow->m_ShouldClose = true; break;
+            case WM_SIZE:
             {
-                LOG_TRACE("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
-                pWindow->OnResolutionChanged((uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
-                pWindow->m_Width = (uint32_t)LOWORD(lParam);
-                pWindow->m_Height = (uint32_t)HIWORD(lParam);
+                if (pWindow->m_SizeEnded)
+                {
+                    LOG_TRACE("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
+                    pWindow->OnResolutionChanged((uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
+                    pWindow->m_Width = (uint32_t)LOWORD(lParam);
+                    pWindow->m_Height = (uint32_t)HIWORD(lParam);
+                }
+
+                break;
+            }
+            case WM_EXITSIZEMOVE:
+                pWindow->m_SizeEnded = true;
+                RECT rc;
+                GetClientRect(pWindow->m_Handle, &rc);
+                LOG_TRACE("Window size changed to {}, {}", rc.right, rc.bottom);
+                pWindow->OnResolutionChanged((uint32_t)rc.right, (uint32_t)rc.bottom);
+                pWindow->m_Width = (uint32_t)rc.right;
+                pWindow->m_Height = (uint32_t)rc.bottom;
+
+                break;
+            case WM_ENTERSIZEMOVE: pWindow->m_SizeEnded = false; break;
+            case WM_LBUTTONDOWN:
+            case WM_LBUTTONDBLCLK:
+            case WM_RBUTTONDOWN:
+            case WM_RBUTTONDBLCLK:
+            {
+                MouseButton keys = MouseButton::NONE;
+                if (wParam & MK_LBUTTON) keys |= MouseButton::BTN_1;
+                if (wParam & MK_RBUTTON) keys |= MouseButton::BTN_2;
+
+                KeyMod mods = KeyMod::None;
+
+                if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
+                if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
+                if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
+                if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
+                if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
+
+                ButtonState state;
+
+                if (uMSG == WM_LBUTTONDOWN || uMSG == WM_RBUTTONDOWN)
+                    state = ButtonState::Pressed;
+                else
+                    state = ButtonState::DoubleClicked;
+
+                pWindow->OnSetMouseState(mods, keys, state, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
+
+                break;
+            }
+            case WM_LBUTTONUP:
+            case WM_RBUTTONUP:
+            {
+                MouseButton keys = MouseButton::NONE;
+                if (wParam & MK_LBUTTON) keys |= MouseButton::BTN_1;
+                if (wParam & MK_RBUTTON) keys |= MouseButton::BTN_2;
+
+                KeyMod mods = KeyMod::None;
+
+                if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
+                if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
+                if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
+                if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
+                if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
+
+                pWindow->OnSetMouseState(mods, keys, ButtonState::Released, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
+
+                break;
             }
 
-            break;
-        }
-        case WM_EXITSIZEMOVE:
-            pWindow->m_SizeEnded = true;
-            RECT rc;
-            GetClientRect(pWindow->m_Handle, &rc);
-            LOG_TRACE("Window size changed to {}, {}", rc.right, rc.bottom);
-            pWindow->OnResolutionChanged((uint32_t)rc.right, (uint32_t)rc.bottom);
-            pWindow->m_Width = (uint32_t)rc.right;
-            pWindow->m_Height = (uint32_t)rc.bottom;
-
-            break;
-        case WM_ENTERSIZEMOVE: pWindow->m_SizeEnded = false; break;
-        case WM_LBUTTONDOWN:
-        case WM_LBUTTONDBLCLK:
-        case WM_RBUTTONDOWN:
-        case WM_RBUTTONDBLCLK:
-        {
-            MouseButton keys = MouseButton::NONE;
-            if (wParam & MK_LBUTTON) keys |= MouseButton::BTN_1;
-            if (wParam & MK_RBUTTON) keys |= MouseButton::BTN_2;
-
-            KeyMod mods = KeyMod::None;
-
-            if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
-            if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
-            if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
-            if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
-            if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
-
-            ButtonState state;
-
-            if (uMSG == WM_LBUTTONDOWN || uMSG == WM_RBUTTONDOWN)
-                state = ButtonState::Pressed;
-            else
-                state = ButtonState::DoubleClicked;
-
-            pWindow->OnSetMouseState(mods, keys, state, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
-
-            break;
-        }
-        case WM_LBUTTONUP:
-        case WM_RBUTTONUP:
-        {
-            MouseButton keys = MouseButton::NONE;
-            if (wParam & MK_LBUTTON) keys |= MouseButton::BTN_1;
-            if (wParam & MK_RBUTTON) keys |= MouseButton::BTN_2;
-
-            KeyMod mods = KeyMod::None;
-
-            if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
-            if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
-            if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
-            if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
-            if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
-
-            pWindow->OnSetMouseState(mods, keys, ButtonState::Released, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
-
-            break;
-        }
-
-        case WM_MOUSEMOVE:
-        {
-            static bool first = true;
-            static int lastX, lastY;
-            int offsetX = 0, offsetY = 0;
-
-            int x = ((int)(short)LOWORD(lParam));
-            int y = ((int)(short)HIWORD(lParam));
-
-            if (first)
+            case WM_MOUSEMOVE:
             {
-                lastX = x;
-                lastY = y;
+                static bool first = true;
+                static int lastX, lastY;
+                int offsetX = 0, offsetY = 0;
 
-                first = false;
+                int x = ((int)(short)LOWORD(lParam));
+                int y = ((int)(short)HIWORD(lParam));
+
+                if (first)
+                {
+                    lastX = x;
+                    lastY = y;
+
+                    first = false;
+                }
+                else
+                {
+                    offsetX = x - lastX;
+                    offsetY = y - lastY;
+
+                    lastX = x;
+                    lastY = y;
+                }
+
+                pWindow->m_CursorPos = glm::ivec2(x, y);
+                pWindow->OnSetMousePosition(pWindow->m_CursorPos, glm::ivec2(offsetX, offsetY));
+
+                break;
             }
-            else
+            case WM_KEYUP:
+            case WM_KEYDOWN:
             {
-                offsetX = x - lastX;
-                offsetY = y - lastY;
+                Key key = TranslateWin32KeySym(wParam);
 
-                lastX = x;
-                lastY = y;
+                KeyMod mods = KeyMod::None;
+
+                if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
+                if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
+                if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
+                if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
+                if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
+
+                pWindow->OnSetKeyState(key, uMSG == WM_KEYDOWN ? ButtonState::Pressed : ButtonState::Released, mods);
+
+                break;
+            }
+            case WM_SETCURSOR:
+            {
+                if (LOWORD(lParam) == 1)
+                {
+                    pWindow->SetCursor(pWindow->m_CurrentCursor);
+                    return true;
+                }
+
+                return DefWindowProc(hHwnd, uMSG, wParam, lParam);
             }
 
-            pWindow->m_CursorPos = glm::ivec2(x, y);
-            pWindow->OnSetMousePosition(pWindow->m_CursorPos, glm::ivec2(offsetX, offsetY));
-
-            break;
-        }
-        case WM_KEYUP:
-        case WM_KEYDOWN:
-        {
-            Key key = TranslateWin32KeySym(wParam);
-
-            KeyMod mods = KeyMod::None;
-
-            if (GetKeyState(VK_SHIFT) & 0x8000) mods |= KeyMod::SHIFT;
-            if (GetKeyState(VK_CONTROL) & 0x8000) mods |= KeyMod::CONTROL;
-            if (GetKeyState(VK_MENU) & 0x8000) mods |= KeyMod::ALT;
-            if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
-            if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
-
-            pWindow->OnSetKeyState(key, uMSG == WM_KEYDOWN ? ButtonState::Pressed : ButtonState::Released, mods);
-
-            break;
-        }
-        case WM_SETCURSOR:
-        {
-            if (LOWORD(lParam) == 1)
-            {
-                pWindow->SetCursor(pWindow->m_CurrentCursor);
-                return true;
-            }
-
-            return DefWindowProc(hHwnd, uMSG, wParam, lParam);
-        }
-
-        default: return DefWindowProc(hHwnd, uMSG, wParam, lParam);
+            default: return DefWindowProc(hHwnd, uMSG, wParam, lParam);
         }
 
         return 0;
     }
 
-    bgfx::PlatformData Win32Window::GetPlatformData()
+    void *Win32Window::GetHandle()
     {
-        bgfx::PlatformData platformData;
-        platformData.nwh = (void *)m_Handle;
-
-        return platformData;
+        return m_Handle;
     }
 }  // namespace Lorr

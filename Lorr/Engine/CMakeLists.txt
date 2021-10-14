@@ -8,14 +8,21 @@ if (NOT "${ENGINE_VERSION_PATCH}" STREQUAL "")
     message("Current patch(rev) is ${ENGINE_VERSION_PATCH}.")
 endif()
 
+set(ENGINE_GPU_LIBS)
+
+if (WIN32)
+    set(ENGINE_GPU_LIBS
+        d3dcompiler
+        d3d11
+    )
+endif()
+
 # Third party applications
 set(ENGINE_VENDOR
-    bgfx
     bx
     bimg
     glm
     imgui
-    bgfx-imgui
     lw
     OpenAL
     spdlog
@@ -24,8 +31,8 @@ set(ENGINE_VENDOR
     vorbis
     vorbisfile
     zlib1
-    freetype-bgfx
     box2d
+    freetype-gl
 )
 
 set(ENGINE_COMPONENTS
@@ -143,5 +150,5 @@ LorrComponent(
     SOURCE
         App/*.cc
     VENDOR
-        ${ENGINE_COMPONENTS}
+        ${ENGINE_COMPONENTS} ${ENGINE_GPU_LIBS} 
 )

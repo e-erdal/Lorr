@@ -2,6 +2,8 @@
 
 namespace Lorr
 {
+    BufferStreamMemoyWatcher *g_pBSWatcher;
+
     Engine::~Engine()
     {
         ZoneScoped;
@@ -19,10 +21,13 @@ namespace Lorr
         Console::Init();
         LOG_INFO("Initializing Lorr...");
 
+        g_pBSWatcher = new BufferStreamMemoyWatcher(false);
+
         if (description.ConsoleApp)
         {
             m_pResourceMan->Init();
             m_pAudioSystem->Init();
+            m_pRenderer->Init(0);
             return true;
         }
 
@@ -36,7 +41,7 @@ namespace Lorr
         m_pRenderer->Init(m_pWindow);
         m_pBatcher->Init();
         m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
-        m_pImGui->Init(this);
+        // m_pImGui->Init(this);
 
         //* Audio system
         m_pAudioSystem->Init();
@@ -52,17 +57,17 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_pRenderer->SetViewTransform(0, m_pCamera->GetProjection(), m_pCamera->GetView());
+        // m_pRenderer->SetViewTransform(0, m_pCamera->GetProjection(), m_pCamera->GetView());
 
         m_pRenderer->BeginFrame();
-        m_pImGui->BeginFrame();
+        // m_pImGui->BeginFrame();
     }
 
     void Engine::EndFrame()
     {
         ZoneScoped;
 
-        m_pImGui->EndFrame();
+        // m_pImGui->EndFrame();
         m_pRenderer->EndFrame();
     }
 

@@ -10,10 +10,40 @@
 
 namespace Lorr
 {
+    class BufferStreamMemoyWatcher
+    {
+    public:
+        BufferStreamMemoyWatcher(bool enable) : m_Log(enable)
+        {
+        }
+
+        void Allocated(size_t size)
+        {
+            if (!m_Log) return;
+
+            m_TotalSize += size;
+            LOG_TRACE("BufferStream allocated {} bytes, total size is now {}.", size, m_TotalSize);
+        }
+
+        void Deallocated(size_t size)
+        {
+            if (!m_Log) return;
+            
+            m_TotalSize -= size;
+            LOG_TRACE("BufferStream deallocated {} bytes, total size is now {}.", size, m_TotalSize);
+        }
+
+    private:
+        bool m_Log = false;
+        size_t m_TotalSize = 0;
+    };
+
+    extern BufferStreamMemoyWatcher *g_pBSWatcher;
+
     class BufferStream
     {
     public:
-        BufferStream() = default;
+        BufferStream(){};
 
         BufferStream(size_t dataLen)
         {
@@ -37,6 +67,7 @@ namespace Lorr
 
         ~BufferStream()
         {
+            g_pBSWatcher->Deallocated(m_DataLen);
             SAFE_FREE(m_Data);
         }
 
@@ -83,9 +114,15 @@ namespace Lorr
             SAFE_FREE(m_Data);
             m_DataLen = 0;
 
-            Expand(data.GetSize());
-            AssignPtr(data.GetData(), data.GetSize());
+            Expand(data.m_DataLen);
+            AssignPtr(data.m_Data, data.m_DataLen);
+
             StartOver();
+        }
+
+        inline uint8_t *GetOffsetPtr()
+        {
+            return (m_Data + m_Offset);
         }
 
         inline void Dump()
@@ -121,6 +158,8 @@ namespace Lorr
             m_DataLen += len;
             m_Data = _REALLOC(m_Data, m_DataLen);
             _ZEROM((m_Data + m_Offset), len);
+
+            g_pBSWatcher->Allocated(len);
         }
 
         // Copies input into buffer's data. Also increases offset.
@@ -194,6 +233,14 @@ namespace Lorr
 
             memcpy(m_Data + m_Offset, (uint8_t *)&pData, size);
             m_Offset += size;
+        }
+
+        inline void Insert(BufferStream &buf)
+        {
+            Expand(buf.m_DataLen);
+
+            memcpy(m_Data + m_Offset, buf.m_Data, buf.m_DataLen);
+            m_Offset += buf.m_DataLen;
         }
 
         template<typename T>
@@ -274,6 +321,8 @@ namespace Lorr
         // Decompress tool for buffer
         void Decompress(size_t decompressedSize)
         {
+            g_pBSWatcher->Deallocated(m_DataLen);
+
             uint8_t *dcompData = zLibInflateToMemory(m_Data, m_DataLen, decompressedSize);
 
             m_DataLen = decompressedSize;
@@ -282,10 +331,14 @@ namespace Lorr
             memcpy(m_Data, dcompData, m_DataLen);
 
             free(dcompData);
+
+            g_pBSWatcher->Allocated(m_DataLen);
         }
 
         void Compress()
         {
+            g_pBSWatcher->Deallocated(m_DataLen);
+
             uint32_t outSize = 0;
             uint8_t *compData = zlibDeflateToMemory(m_Data, m_DataLen, &outSize);
 
@@ -295,6 +348,8 @@ namespace Lorr
             memcpy(m_Data, compData, m_DataLen);
 
             free(compData);
+
+            g_pBSWatcher->Allocated(m_DataLen);
         }
 
     public:

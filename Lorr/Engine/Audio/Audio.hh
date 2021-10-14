@@ -9,6 +9,14 @@
 
 namespace Lorr
 {
+    class AudioChannel;
+    
+    struct AudioDesc
+    {
+        AudioChannel *pChannel = 0;
+        // TODO: Settings/info for effects, etc...
+    };
+
     struct AudioData
     {
         uint32_t PCMFrequency;
@@ -17,13 +25,12 @@ namespace Lorr
         BufferStream PCMFrames;
     };
 
-    class AudioChannel;
-    class Audio : public IResource
+    class Audio : public IResource<AudioDesc, AudioData>
     {
     public:
         Audio() = default;
 
-        void Init(const Identifier &ident, AudioData *pData, AudioChannel *pChannel);
+        void Init(const Identifier &ident, AudioDesc *pDesc, AudioData *pData) override;
         static void ParseToMemory(AudioData *outData, BufferStream &audioBuffer);
 
         void Play();
@@ -41,7 +48,7 @@ namespace Lorr
 
         void SetPosition(glm::vec3 position);
 
-        static constexpr ResourceType m_Type = ResourceType::Audio;
+        static constexpr ResourceType m_ResType = ResourceType::Audio;
 
     private:
         AudioChannel *m_pChannel;

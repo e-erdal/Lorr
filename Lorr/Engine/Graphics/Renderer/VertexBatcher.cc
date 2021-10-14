@@ -8,11 +8,11 @@ namespace Lorr
 
     void VertexBatcher::Init()
     {
-        m_Layout.begin()
-            .add(bgfx::Attrib::Position, 3, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::TexCoord0, 2, bgfx::AttribType::Float)
-            .add(bgfx::Attrib::Color0, 4, bgfx::AttribType::Float, true)
-            .end();
+        InputLayout layout = {
+            { VertexAttribType::Vec3, "POSITION" },
+            { VertexAttribType::Vec2, "TEXCOORD" },
+            { VertexAttribType::Vec4, "COLOR" },
+        };
 
         uint32_t *quads = new uint32_t[kMaxRects * 6];
         uint32_t offset = 0;
@@ -30,13 +30,13 @@ namespace Lorr
             offset += 4;
         }
 
-        m_IndexBuffer = bgfx::createIndexBuffer(bgfx::copy(quads, kMaxRects * 6 * sizeof(uint32_t)), BGFX_BUFFER_INDEX32);
+        // m_IndexBuffer = bgfx::createIndexBuffer(bgfx::copy(quads, kMaxRects * 6 * sizeof(uint32_t)), BGFX_BUFFER_INDEX32);
         delete[] quads;
 
-        m_TextureUniform = bgfx::createUniform("s_Texture", bgfx::UniformType::Sampler);
-
-        Shader *pShader = GetEngine()->GetResourceMan()->LoadShader("engine://batcher-program", "batch.lr", false);
-        m_ShaderProgram = pShader->GetHandle();
+        ShaderDesc vertDesc;
+        vertDesc.Layout = layout;
+        m_VertexShader = Shader::Create("engine://batcher-program-vert", "batchv.lr", &vertDesc);
+        m_PixelShader = Shader::Create("engine://batcher-program-pixel", "batchp.lr");
     }
 
     void VertexBatcher::Begin()
@@ -50,26 +50,29 @@ namespace Lorr
 
     void VertexBatcher::Flush()
     {
+        m_VertexShader->Use();
+        m_PixelShader->Use();
+
         for (auto &&event : m_Queue)
         {
-            Texture2D *pTexture = event.first;
+            TextureHandle texture = event.first;
             auto &vertexes = event.second.Vertices;
             auto &indexes = event.second.Indexes;
 
             if (vertexes.size() > 0)
             {
-                bgfx::TransientVertexBuffer tvb;
-                bgfx::allocTransientVertexBuffer(&tvb, vertexes.size(), m_Layout);
-                memcpy(tvb.data, &vertexes[0], vertexes.size() * sizeof(BatcherVertex));
-                bgfx::setVertexBuffer(0, &tvb, 0, vertexes.size());
+                // bgfx::TransientVertexBuffer tvb;
+                // bgfx::allocTransientVertexBuffer(&tvb, vertexes.size(), m_Layout);
+                // memcpy(tvb.data, &vertexes[0], vertexes.size() * sizeof(BatcherVertex));
+                // bgfx::setVertexBuffer(0, &tvb, 0, vertexes.size());
 
-                // This is wrong, nvm, not for now
-                uint32_t count = indexes ? indexes : kMaxRects * 6;
-                bgfx::setIndexBuffer(m_IndexBuffer, 0, count);
+                // // This is wrong, nvm, not for now
+                // uint32_t count = indexes ? indexes : kMaxRects * 6;
+                // bgfx::setIndexBuffer(m_IndexBuffer, 0, count);
 
-                GetEngine()->GetRenderer()->SetTexture(pTexture, m_TextureUniform);
-                bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z | BGFX_STATE_BLEND_ALPHA);
-                bgfx::submit(0, m_ShaderProgram);
+                // GetEngine()->GetRenderer()->SetTexture(pTexture, m_TextureUniform);
+                // bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z | BGFX_STATE_BLEND_ALPHA);
+                // bgfx::submit(0, m_ShaderProgram);
             }
         }
     }
@@ -80,11 +83,15 @@ namespace Lorr
         m_Queue.clear();
     }
 
-    void VertexBatcher::PushRect(Texture2D *pTexture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
+    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
     {
-        const glm::mat4x2 rUV = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
+        const glm::mat4x2 uvMat = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
+        PushRect(texture, transform, uvMat, color);
+    }
 
-        BatcherEvent &event = GetEvent(!pTexture ? GetEngine()->GetRenderer()->GetPlaceholder() : pTexture);
+    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)
+    {
+        BatcherEvent &event = GetEvent(!texture ? GetEngine()->GetRenderer()->GetPlaceholder() : texture);
         BatcherVertices &vertices = event.Vertices;
         vertices.resize(vertices.size() + 4);
 
@@ -93,7 +100,7 @@ namespace Lorr
         for (size_t i = 0; i < 4; i++)
         {
             info->Pos = transform * kVertexPos[i];
-            info->UV = rUV[i];
+            info->UV = uv[i];
             info->Color = (glm::vec4)color / 255.f;
             info++;
         }
@@ -101,13 +108,18 @@ namespace Lorr
         event.Indexes += 6;
     }
 
-    BatcherEvent &VertexBatcher::GetEvent(Texture2D *pTexture)
+    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color)
+    {
+        PushRect(texture, transform, kVertexUV, color);
+    }
+
+    BatcherEvent &VertexBatcher::GetEvent(TextureHandle texture)
     {
         constexpr uint32_t allocSize = 128 * 4 * sizeof(BatcherVertex);
 
-        if (m_Queue.size() > 0 && m_Queue.back().first == pTexture) return m_Queue.back().second;
+        if (m_Queue.size() > 0 && m_Queue.back().first == texture) return m_Queue.back().second;
 
-        m_Queue.push_back(std::make_pair(pTexture, BatcherEvent{}));
+        m_Queue.push_back(std::make_pair(texture, BatcherEvent{}));
         m_Queue.back().second.Vertices.reserve(allocSize);
 
         return m_Queue.back().second;

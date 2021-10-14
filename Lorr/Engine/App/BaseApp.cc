@@ -26,7 +26,7 @@ namespace Lorr
     void BaseApp::Run()
     {
         if (m_ConsoleApp) return;
-        
+
         ZoneScoped;
 
         PlatformWindow *pWindow = m_pEngine->GetWindow();
@@ -50,5 +50,10 @@ namespace Lorr
 
             FrameMark;
         }
+    }
+
+    void BaseApp::SetCurrentScene(Scene *pScene)
+    {
+        m_pCurrentScene = pScene;
     }
 }  // namespace Lorr

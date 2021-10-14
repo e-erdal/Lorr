@@ -17,10 +17,24 @@ namespace Lorr
         Font
     };
 
+    struct IResourceDesc
+    {
+    };
+    struct IResourceData
+    {
+    };
+
+    template<typename TDesc = IResourceDesc, typename TData = IResourceData>
     class IResource
     {
     public:
-        static constexpr ResourceType m_Type = ResourceType::Invalid;
+        virtual void Init(const Identifier &ident, TDesc *pDesc, TData *pData) = 0;
+
+        // Little hack to make our life easier
+        static TDesc m_DescType;
+        static TData m_DataType;
+
+        static constexpr ResourceType m_ResType = ResourceType::Invalid;
 
     public:
         const Identifier &GetIdentifier() const

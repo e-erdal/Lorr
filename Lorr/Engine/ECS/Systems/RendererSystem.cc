@@ -20,11 +20,10 @@ namespace Lorr::System
         pBatcher->Begin();
 
         m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
-
             if (m_pRegistry->has<Component::Renderable>(entity))
             {
                 auto &renderable = m_pRegistry->get<Component::Renderable>(entity);
-                if (renderable.IsBatch) pBatcher->PushRect(renderable.pTexture, transform.Matrix, renderable.TextureCoords, renderable.Color);
+                if (renderable.IsBatch) pBatcher->PushRect(renderable.texture, transform.Matrix, renderable.Color);
             }
 
             if (m_pRegistry->has<Component::Text>(entity))
@@ -34,7 +33,7 @@ namespace Lorr::System
                 {
                     Math::SetPos(matrix, glm::vec3(transform.Position.x + c.Pos.x, transform.Position.y + c.Pos.y, transform.Position.z));
                     Math::SetSize(matrix, glm::vec3(c.Size.x, c.Size.y, 1));
-                    pBatcher->PushRect(text.pTexture, matrix, c.UV, { 255, 255, 255, 255 });
+                    pBatcher->PushRect(text.texture, matrix, c.UV, { 255, 255, 255, 255 });
                 }
             }
         });

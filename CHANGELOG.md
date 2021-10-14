@@ -4,7 +4,15 @@
     - Renderable component.
 - Font rendering.
     - Basic UTF8 implementation.
-- 2D Box2D physics (Broken/no MKR handling)
+- Native renderer abstraction.
+    - Cross-API shader input layout.
+    - Support for D3D11.
+        - Able to create D3D11Texture2D.
+        - Able to create D3D11VertexShader.
+        - Able to create D3D11PixelShader.
+        - Vertex shader D3D11InputLayout.
+    - Base for D3D12.
+- BufferStream memory watcher.
 
 # v1.1-alpha
 - Audio system.

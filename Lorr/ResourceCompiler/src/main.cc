@@ -2,9 +2,10 @@
 #include "Engine/Utils/ArgParser.hh"
 #include "Engine/Stream/BufferStream.hh"
 
+#include "Compilers/AudioCompiler.hh"
+#include "Compilers/FontCompiler.hh"
 #include "Compilers/ShaderCompiler.hh"
 #include "Compilers/TextureCompiler.hh"
-#include "Compilers/AudioCompiler.hh"
 
 class RCApp : public Lorr::BaseApp
 {
@@ -71,6 +72,18 @@ int main(int argc, char **argv)
             if (parser.GetConfig("o", &targetPath))
             {
                 AudioCompiler c(path, targetPath);
+            }
+            else
+            {
+                PERROR("You have to specifiy the output path.");
+            }
+        }
+        else if (parser.HasArg("font"))
+        {
+            std::string targetPath = "";
+            if (parser.GetConfig("o", &targetPath))
+            {
+                FontCompiler c(path, targetPath);
             }
             else
             {

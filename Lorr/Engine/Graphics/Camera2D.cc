@@ -34,7 +34,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_Projection = glm::ortho(0.0f, m_Scale.x, m_Scale.y, .0f, 0.1f, 10000.f);
+        m_Projection = glm::orthoLH_ZO(0.0f, m_Scale.x, m_Scale.y, .0f, 0.1f, 10000.f);
         m_Projection[3].z = 1.f;
 
         GetEngine()->GetRenderer()->SetView(m_Scale.x, m_Scale.y);

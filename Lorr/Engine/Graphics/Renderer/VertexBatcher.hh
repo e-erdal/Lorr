@@ -4,7 +4,8 @@
 
 #pragma once
 
-#include "Engine/Graphics/Texture2D.hh"
+#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/IShader.hh"
 
 namespace Lorr
 {
@@ -51,7 +52,7 @@ namespace Lorr
         BatcherVertices Vertices;
         uint32_t Indexes = 0;
     };
-    typedef std::vector<std::pair<Texture2D *, BatcherEvent>> BatcherQueue;
+    typedef std::vector<std::pair<TextureHandle, BatcherEvent>> BatcherQueue;
 
     class VertexBatcher
     {
@@ -66,16 +67,16 @@ namespace Lorr
         void Flush();
         void Reset();
 
-        void PushRect(Texture2D *pTexture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 });
 
     private:
-        BatcherEvent &GetEvent(Texture2D *pTexture);
+        BatcherEvent &GetEvent(TextureHandle texture);
 
     private:
-        bgfx::VertexLayout m_Layout;
-        bgfx::IndexBufferHandle m_IndexBuffer;
-        bgfx::ProgramHandle m_ShaderProgram;
-        bgfx::UniformHandle m_TextureUniform;
+        ShaderHandle m_VertexShader;
+        ShaderHandle m_PixelShader;
 
         BatcherQueue m_Queue;
     };

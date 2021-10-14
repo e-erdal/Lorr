@@ -647,7 +647,7 @@ cleanup_stroker:
     size_t tgt_w = src_w + padding.left + padding.right;
     size_t tgt_h = src_h + padding.top + padding.bottom;
 
-    region = texture_atlas_get_region( self->atlas, tgt_w, tgt_h );
+    region = texture_atlas_get_region( self->atlas, tgt_w + 1, tgt_h + 1 );
 
     if ( region.x < 0 )
     {

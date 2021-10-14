@@ -8,7 +8,7 @@
 #include <freetype-gl.h>
 #include <tinyutf8/tinyutf8.h>
 
-#include "Engine/Graphics/Texture2D.hh"
+#include "Engine/Graphics/Common/ITexture.hh"
 #include "Engine/Resource/IResource.hh"
 
 namespace Lorr
@@ -20,27 +20,32 @@ namespace Lorr
         glm::vec4 UV;
     };
 
+    struct FontDesc
+    {
+        uint8_t SizePX = 0;
+    };
+
     struct FontData
     {
-        BufferStream TTFData;
+        BufferStream TTFData{};
         tiny_utf8::string UsingChars = "";
     };
 
-    class Font : public IResource
+    class Font : public IResource<FontDesc, FontData>
     {
     public:
-        void Init(const Identifier &ident, FontData *pData, uint8_t sizePX);
-        static void ParseToMemory(FontData *pOutData, BufferStream &imageBuffer);
+        void Init(const Identifier &ident, FontDesc *pDesc, FontData *pData) override;
+        static void ParseToMemory(FontData *pOutData, BufferStream &outBuf);
 
         ftgl::texture_glyph_t *GetGlyph(char32_t target);
         float GetKerning(char32_t before, char32_t current);
 
-        static constexpr ResourceType m_Type = ResourceType::Font;
+        static constexpr ResourceType m_ResType = ResourceType::Font;
 
     public:
-        Texture2D *GetTexture() const
+        TextureHandle GetTexture() const
         {
-            return m_pTexture;
+            return m_Texture;
         }
 
         ftgl::texture_font_t *GetHandle() const
@@ -52,7 +57,7 @@ namespace Lorr
         ftgl::texture_atlas_t *m_pAtlas = 0;
         ftgl::texture_font_t *m_pHandle = 0;
 
-        Texture2D *m_pTexture = 0;
+        TextureHandle m_Texture = 0;
     };
 
     namespace TextEngine

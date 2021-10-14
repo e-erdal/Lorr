@@ -6,6 +6,7 @@
 #pragma once
 
 #include <entt.hpp>
+#include <tinyutf8/tinyutf8.h>
 
 namespace Lorr
 {
@@ -54,17 +55,16 @@ namespace Lorr
             m_Registry->remove_if_exists<T>(m_Handle);
         }
 
+    public:
+        Entity &AttachDynamicBox(float destiny, float friction);
+        Entity &AttachStaticBox(float destiny = 0.f);
+        Entity &AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, uint32_t maxWidth = 0);
+
     private:
         Identifier m_Identifier = kEmptyIdentifier;
 
         EntityRegistry *m_Registry = 0;
         EntityHandle m_Handle = kInvalidEntity;
-    };
-
-    namespace ECSUtils
-    {
-        Entity &AttachDynamicBox(Entity &target, float destiny, float friction);
-        Entity &AttachStaticBox(Entity &target, float destiny = 0.f);
     };
 
 }  // namespace Lorr

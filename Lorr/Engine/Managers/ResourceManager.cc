@@ -25,54 +25,6 @@ namespace Lorr
         return true;
     }
 
-    bool ResourceManager::ImportTextureData(const std::string &path, Texture2DData &outData)
-    {
-        BufferStream resourceBuf;
-        if (!ResourceManager::LoadResourceFile(path, resourceBuf))
-        {
-            LOG_WARN("Failed to load Texture2D resource.");
-            return false;
-        }
-
-        resourceBuf.StartOver();
-
-        return ParseTextureDataFromFile(outData, resourceBuf);
-    }
-
-    bool ResourceManager::ImportAudioData(const std::string &path, AudioData &outData)
-    {
-        BufferStream resourceBuf;
-        if (!ResourceManager::LoadResourceFile(path, resourceBuf))
-        {
-            LOG_WARN("Failed to load Audio resource.");
-            return false;
-        }
-
-        resourceBuf.StartOver();
-
-        return ParseAudioDataFromFile(outData, resourceBuf);
-    }
-
-    bool ResourceManager::ImportShaderData(const std::string &path, ShaderData &outData)
-    {
-        BufferStream resourceBuf;
-        if (!ResourceManager::LoadResourceFile(path, resourceBuf))
-        {
-            LOG_WARN("Failed to load Shader resource.");
-            return false;
-        }
-
-        resourceBuf.StartOver();
-
-        return ParseShaderDataFromFile(outData, resourceBuf);
-    }
-
-    bool ResourceManager::ImportFontData(const std::string &path, FontData &outData)
-    {
-        FileSystem::ReadBinaryFile(path, outData.TTFData);
-        return true;
-    }
-
     bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
     {
         BufferStream fileBuf;
@@ -89,6 +41,7 @@ namespace Lorr
             case ResourceType::Texture: return ParseTextureToBuffer(fileBuf, outBuf);
             case ResourceType::Audio: return ParseAudioToBuffer(fileBuf, outBuf);
             case ResourceType::Shader: return ParseShaderToBuffer(fileBuf, outBuf);
+            case ResourceType::Font: return ParseFontToBuffer(fileBuf, outBuf);
             default: return false;
         }
     }
@@ -118,7 +71,8 @@ namespace Lorr
             LOG_WARN("Attempted to load invalid resource file. File signature does not match.");
             return false;
         }
-        if (header.EngineVersion != ENGINE_VERSION_PACKED) LOG_WARN("Engine version does not match. But we will let the parser handle this.");
+        if (header.EngineVersion != ENGINE_VERSION_PACKED)
+            LOG_WARN("Engine version does not match. But we will let the parser handle this.");
         if (header.Version < kResourceMinVersion)
         {
             LOG_WARN("Attempted to load outdated resource. Min: {}, req: {}.", kResourceMinVersion, header.Version);
@@ -134,18 +88,18 @@ namespace Lorr
         return true;
     }
 
-    /// PARSERS
+    /// PARSERS -----------------------------------------------------------------------------------
 
     // ********************
-    // * To file section
+    // * From memory section ----------------------------------------------------------------------
     // ********************
 
-    bool ResourceManager::ParseTextureDataFromFile(Texture2DData &outData, BufferStream &resourceBuf)
+    bool ResourceManager::ParseTextureDataFromFile(TextureData &outData, BufferStream &resourceBuf)
     {
         resourceBuf.StartOver();
         outData.Width = resourceBuf.Get<uint32_t>();
         outData.Height = resourceBuf.Get<uint32_t>();
-        outData.Format = (bgfx::TextureFormat::Enum)resourceBuf.Get<uint32_t>();
+        outData.Format = resourceBuf.Get<TextureFormat>();
         outData.DataSize = resourceBuf.Get<uint32_t>();
         outData.Data = resourceBuf.GetPtrNew<uint8_t>(outData.DataSize);
 
@@ -166,34 +120,29 @@ namespace Lorr
     bool ResourceManager::ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf)
     {
         resourceBuf.StartOver();
-        outData.TypeCount = resourceBuf.Get<uint8_t>();
-        outData.Shaders.resize(outData.TypeCount * kShaderRenderers.size());
-
-        for (auto &shader : outData.Shaders)
-        {
-            shader.Renderer = (bgfx::RendererType::Enum)resourceBuf.Get<uint8_t>();
-            shader.Type = resourceBuf.Get<ShaderType>();
-            shader.Len = resourceBuf.Get<uint32_t>();
-            shader.pData = resourceBuf.GetPtrNew<uint8_t>(shader.Len);
-        }
+        outData.Renderer = resourceBuf.Get<APIType>();
+        outData.Type = resourceBuf.Get<ShaderType>();
+        uint32_t len = resourceBuf.Get<uint32_t>();
+        outData.Buffer.Reset(resourceBuf.GetPtr<uint8_t>(len), len);
 
         return true;
     }
 
     bool ResourceManager::ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf)
     {
-        //* No.
+        outData.TTFData.Reset(resourceBuf);
+
         return true;
     }
 
     // ********************
-    // * To memory section
+    // * To memory section ------------------------------------------------------------------------
     // ********************
 
     bool ResourceManager::ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
-        Texture2DData data;
-        Texture2D::ParseToMemory(&data, inBuf);
+        TextureData data;
+        ITexture::ParseToMemory(&data, inBuf);
 
         outBuf.Reset();
         outBuf.Insert(data.Width);
@@ -213,7 +162,7 @@ namespace Lorr
         outBuf.Reset();
         outBuf.Insert(data.PCMFrequency);
         outBuf.Insert(data.PCMFormat);
-        outBuf.Insert<uint32_t>((uint32_t)data.PCMFrames.GetSize());
+        outBuf.Insert((uint32_t)data.PCMFrames.GetSize());
         outBuf.InsertPtr(data.PCMFrames.GetData(), data.PCMFrames.GetSize());
 
         return true;
@@ -222,9 +171,13 @@ namespace Lorr
     bool ResourceManager::ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         ShaderData data;
-        Shader::ParseToMemory(&data, inBuf);
+        IShader::ParseToMemory(&data, inBuf);
 
-        outBuf.Reset(inBuf.GetData(), inBuf.GetSize());
+        outBuf.Reset();
+        outBuf.Insert(data.Renderer);
+        outBuf.Insert(data.Type);
+        outBuf.Insert<uint32_t>(data.Buffer.GetSize());
+        outBuf.Insert(data.Buffer);
 
         return true;
     }
@@ -239,6 +192,6 @@ namespace Lorr
         return true;
     }
 
-    /// -------
+    /// -------------------------------------------------------------------------------------------
 
 }  // namespace Lorr

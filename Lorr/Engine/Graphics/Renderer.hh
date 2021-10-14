@@ -6,22 +6,22 @@
 
 #include "Engine/Core/Window/PlatformWindow.hh"
 
-#include "Engine/Graphics/Texture2D.hh"
+#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/IRenderer.hh"
 
 namespace Lorr
 {
-    class Renderer2D
+    class Renderer
     {
     public:
-        ~Renderer2D();
+        ~Renderer();
 
         void Init(PlatformWindow *pWindow);
 
         void BeginFrame();
         void EndFrame();
 
-        void SetViewTransform(uint32_t viewID, const glm::mat4 &proj, const glm::mat4 &view);
-        void SetTexture(Texture2D *pTexture, const bgfx::UniformHandle &uniform);
+        void SetViewTransform(const glm::mat4 &proj, const glm::mat4 &view);
         void SetVSyncState(bool VSync);
 
         void Submit(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color);
@@ -32,17 +32,19 @@ namespace Lorr
     public:
         const auto &GetPlaceholder() const
         {
-            return m_pPlaceholderTexture;
+            return m_PlaceholderTexture;
         }
 
     private:
-        Texture2D *m_pPlaceholderTexture = 0;
+        IRenderer *m_pHandle = 0;
 
-        uint32_t m_ResetFlags = BGFX_RESET_MSAA_X16;
+        TextureHandle m_PlaceholderTexture = 0;
+
+        uint32_t m_ResetFlags = 0;
         uint32_t m_ResWidth = 0;
         uint32_t m_ResHeight = 0;
 
-        uintptr_t m_State = BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_BLEND_ALPHA;
+        uintptr_t m_State = 0;
     };
 
 }  // namespace Lorr

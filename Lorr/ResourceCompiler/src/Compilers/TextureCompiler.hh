@@ -6,7 +6,6 @@
 
 #include "Engine/App/Engine.hh"
 #include "Engine/Resource/ResourceFile.hh"
-#include "Engine/Graphics/Texture2D.hh"
 
 #include "Engine/Stream/FileStream.hh"
 #include "Engine/Stream/BufferStream.hh"

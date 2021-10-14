@@ -11,9 +11,10 @@
 #include "Engine/Stream/BufferStream.hh"
 #include "Engine/Stream/FileStream.hh"
 
+#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/IShader.hh"
+
 #include "Engine/Audio/AudioSystem.hh"
-#include "Engine/Graphics/Shader.hh"
-#include "Engine/Graphics/Texture2D.hh"
 #include "Engine/Graphics/Font.hh"
 
 namespace Lorr
@@ -25,59 +26,51 @@ namespace Lorr
 
         void Init();
 
-        template<typename... Args>
-        inline Texture2D *LoadTexture2D(const Identifier &ident, const std::string &path, Args &&...args)
-        {
-            Texture2DData data;
-            if (!ImportTexture2DData(path, data)) return 0;
-
-            Texture2D *resource = new Texture2D;
-            resource->Init(ident, &data, std::forward<Args>(args)...);
-            m_Resources.emplace(ident, resource);
-
-            return resource;
-        }
-
-        template<typename... Args>
-        inline Shader *LoadShader(const Identifier &ident, const std::string &path, Args &&...args)
-        {
-            ShaderData data;
-            if (!ImportShaderData(path, data)) return 0;
-
-            Shader *resource = new Shader;
-            resource->Init(ident, &data, std::forward<Args>(args)...);
-            m_Resources.emplace(ident, resource);
-
-            return resource;
-        }
-
-        template<typename... Args>
-        inline Font *LoadFont(const Identifier &ident, const std::string &path, Args &&...args)
-        {
-            FontData data;
-            if (!ImportFontData(path, data)) return 0;
-
-            Font *resource = new Font;
-            resource->Init(ident, &data, std::forward<Args>(args)...);
-            m_Resources.emplace(ident, resource);
-
-            return resource;
-        }
-
-        template<typename T = IResource>
+        template<typename T>
         inline T *GetResource(const Identifier &ident)
         {
             auto found = m_Resources.find(ident);
             return (found == m_Resources.end() ? 0 : (T *)found->second);
         }
 
-        // Export original data to something that Lorr can read
-        bool ExportResource(ResourceType type, const std::string &path, BufferStream &buf);
+        template<typename T>
+        inline T *LoadResource(const Identifier &ident, const std::string &path, decltype(T::m_DescType) *pDesc)
+        {
+            decltype(T::m_DataType) data;
+            if (!ImportResource(T::m_ResType, path, data)) return 0;
 
-        bool ImportTextureData(const std::string &path, Texture2DData &outData);
-        bool ImportAudioData(const std::string &path, AudioData &outData);
-        bool ImportShaderData(const std::string &path, ShaderData &outData);
-        bool ImportFontData(const std::string &path, FontData &outData);
+            T *resource = new T;
+            resource->Init(ident, pDesc, &data);
+            m_Resources.emplace(ident, resource);
+
+            return resource;
+        }
+
+        template<typename T>
+        inline bool ImportResource(ResourceType type, const std::string &path, T &outData)
+        {
+            BufferStream resourceBuf;
+            if (!ResourceManager::LoadResourceFile(path, resourceBuf))
+            {
+                LOG_WARN("Failed to load resource file.");
+                return false;
+            }
+
+            resourceBuf.StartOver();
+
+            switch (type)
+            {
+                case ResourceType::Texture: return ParseTextureDataFromFile((TextureData &)outData, resourceBuf);
+                case ResourceType::Audio: return ParseAudioDataFromFile((AudioData &)outData, resourceBuf);
+                case ResourceType::Shader: return ParseShaderDataFromFile((ShaderData &)outData, resourceBuf);
+                case ResourceType::Font: return ParseFontDataFromFile((FontData &)outData, resourceBuf);
+                default: return false;
+            }
+
+            return false;
+        }
+
+        bool ExportResource(ResourceType type, const std::string &path, BufferStream &buf);
 
     public:
         static bool LoadResourceFile(const std::string &path, BufferStream &buf);
@@ -86,7 +79,7 @@ namespace Lorr
         bool ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf);
 
         // In
-        bool ParseTextureDataFromFile(Texture2DData &outData, BufferStream &resourceBuf);
+        bool ParseTextureDataFromFile(TextureData &outData, BufferStream &resourceBuf);
         bool ParseAudioDataFromFile(AudioData &outData, BufferStream &resourceBuf);
         bool ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf);
         bool ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf);
@@ -98,7 +91,7 @@ namespace Lorr
         bool ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf);
 
     private:
-        std::unordered_map<Identifier, IResource *> m_Resources;
+        std::unordered_map<Identifier, void *> m_Resources;
     };
 
 }  // namespace Lorr

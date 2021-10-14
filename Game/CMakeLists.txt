@@ -5,21 +5,34 @@ set(GAME_VENDOR
 
 set(GAME_COMPONENTS
     GameApp
+    Scenes
 )
 
-######### Editor components ########
+######### Game components ########
 # GameApp
 LorrComponent(
     NAME
         GameApp
     INCLUDE
-        src/
+        ./
     SOURCE
-        src/GameApp/*.cc
+        ./GameApp/*.cc
     VENDOR
         ${GAME_VENDOR}
 )
 
-add_executable(Game src/main.cc)
+# Scenes
+LorrComponent(
+    NAME
+        Scenes
+    INCLUDE
+        ./
+    SOURCE
+        ./Scenes/*.cc
+    VENDOR
+        ${GAME_VENDOR}
+)
+
+add_executable(Game main.cc)
     target_link_libraries(Game PUBLIC ${GAME_VENDOR} ${GAME_COMPONENTS})
-    target_include_directories(Game PUBLIC src/)
+    target_include_directories(Game PUBLIC .)

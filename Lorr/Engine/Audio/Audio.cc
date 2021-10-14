@@ -9,10 +9,10 @@
 
 namespace Lorr
 {
-    void Audio::Init(const Identifier &ident, AudioData *pData, AudioChannel *pChannel)
+    void Audio::Init(const Identifier &ident, AudioDesc *pDesc, AudioData *pData)
     {
         m_Ident = ident;
-        m_pChannel = pChannel;
+        m_pChannel = pDesc->pChannel;
 
         alGenSources(1, &m_Source);
         alGenBuffers(1, &m_Buffer);

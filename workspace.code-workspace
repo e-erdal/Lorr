@@ -1,0 +1,19 @@
+{
+	"folders": [
+		{
+			"name": "Lorr",
+			"path": "."
+		}
+	],
+	"settings": {
+		"cmake.configureOnOpen": true,
+		"files.associations": {
+			"random": "cpp",
+			"chrono": "cpp",
+			"cmath": "cpp"
+		},
+		"clangd.arguments": [
+			"-header-insertion=never"
+		]
+	}
+}

@@ -10,7 +10,7 @@
 #include "Engine/Core/Window/IWindow.hh"
 #include "Engine/Debug/ImGuiHandler.hh"
 #include "Engine/Graphics/Camera2D.hh"
-#include "Engine/Graphics/Renderer/Renderer2D.hh"
+#include "Engine/Graphics/Renderer.hh"
 #include "Engine/Graphics/Renderer/VertexBatcher.hh"
 #include "Engine/Managers/ResourceManager.hh"
 
@@ -39,7 +39,7 @@ namespace Lorr
             return m_pWindow;
         }
 
-        Renderer2D *GetRenderer() const
+        Renderer *GetRenderer() const
         {
             return m_pRenderer;
         }
@@ -72,7 +72,7 @@ namespace Lorr
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
-        Renderer2D *m_pRenderer = new Renderer2D;
+        Renderer *m_pRenderer = new Renderer;
         VertexBatcher *m_pBatcher = new VertexBatcher;
         Camera2D *m_pCamera = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;

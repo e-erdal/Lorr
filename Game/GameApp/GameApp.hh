@@ -14,7 +14,4 @@ public:
     void Init() override;
     void Tick(float fDelta) override;
     void Draw() override;
-
-private:
-    Lorr::Scene *m_pCurrentScene = new Lorr::Scene;
 };

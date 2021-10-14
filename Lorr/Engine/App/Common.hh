@@ -27,7 +27,7 @@
     }
 
 #define SAFE_RELEASE(var)                                                                                                                                                \
-    if (var)                                                                                                                                                             \
+    if (var != nullptr)                                                                                                                                                             \
     {                                                                                                                                                                    \
         var->Release();                                                                                                                                                  \
         var = nullptr;                                                                                                                                                   \

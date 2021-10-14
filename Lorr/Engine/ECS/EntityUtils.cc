@@ -9,16 +9,16 @@
 
 namespace Lorr
 {
-    Entity &ECSUtils::AttachDynamicBox(Entity &target, float destiny, float friction)
+    Entity &Entity::AttachDynamicBox(float destiny, float friction)
     {
-        if (!target.HasComponent<Component::Transform>())
+        if (!HasComponent<Component::Transform>())
         {
             LOG_ERROR("Dynamic box component requires Transform component! Attach it first.");
-            return target;
+            return *this;
         }
 
-        auto &c = target.AddComponent<Component::Physics>();
-        auto &transform = target.GetComponent<Component::Transform>();
+        auto &c = AddComponent<Component::Physics>();
+        auto &transform = GetComponent<Component::Transform>();
 
         //* Init body definitions
         b2BodyDef bodyDef;
@@ -41,19 +41,19 @@ namespace Lorr
         c.pBody->CreateFixture(&fixtureDef);
         transform.SetOriginCenter();
 
-        return target;
+        return *this;
     }
 
-    Entity &ECSUtils::AttachStaticBox(Entity &target, float destiny)
+    Entity &Entity::AttachStaticBox(float destiny)
     {
-        if (!target.HasComponent<Component::Transform>())
+        if (!HasComponent<Component::Transform>())
         {
             LOG_ERROR("Static box component requires Transform component! Attach it first.");
-            return target;
+            return *this;
         }
 
-        auto &c = target.AddComponent<Component::Physics>();
-        auto &transform = target.GetComponent<Component::Transform>();
+        auto &c = AddComponent<Component::Physics>();
+        auto &transform = GetComponent<Component::Transform>();
 
         //* Init body definitions
         b2BodyDef bodyDef;
@@ -69,7 +69,15 @@ namespace Lorr
         c.pBody->CreateFixture(&staticBox, destiny);
         transform.SetOriginCenter();
 
-        return target;
+        return *this;
+    }
+
+    Entity &Entity::AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, uint32_t maxWidth)
+    {
+        if (!HasComponent<Component::Transform>()) AddComponent<Component::Transform>(pos);
+        AddComponent<Component::Text>(GetEngine()->GetResourceMan()->GetResource<Font>(fontIdent), text, maxWidth);
+        
+        return *this;
     }
 
 }  // namespace Lorr

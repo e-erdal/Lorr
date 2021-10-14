@@ -6,7 +6,7 @@
 
 #include "Engine/ECS/Entity.hh"
 
-#include "Engine/Graphics/Texture2D.hh"
+#include "Engine/Graphics/Common/ITexture.hh"
 
 namespace Lorr::Component
 {
@@ -15,7 +15,7 @@ namespace Lorr::Component
         bool IsBatch = false;
         glm::ivec4 Color = { 255, 255, 255, 255 };
 
-        Texture2D *pTexture = 0;
+        TextureHandle texture = 0;
         glm::vec4 TextureCoords = { 1, 1, 1, 1 };
     };
 

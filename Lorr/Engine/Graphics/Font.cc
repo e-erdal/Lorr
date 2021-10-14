@@ -9,7 +9,8 @@ namespace Lorr
                                          "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ["
                                          "\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
                                          "ĞÜŞÖÇİ"
-                                         "ğüşiöçı";
+                                         "ğüşiöçı"
+                                         "©•";
 
     static tiny_utf8::string GetNextWord(const tiny_utf8::string &str, uint32_t p1, uint32_t p2)
     {
@@ -20,35 +21,36 @@ namespace Lorr
         return str.substr(p1, (p2 - p1));
     }
 
-    void Font::Init(const Identifier &ident, FontData *pData, uint8_t sizePX)
+    void Font::Init(const Identifier &ident, FontDesc *pDesc, FontData *pData)
     {
         m_pAtlas = ftgl::texture_atlas_new(512, 512, 4);
-        m_pHandle = ftgl::texture_font_new_from_memory(m_pAtlas, sizePX, pData->TTFData.GetData(), pData->TTFData.GetSize());
+        m_pHandle = ftgl::texture_font_new_from_memory(m_pAtlas, pDesc->SizePX, pData->TTFData.GetData(), pData->TTFData.GetSize());
         ftgl::texture_font_load_glyphs(m_pHandle, g_szASCII.c_str());
 
-        Texture2DData data;
+        TextureData data;
         data.Width = 512;
         data.Height = 512;
         data.DataSize = m_pAtlas->width * m_pAtlas->height * m_pAtlas->depth;
         data.Data = m_pAtlas->data;
 
-        m_pTexture = new Texture2D;
-        m_pTexture->Init("", &data, TEXTURE_MAG_NEAREST);
+        // m_pTexture = new Texture2D;
+        // m_pTexture->Init("", &data, TEXTURE_MAG_NEAREST);
     }
 
-    void Font::ParseToMemory(FontData *pOutData, BufferStream &imageBuffer)
+    void Font::ParseToMemory(FontData *pOutData, BufferStream &outBuf)
     {
+        
     }
+
+    static std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
 
     ftgl::texture_glyph_t *Font::GetGlyph(char32_t target)
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
         return ftgl::texture_font_get_glyph(m_pHandle, convert.to_bytes(target).c_str());
     }
 
     float Font::GetKerning(char32_t before, char32_t current)
     {
-        std::wstring_convert<std::codecvt_utf8<char32_t>, char32_t> convert;
         return ftgl::texture_glyph_get_kerning(GetGlyph(before), convert.to_bytes(current).c_str());
     }
 
@@ -113,7 +115,7 @@ namespace Lorr
             ftgl::texture_glyph_t *glyph = pFont->GetGlyph(c);
 
             float kerning = 0.f;
-            if (i > 0)
+            if (i > 0 && text[i - 1] > 32)
             {
                 pen.x += (kerning = pFont->GetKerning(text[i - 1], c));
             }

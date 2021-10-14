@@ -21,10 +21,10 @@ namespace Lorr::Component
         {
             glm::vec2 a;
             TextEngine::AlignAll(pFont, text, Chars, a, maxWidth);
-            pTexture = pFont->GetTexture();
+            texture = pFont->GetTexture();
         }
 
-        Texture2D *pTexture = 0;
+        TextureHandle texture;
 
         std::vector<CharInfo> Chars;
     };

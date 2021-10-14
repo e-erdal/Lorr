@@ -6,8 +6,6 @@
 
 #include "Common.hh"
 
-#include <bgfx/bgfx.h>
-#include <bimg/bimg.h>
 #include <bx/bx.h>
 #include <glm/glm.hpp>
 #include <signals.h>

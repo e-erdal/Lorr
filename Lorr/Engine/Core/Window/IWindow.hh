@@ -58,7 +58,7 @@ namespace Lorr
         signals::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
 
     public:
-        virtual bgfx::PlatformData GetPlatformData() = 0;
+        virtual void *GetHandle() = 0;
 
         uint32_t GetWidth() const
         {

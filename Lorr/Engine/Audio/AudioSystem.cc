@@ -55,7 +55,8 @@ namespace Lorr
             pTargetChannel = itChannel->second;
         }
 
-        pAudioOut->Init(ident, pData, pTargetChannel);
+        AudioDesc desc{ .pChannel = pTargetChannel };
+        pAudioOut->Init(ident, &desc, pData);
     }
 
 }  // namespace Lorr
