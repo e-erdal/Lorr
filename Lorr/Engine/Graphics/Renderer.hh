@@ -20,9 +20,10 @@ namespace Lorr
 
         void BeginFrame();
         void EndFrame();
+        void Draw(uint32_t indexCount);
 
         void SetViewTransform(const glm::mat4 &proj, const glm::mat4 &view);
-        void SetVSyncState(bool VSync);
+        void SetVSyncState(bool vSync);
 
         void Submit(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color);
 

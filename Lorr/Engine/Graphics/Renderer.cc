@@ -37,7 +37,8 @@ namespace Lorr
 
     void Renderer::BeginFrame()
     {
-        m_pHandle->SetClearColor({ 0, 0, 0, 1 });
+        m_pHandle->HandlePreFrame();
+        m_pHandle->SetClearColor({ 0.1, 0.1, 0.1, 1 });
     }
 
     void Renderer::EndFrame()
@@ -45,7 +46,12 @@ namespace Lorr
         m_pHandle->Frame(0);
     }
 
-    void Renderer::SetVSyncState(bool VSync)
+    void Renderer::Draw(uint32_t indexCount)
+    {
+        m_pHandle->DrawIndexed(indexCount);
+    }
+
+    void Renderer::SetVSyncState(bool vSync)
     {
         Reset();
     }

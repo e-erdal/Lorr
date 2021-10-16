@@ -23,6 +23,9 @@ namespace Lorr
         void SetViewport(uint32_t width, uint32_t height, float farZ, float nearZ) override;
         void SetClearColor(const glm::vec4 &color) override;
         void Frame(uint32_t interval) override;
+        void HandlePreFrame() override;
+
+        void DrawIndexed(uint32_t indexCount) override;
 
         static D3D11Renderer *&Get();
 

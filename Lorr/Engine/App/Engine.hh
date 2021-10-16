@@ -7,11 +7,17 @@
 #include "BaseApp.hh"
 
 #include "Engine/Audio/AudioSystem.hh"
+
 #include "Engine/Core/Window/IWindow.hh"
+
 #include "Engine/Debug/ImGuiHandler.hh"
+
 #include "Engine/Graphics/Camera2D.hh"
+#include "Engine/Graphics/Camera3D.hh"
 #include "Engine/Graphics/Renderer.hh"
 #include "Engine/Graphics/Renderer/VertexBatcher.hh"
+
+#include "Engine/Managers/ShaderManager.hh"
 #include "Engine/Managers/ResourceManager.hh"
 
 #include <box2d/box2d.h>
@@ -44,7 +50,7 @@ namespace Lorr
             return m_pRenderer;
         }
 
-        Camera2D *GetCamera() const
+        Camera3D *GetCamera() const
         {
             return m_pCamera;
         }
@@ -52,6 +58,11 @@ namespace Lorr
         ResourceManager *GetResourceMan() const
         {
             return m_pResourceMan;
+        }
+
+        ShaderManager *GetShaderMan() const
+        {
+            return m_pShaderMan;
         }
 
         AudioSystem *GetAudioSys() const
@@ -74,9 +85,10 @@ namespace Lorr
         PlatformWindow *m_pWindow = new PlatformWindow;
         Renderer *m_pRenderer = new Renderer;
         VertexBatcher *m_pBatcher = new VertexBatcher;
-        Camera2D *m_pCamera = new Camera2D;
+        Camera3D *m_pCamera = new Camera3D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
         ResourceManager *m_pResourceMan = new ResourceManager;
+        ShaderManager *m_pShaderMan = new ShaderManager;
         AudioSystem *m_pAudioSystem = new AudioSystem;
 
         b2World *m_World = 0;

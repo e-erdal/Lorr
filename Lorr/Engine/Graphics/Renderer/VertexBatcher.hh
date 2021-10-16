@@ -6,6 +6,7 @@
 
 #include "Engine/Graphics/Common/ITexture.hh"
 #include "Engine/Graphics/Common/IShader.hh"
+#include "Engine/Graphics/Common/IRenderBuffer.hh"
 
 namespace Lorr
 {
@@ -67,8 +68,10 @@ namespace Lorr
         void Flush();
         void Reset();
 
-        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
-        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv,
+                      const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv,
+                      const glm::ivec4 &color = { 255, 255, 255, 255 });
         void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 });
 
     private:
@@ -77,6 +80,10 @@ namespace Lorr
     private:
         ShaderHandle m_VertexShader;
         ShaderHandle m_PixelShader;
+        RenderBufferHandle m_VertexBuffer;
+        RenderBufferHandle m_IndexBuffer;
+        RenderBufferHandle m_ConstantBuffer;
+        InputLayout m_Layout;
 
         BatcherQueue m_Queue;
     };

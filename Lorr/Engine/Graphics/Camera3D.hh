@@ -6,15 +6,16 @@
 
 namespace Lorr
 {
-    class Camera2D
+    class Camera3D
     {
     public:
-        void Init(const glm::vec2 &pos, const glm::vec2 &size);
+        void Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear,
+                  float zFar);
 
         void CalculateView();
         void CalculateProjection();
 
-        void SetPosition(const glm::vec2 &pos);
+        void SetPosition(const glm::vec3 &pos);
         void SetSize(const glm::vec2 &size);
 
     public:
@@ -28,7 +29,7 @@ namespace Lorr
             return m_View;
         }
 
-        const glm::vec2 &GetPosition() const
+        const glm::vec3 &GetPosition() const
         {
             return m_Pos;
         }
@@ -39,9 +40,16 @@ namespace Lorr
         glm::mat4 m_Projection{};
         glm::mat4 m_View{};
 
-        glm::vec2 m_Pos{};
+        glm::vec3 m_Pos{};
+        glm::vec3 m_Direction{};
+        glm::vec3 m_Up{};
+        glm::vec3 m_Right{};
         glm::vec2 m_Size{};
 
+        float m_Fov = 0.f;
+        float m_Aspect = 0.f;
+        float m_zNear = 0.f;
+        float m_zFar = 0.f;
         float m_Rotation{};
         float m_Zoom{};
     };

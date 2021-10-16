@@ -2,9 +2,13 @@
 
 #include "Engine/App/Engine.hh"
 
+#include "Engine/Managers/ShaderManager.hh"
+
 #include "Engine/ECS/Components/TransformComponent.hh"
 #include "Engine/ECS/Components/RenderableComponent.hh"
 #include "Engine/ECS/Components/TextComponent.hh"
+
+#include "Engine/Model/Model.hh"
 
 namespace Lorr::System
 {
@@ -16,6 +20,16 @@ namespace Lorr::System
     {
         glm::mat4 matrix(1.0f);
 
+        // Stuff that renderer requires
+        Camera3D *pCamera = GetEngine()->GetCamera();
+        glm::mat4 cameraMatrix = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
+
+        // Model shader
+        ShaderProgram *modelProgram = GetEngine()->GetShaderMan()->Get("game://model");
+        RenderBufferHandle modelCBuf = GetEngine()->GetShaderMan()->GetCBuf("game://model");
+        modelCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
+
+        // Renderer
         VertexBatcher *pBatcher = GetEngine()->GetBatcher();
         pBatcher->Begin();
 
@@ -35,6 +49,20 @@ namespace Lorr::System
                     Math::SetSize(matrix, glm::vec3(c.Size.x, c.Size.y, 1));
                     pBatcher->PushRect(text.texture, matrix, c.UV, { 255, 255, 255, 255 });
                 }
+            }
+
+            if (m_pRegistry->has<Model>(entity))
+            {
+                Model &model = m_pRegistry->get<Model>(entity);
+
+                modelProgram->Vertex->Use();
+                modelProgram->Pixel->Use();
+                modelCBuf->Use(0);
+
+                model.GetVertexBuf()->Use(0, &kMeshLayout);
+                model.GetIndexBuf()->Use(0);
+
+                GetEngine()->GetRenderer()->Draw(model.GetIndexCount());
             }
         });
 

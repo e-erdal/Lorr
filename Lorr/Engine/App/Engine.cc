@@ -38,9 +38,11 @@ namespace Lorr
         m_pResourceMan->Init();
 
         //* Graphics
+        m_pShaderMan->Init();
         m_pRenderer->Init(m_pWindow);
         m_pBatcher->Init();
-        m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
+        // m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
+        m_pCamera->Init({ 0, 0, -5 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, { 0, 0, 1 }, { 0, 1, 0 }, 60.f, 0.1f, 10000.f);
         // m_pImGui->Init(this);
 
         //* Audio system

@@ -27,6 +27,9 @@ namespace Lorr
         virtual void SetViewport(uint32_t width, uint32_t height, float farZ, float nearZ) = 0;
         virtual void SetClearColor(const glm::vec4 &color) = 0;
         virtual void Frame(uint32_t interval) = 0;
+        virtual void HandlePreFrame() = 0;
+
+        virtual void DrawIndexed(uint32_t indexCount) = 0;
 
     public:
         static APIType CurrentAPI()

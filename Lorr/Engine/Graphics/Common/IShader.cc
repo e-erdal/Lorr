@@ -36,7 +36,7 @@ namespace Lorr
 
         // clang-format off
         if ((hr = 
-            D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "LorrShader", 0, 0, "main", 
+            D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "main", 0, 0, "main", 
             D3D::GetLatestShaderFeature(currentType).data(), flags, 0, &pCode, &pError)) < 0)
         {
             LOG_ERROR("Failed to compile shader. -- {} -- {}", (char *)pError->GetBufferPointer(), D3D::GetLatestShaderFeature(currentType));

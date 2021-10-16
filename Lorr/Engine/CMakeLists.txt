@@ -42,6 +42,7 @@ set(ENGINE_COMPONENTS
     LorrECS
     LorrGraphics
     LorrManagers
+    LorrModel
     LorrSystems
 )
 
@@ -126,6 +127,20 @@ LorrComponent(
         App/pch.hh
     SOURCE
         Managers/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# Model
+LorrComponent(
+    NAME
+        LorrModel
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Model/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

@@ -4,11 +4,34 @@
 
 namespace Lorr
 {
-    constexpr uint32_t kMaxRects = 5000;
+
+    BatcherVertex cubeVertices[] = {
+        { { -1.0, 1.0, -1.0 }, { 0.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },  { { 1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },
+        { { -1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } }, { { -1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } },
+        { { 1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },   { { 1.0, -1.0, -1.0 }, { 1.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } },
+        { { 1.0, 1.0, -1.0 }, { 0.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },    { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },
+        { { 1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },   { { 1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },
+        { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },     { { 1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },
+        { { 1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },     { { -1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },
+        { { 1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },    { { 1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },
+        { { -1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },    { { -1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },
+        { { -1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },   { { -1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },
+        { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },  { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },
+        { { -1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },  { { -1.0, -1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },
+        { { -1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },    { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },
+        { { -1.0, 1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },   { { -1.0, 1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },
+        { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },     { { 1.0, 1.0, -1.0 }, { 1.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },
+        { { -1.0, -1.0, -1.0 }, { 0.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } }, { { 1.0, -1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } },
+        { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },  { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },
+        { { 1.0, -1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } },  { { 1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },
+    };
+
+    constexpr uint32_t kMaxRects = _countof(cubeVertices) / 4;
+    constexpr uint32_t kTransientBufSize = kMaxRects * sizeof(BatcherVertex) * 4;
 
     void VertexBatcher::Init()
     {
-        InputLayout layout = {
+        m_Layout = {
             { VertexAttribType::Vec3, "POSITION" },
             { VertexAttribType::Vec2, "TEXCOORD" },
             { VertexAttribType::Vec4, "COLOR" },
@@ -30,11 +53,22 @@ namespace Lorr
             offset += 4;
         }
 
-        // m_IndexBuffer = bgfx::createIndexBuffer(bgfx::copy(quads, kMaxRects * 6 * sizeof(uint32_t)), BGFX_BUFFER_INDEX32);
+        // TODO: Create a buffer manager, this will also help to keep track on buffer lifetime and types
+        void *pTempData = malloc(kTransientBufSize);
+        memset(pTempData, 0, kTransientBufSize);
+
+        m_VertexBuffer =
+            RenderBuffer::Create(pTempData, kTransientBufSize, RenderBufferType::Vertex, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+        free(pTempData);
+
+        m_IndexBuffer = RenderBuffer::Create(quads, kMaxRects * 6 * sizeof(uint32_t), RenderBufferType::Index);
         delete[] quads;
 
+        m_ConstantBuffer =
+            RenderBuffer::Create(0, sizeof(glm::mat4), RenderBufferType::Constant, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+
         ShaderDesc vertDesc;
-        vertDesc.Layout = layout;
+        vertDesc.Layout = m_Layout;
         m_VertexShader = Shader::Create("engine://batcher-program-vert", "batchv.lr", &vertDesc);
         m_PixelShader = Shader::Create("engine://batcher-program-pixel", "batchp.lr");
     }
@@ -50,8 +84,9 @@ namespace Lorr
 
     void VertexBatcher::Flush()
     {
-        m_VertexShader->Use();
-        m_PixelShader->Use();
+        Renderer *pRenderer = GetEngine()->GetRenderer();
+        auto *pCamera = GetEngine()->GetCamera();
+        glm::mat4 mvp = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
 
         for (auto &&event : m_Queue)
         {
@@ -61,18 +96,19 @@ namespace Lorr
 
             if (vertexes.size() > 0)
             {
-                // bgfx::TransientVertexBuffer tvb;
-                // bgfx::allocTransientVertexBuffer(&tvb, vertexes.size(), m_Layout);
-                // memcpy(tvb.data, &vertexes[0], vertexes.size() * sizeof(BatcherVertex));
-                // bgfx::setVertexBuffer(0, &tvb, 0, vertexes.size());
+                m_ConstantBuffer->SetData(&mvp[0][0], sizeof(mvp));
+                m_ConstantBuffer->Use(0);
 
-                // // This is wrong, nvm, not for now
-                // uint32_t count = indexes ? indexes : kMaxRects * 6;
-                // bgfx::setIndexBuffer(m_IndexBuffer, 0, count);
+                m_VertexShader->Use();
+                m_PixelShader->Use();
 
-                // GetEngine()->GetRenderer()->SetTexture(pTexture, m_TextureUniform);
-                // bgfx::setState(BGFX_STATE_WRITE_RGB | BGFX_STATE_WRITE_A | BGFX_STATE_WRITE_Z | BGFX_STATE_BLEND_ALPHA);
-                // bgfx::submit(0, m_ShaderProgram);
+                m_VertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
+                m_VertexBuffer->Use(0, &m_Layout);
+
+                m_IndexBuffer->Use(0);
+
+                uint32_t indexCount = indexes ? indexes : kMaxRects * 6;
+                pRenderer->Draw(54);
             }
         }
     }
@@ -86,7 +122,7 @@ namespace Lorr
     void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
     {
         const glm::mat4x2 uvMat = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
-        PushRect(texture, transform, uvMat, color);
+        PushRect(texture, glm::transpose(transform), uvMat, color);
     }
 
     void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)

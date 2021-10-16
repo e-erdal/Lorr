@@ -6,7 +6,7 @@ namespace Lorr
 {
     void Camera2D::OnResolutionChanged(uint32_t width, uint32_t height)
     {
-        SetScale({ width, height });
+        SetSize({ width, height });
     }
 
     void Camera2D::Init(const glm::vec2 &pos, const glm::vec2 &size)
@@ -16,7 +16,7 @@ namespace Lorr
         GetEngine()->GetWindow()->OnResolutionChanged.connect<&Camera2D::OnResolutionChanged>(this);
 
         m_Pos = pos;
-        m_Scale = size;
+        m_Size = size;
 
         CalculateView();
         CalculateProjection();
@@ -26,18 +26,17 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_View =
-            glm::inverse(glm::translate(glm::mat4(1.f), glm::vec3(m_Pos.x, m_Pos.y, .0f)) * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(.0f, .0f, 1.f)));
+        m_View = glm::transpose(glm::inverse(glm::translate(glm::mat4(1.f), glm::vec3(m_Pos.x, m_Pos.y, .0f))
+                                             * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(.0f, .0f, 1.f))));
     }
 
     void Camera2D::CalculateProjection()
     {
         ZoneScoped;
 
-        m_Projection = glm::orthoLH_ZO(0.0f, m_Scale.x, m_Scale.y, .0f, 0.1f, 10000.f);
-        m_Projection[3].z = 1.f;
+        m_Projection = glm::transpose(glm::orthoRH(0.0f, m_Size.x, m_Size.y, .0f, 0.1f, 100.f));
 
-        GetEngine()->GetRenderer()->SetView(m_Scale.x, m_Scale.y);
+        GetEngine()->GetRenderer()->SetView(m_Size.x, m_Size.y);
     }
 
     void Camera2D::SetPosition(const glm::vec2 &pos)
@@ -49,11 +48,11 @@ namespace Lorr
         CalculateView();
     }
 
-    void Camera2D::SetScale(const glm::vec2 &size)
+    void Camera2D::SetSize(const glm::vec2 &size)
     {
         ZoneScoped;
 
-        m_Scale = size;
+        m_Size = size;
 
         CalculateProjection();
     }

@@ -9,6 +9,8 @@
 
 #include "Engine/Graphics/Font.hh"
 
+#include "Engine/Model/Model.hh"
+
 using namespace Lorr;
 
 void GameApp::Init()
@@ -16,22 +18,14 @@ void GameApp::Init()
     m_pCurrentScene = new Scene;
     m_pCurrentScene->Init("game://default-scene");
 
-    FontDesc desc;
-    desc.SizePX = 18;
+    glm::mat4 mat = glm::mat4(1.f);
+    GetEngine()->GetShaderMan()->CreateProgram("game://model", kMeshLayout, "modelv.lr", "modelp.lr");
+    GetEngine()->GetShaderMan()->CreateCBuffer("game://model", mat, true);
 
-    Font *pFont = GetEngine()->GetResourceMan()->LoadResource<Font>("game://font-18", "font.lr", &desc);
-    // Entity ent = m_pCurrentScene->CreateEntity("tes");
-    // ent.AttachText("game://font-18",
-    //                "Lorr is a game engine developed by Emirhan Erdal.\n"
-    //                "Legal notices of third party libraries used in Lorr.\n\n\n"
-
-    //                "bgfx • Copyright © 2010 - 2021 Branimir Karadzic\n"
-    //                "imgui • Copyright © 2014 - 2021 Omar Cornut\n"
-    //                "OpenAL • Copyright © 2007 - 2021 Free Software Foundation, Inc.\n\n\n"
-    //                "Click here for details",
-    //                { 100, 100, 1 });
-
-    m_pCurrentScene->SortAllByDepth();
+    Entity modelEntity = m_pCurrentScene->CreateEntity("test");
+    modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
+    Model &model = modelEntity.AddComponent<Model>();
+    model.Init("test.obj");
 }
 
 void GameApp::Tick(float fDelta)

@@ -26,11 +26,12 @@ namespace Lorr
         if (!CreateDepthStencil(width, height)) return false;
         if (!CreateRasterizer()) return false;
 
+        m_IsContextReady = true;
+
         SetViewport(width, height, 1.f, 0.0f);
 
         LOG_INFO("Successfully initialized D3D11 device.");
 
-        m_IsContextReady = true;
         return true;
     }
 
@@ -92,8 +93,8 @@ namespace Lorr
         // feature level that device will select
         D3D_FEATURE_LEVEL currentFeatureLevel;
         if (FAILED(hr = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE,  // FIXME: HARDCODED
-                                          0, flags, featureLevels, _countof(featureLevels), D3D11_SDK_VERSION, &m_pDevice,
-                                          &currentFeatureLevel, &m_pDeviceContext)))
+                                          0, flags, featureLevels, _countof(featureLevels), D3D11_SDK_VERSION, &m_pDevice, &currentFeatureLevel,
+                                          &m_pDeviceContext)))
 
         {
             LOG_ERROR("Failed to create D3D11 device!");
@@ -199,8 +200,7 @@ namespace Lorr
         m_DepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
         m_DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
 
-        if (FAILED(hr = m_pDevice->CreateDepthStencilView((ID3D11Texture2D *)m_DepthTexture->GetHandle(), &m_DepthStencilViewDesc,
-                                                          &m_pDepthStencilView)))
+        if (FAILED(hr = m_pDevice->CreateDepthStencilView((ID3D11Texture2D *)m_DepthTexture->GetHandle(), &m_DepthStencilViewDesc, &m_pDepthStencilView)))
         {
             LOG_ERROR("Failed to create D3D11 Depth stencil view!");
             return false;
@@ -244,7 +244,7 @@ namespace Lorr
         HRESULT hr;
         m_RasterizerDesc = {};
 
-        m_RasterizerDesc.CullMode = D3D11_CULL_FRONT;
+        m_RasterizerDesc.CullMode = D3D11_CULL_NONE;
         m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
         m_RasterizerDesc.DepthClipEnable = true;
@@ -297,12 +297,19 @@ namespace Lorr
         return g_D3D11Renderer;
     }
 
-    // void D3D11Renderer::HandlePreFrame()
-    // {
-    //     m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
-    //     m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-    //     m_pDeviceContext->RSSetState(m_pRasterizerState);
-    // }
+    void D3D11Renderer::HandlePreFrame()
+    {
+        m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+        m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+        m_pDeviceContext->RSSetState(m_pRasterizerState);
+
+        m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    }
+
+    void D3D11Renderer::DrawIndexed(uint32_t indexCount)
+    {
+        m_pDeviceContext->DrawIndexed(indexCount, 0, 0);
+    }
 
     // void D3D11Renderer::HanlePostFrame()
     // {
