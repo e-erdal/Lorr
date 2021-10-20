@@ -21,9 +21,14 @@ namespace Lorr
             return true;
         }
 
+        // Create default members we needed
+        m_StateManager.SetDevice(m_pDevice);
+        m_TargetManager.Init(m_pDevice);
         if (!CreateSwapChain(pWindow, width, height)) return false;
         if (!CreateBackBuffer()) return false;
-        if (!CreateDepthStencil(width, height)) return false;
+        if (!CreateDepthTexture(width, height)) return false;
+        if (!CreateDepthStencil()) return false;
+        if (!CreateBlendState()) return false;
         if (!CreateRasterizer()) return false;
 
         m_IsContextReady = true;
@@ -31,6 +36,17 @@ namespace Lorr
         SetViewport(width, height, 1.f, 0.0f);
 
         LOG_INFO("Successfully initialized D3D11 device.");
+
+        TextureDesc desc;
+
+        constexpr uint32_t whiteColor = 0xffffffff;
+        TextureData data;
+        data.Width = 1;
+        data.Height = 1;
+        data.DataSize = sizeof(uint32_t);
+        data.Data = (uint8_t *)&whiteColor;
+
+        m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
 
         return true;
     }
@@ -40,8 +56,79 @@ namespace Lorr
         ZoneScoped;
         if (!m_IsContextReady) return;
 
-        m_pDeviceContext->ClearRenderTargetView(m_pRenderTargetView, &v4Color[0]);
+        m_TargetManager.ClearAll(m_pDeviceContext);
         m_pDeviceContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    }
+
+    void D3D11Renderer::SetScissor(const glm::vec4 &lrtb)
+    {
+        D3D11_RECT rect;
+        rect.left = lrtb.x;
+        rect.right = lrtb.y;
+        rect.top = lrtb.z;
+        rect.bottom = lrtb.w;
+
+        m_pDeviceContext->RSSetScissorRects(1, &rect);
+    }
+
+    void D3D11Renderer::SetDepthFunc(D3D::DepthFunc func, bool depthEnabled)
+    {
+        m_DepthStencilDesc.DepthEnable = depthEnabled;
+        m_DepthStencilDesc.StencilEnable = depthEnabled;
+        m_DepthStencilDesc.DepthFunc = (D3D11_COMPARISON_FUNC)func;
+
+        auto state = m_StateManager.Get(m_DepthStencilDesc);
+        if (m_pDepthStencilState != state)
+        {
+            m_pDepthStencilState = state;
+            m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+        }
+    }
+
+    void D3D11Renderer::SetCulling(D3D::Cull cull, bool counterClockwise)
+    {
+        m_RasterizerDesc.FrontCounterClockwise = counterClockwise;
+        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)cull;
+
+        auto state = m_StateManager.Get(m_RasterizerDesc);
+        if (m_pRasterizerState != state)
+        {
+            m_pRasterizerState = state;
+            m_pDeviceContext->RSSetState(m_pRasterizerState);
+        }
+    }
+
+    void D3D11Renderer::SetBlend(bool enableBlending, bool alphaCoverage)
+    {
+        m_BlendDesc.AlphaToCoverageEnable = alphaCoverage;
+        m_BlendDesc.RenderTarget[0].BlendEnable = enableBlending;
+
+        auto state = m_StateManager.Get(m_BlendDesc);
+        if (m_pBlendState != state)
+        {
+            m_pBlendState = state;
+            glm::vec4 factor = { 1, 1, 1, 1 };
+            m_pDeviceContext->OMSetBlendState(m_pBlendState, &factor[0], 0xffffffff);
+        }
+    }
+
+    void D3D11Renderer::CreateTarget(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle texture)
+    {
+        m_TargetManager.Create(ident, width, height, texture);
+    }
+
+    void D3D11Renderer::SetCurrentTarget(const Identifier &ident)
+    {
+        constexpr ID3D11ShaderResourceView *nullSRV[1] = { nullptr };
+        m_pDeviceContext->PSSetShaderResources(0, 1, nullSRV);
+
+        auto target = m_TargetManager.GetView(ident);
+        m_pDeviceContext->OMSetRenderTargets(1, &target, m_pDepthStencilView);
+    }
+
+    TextureHandle D3D11Renderer::GetTargetTexture(const Identifier &ident)
+    {
+        return m_TargetManager.GetTexture(ident);
     }
 
     void D3D11Renderer::Frame(uint32_t uInterval)
@@ -52,7 +139,7 @@ namespace Lorr
         if (m_NeedToPresent)
         {
             m_pSwapChain->Present(uInterval, 0);
-            // m_pDeviceContext->Flush(); // no idea what to do with this
+            m_pDeviceContext->Flush();  // no idea what to do with this
         }
     }
 
@@ -174,27 +261,25 @@ namespace Lorr
             return false;
         }
 
-        hr = m_pDevice->CreateRenderTargetView(pBackBuffer, 0, &m_pRenderTargetView);
-
-        if (hr < 0)
-        {
-            LOG_ERROR("Failed to create D3D11 RTV!");
-            return false;
-        }
+        auto view = m_TargetManager.Create("renderer://backbuffer", pBackBuffer);
+        m_pDeviceContext->OMSetRenderTargets(1, &view, m_pDepthStencilView);
 
         SAFE_RELEASE(pBackBuffer);
 
         return true;
     }
 
-    bool D3D11Renderer::CreateDepthStencil(uint32_t width, uint32_t height)
+    bool D3D11Renderer::CreateDepthTexture(uint32_t width, uint32_t height)
     {
         HRESULT hr;
 
-        TextureData depthData = {};
-        depthData.Format = TEXTURE_FORMAT_DEPTH_32, depthData.Width = width, depthData.Height = height;
+        TextureDesc desc = {};
+        desc.Type = TEXTURE_TYPE_DEPTH;
 
-        m_DepthTexture = Texture::Create("d3d11-renderer://depth", 0, &depthData);
+        TextureData depthData = {};
+        depthData.Format = TEXTURE_FORMAT_R32_TYPELESS, depthData.Width = width, depthData.Height = height;
+
+        m_DepthTexture = Texture::Create("d3d11-renderer://depth", &desc, &depthData);
 
         m_DepthStencilViewDesc = {};
         m_DepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
@@ -206,15 +291,16 @@ namespace Lorr
             return false;
         }
 
-        m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
+        return true;
+    }
 
-        m_DepthStencilDesc = {};
-
+    bool D3D11Renderer::CreateDepthStencil()
+    {
         m_DepthStencilDesc.DepthEnable = true;
         m_DepthStencilDesc.DepthWriteMask = D3D11_DEPTH_WRITE_MASK_ALL;
         m_DepthStencilDesc.DepthFunc = D3D11_COMPARISON_LESS;
 
-        m_DepthStencilDesc.StencilEnable = false;
+        m_DepthStencilDesc.StencilEnable = true;
         m_DepthStencilDesc.StencilReadMask = 0xFF;
         m_DepthStencilDesc.StencilWriteMask = 0xFF;
 
@@ -228,23 +314,27 @@ namespace Lorr
         m_DepthStencilDesc.BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
         m_DepthStencilDesc.BackFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
 
-        if (FAILED(hr = m_pDevice->CreateDepthStencilState(&m_DepthStencilDesc, &m_pDepthStencilState)))
-        {
-            LOG_ERROR("Failed to create D3D11 Depth stencil state!");
-            return false;
-        }
+        return m_pDepthStencilState = m_StateManager.Get(m_DepthStencilDesc);
+    }
 
-        m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+    bool D3D11Renderer::CreateBlendState()
+    {
+        m_BlendDesc.AlphaToCoverageEnable = false;
+        m_BlendDesc.RenderTarget[0].BlendEnable = true;
+        m_BlendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+        m_BlendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+        m_BlendDesc.RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+        m_BlendDesc.RenderTarget[0].SrcBlendAlpha = D3D11_BLEND_ONE;
+        m_BlendDesc.RenderTarget[0].DestBlendAlpha = D3D11_BLEND_INV_SRC_ALPHA;
+        m_BlendDesc.RenderTarget[0].BlendOpAlpha = D3D11_BLEND_OP_ADD;
+        m_BlendDesc.RenderTarget[0].RenderTargetWriteMask = D3D11_COLOR_WRITE_ENABLE_ALL;
 
-        return true;
+        return m_pBlendState = m_StateManager.Get(m_BlendDesc);
     }
 
     bool D3D11Renderer::CreateRasterizer()
     {
-        HRESULT hr;
-        m_RasterizerDesc = {};
-
-        m_RasterizerDesc.CullMode = D3D11_CULL_NONE;
+        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)D3D::Cull::Back;
         m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
         m_RasterizerDesc.DepthClipEnable = true;
@@ -257,15 +347,7 @@ namespace Lorr
         m_RasterizerDesc.MultisampleEnable = false;
         m_RasterizerDesc.ScissorEnable = false;
 
-        hr = m_pDevice->CreateRasterizerState(&m_RasterizerDesc, &m_pRasterizerState);
-
-        if (hr < 0)
-        {
-            LOG_ERROR("Failed to create D3D11 Rasterizer state!");
-            return false;
-        }
-
-        return true;
+        return m_pRasterizerState = m_StateManager.Get(m_RasterizerDesc);
     }
 
     void D3D11Renderer::ChangeResolution(uint32_t width, uint32_t height)
@@ -276,18 +358,18 @@ namespace Lorr
 
         m_pDeviceContext->OMSetRenderTargets(0, 0, 0);
 
-        SAFE_RELEASE(m_pRenderTargetView);
+        m_TargetManager.Release("renderer://backbuffer");
         SAFE_RELEASE(m_pDepthStencilView);
         m_DepthTexture->Delete();
 
-        if (FAILED(m_pSwapChain->ResizeBuffers(0, 0, 0, DXGI_FORMAT_UNKNOWN, 0)))
+        if (FAILED(m_pSwapChain->ResizeBuffers(0, 0, 0, m_SwapChainDesc.BufferDesc.Format, 0)))
         {
             LOG_ERROR("Failed to resize swap chain!");
             return;
         }
 
         CreateBackBuffer();
-        CreateDepthStencil(width, height);
+        CreateDepthTexture(width, height);
 
         SetViewport(width, height, 1.f, 0.f);
     }
@@ -299,19 +381,17 @@ namespace Lorr
 
     void D3D11Renderer::HandlePreFrame()
     {
-        m_pDeviceContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
-        m_pDeviceContext->OMSetRenderTargets(1, &m_pRenderTargetView, m_pDepthStencilView);
-        m_pDeviceContext->RSSetState(m_pRasterizerState);
+        SetCurrentTarget("renderer://backbuffer");
+        SetDepthFunc(D3D::DepthFunc::Less, true);
+        SetCulling(D3D::Cull::Back, true);
+        SetBlend(true, true);
 
         m_pDeviceContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
     }
 
-    void D3D11Renderer::DrawIndexed(uint32_t indexCount)
+    void D3D11Renderer::DrawIndexed(uint32_t indexCount, uint32_t startIndex, uint32_t baseVertex)
     {
-        m_pDeviceContext->DrawIndexed(indexCount, 0, 0);
+        m_pDeviceContext->DrawIndexed(indexCount, startIndex, baseVertex);
     }
 
-    // void D3D11Renderer::HanlePostFrame()
-    // {
-    // }
 }  // namespace Lorr

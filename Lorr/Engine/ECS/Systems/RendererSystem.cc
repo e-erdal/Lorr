@@ -2,6 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
+#include "Engine/Graphics/D3D11/D3D11Texture.hh"
 #include "Engine/Managers/ShaderManager.hh"
 
 #include "Engine/ECS/Components/TransformComponent.hh"
@@ -18,20 +19,26 @@ namespace Lorr::System
 
     void RendererSystem::Draw()
     {
-        glm::mat4 matrix(1.0f);
+        IRenderer *pRenderer = GetEngine()->GetRenderer();
 
         // Stuff that renderer requires
-        Camera3D *pCamera = GetEngine()->GetCamera();
+        Camera3D *pCamera = GetEngine()->GetCamera3D();
+        IWindow *pWindow = GetEngine()->GetWindow();
         glm::mat4 cameraMatrix = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
+
+        pRenderer->SetCurrentTarget("renderer://test");
 
         // Model shader
         ShaderProgram *modelProgram = GetEngine()->GetShaderMan()->Get("game://model");
         RenderBufferHandle modelCBuf = GetEngine()->GetShaderMan()->GetCBuf("game://model");
+
         modelCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
 
         // Renderer
         VertexBatcher *pBatcher = GetEngine()->GetBatcher();
         pBatcher->Begin();
+
+        glm::mat4 matrix(1.0f);
 
         m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
             if (m_pRegistry->has<Component::Renderable>(entity))
@@ -59,14 +66,13 @@ namespace Lorr::System
                 modelProgram->Pixel->Use();
                 modelCBuf->Use(0);
 
-                model.GetVertexBuf()->Use(0, &kMeshLayout);
-                model.GetIndexBuf()->Use(0);
-
-                GetEngine()->GetRenderer()->Draw(model.GetIndexCount());
+                model.Render();
             }
         });
 
         pBatcher->End();
+
+        pRenderer->SetCurrentTarget("renderer://backbuffer");
     }
 
 }  // namespace Lorr::System

@@ -18,25 +18,24 @@ namespace Lorr
         m_Pos = pos;
         m_Size = size;
 
-        CalculateView();
-        CalculateProjection();
+        CalculateMetrices();
     }
 
-    void Camera2D::CalculateView()
+    void Camera2D::CalculateMetrices()
     {
         ZoneScoped;
 
-        m_View = glm::transpose(glm::inverse(glm::translate(glm::mat4(1.f), glm::vec3(m_Pos.x, m_Pos.y, .0f))
-                                             * glm::rotate(glm::mat4(1.f), glm::radians(0.f), glm::vec3(.0f, .0f, 1.f))));
-    }
+        float L = m_Pos.x;
+        float R = m_Pos.x + m_Size.x;
+        float T = m_Pos.y;
+        float B = m_Pos.y + m_Size.y;
 
-    void Camera2D::CalculateProjection()
-    {
-        ZoneScoped;
-
-        m_Projection = glm::transpose(glm::orthoRH(0.0f, m_Size.x, m_Size.y, .0f, 0.1f, 100.f));
-
-        GetEngine()->GetRenderer()->SetView(m_Size.x, m_Size.y);
+        m_Matrix = {
+            { 2.0f / (R - L), 0.0f, 0.0f, 0.0f },
+            { 0.0f, 2.0f / (T - B), 0.0f, 0.0f },
+            { 0.0f, 0.0f, 0.5f, 0.0f },
+            { (R + L) / (L - R), (T + B) / (B - T), 0.5f, 1.0f },
+        };
     }
 
     void Camera2D::SetPosition(const glm::vec2 &pos)
@@ -45,7 +44,7 @@ namespace Lorr
 
         m_Pos = pos;
 
-        CalculateView();
+        CalculateMetrices();
     }
 
     void Camera2D::SetSize(const glm::vec2 &size)
@@ -54,7 +53,7 @@ namespace Lorr
 
         m_Size = size;
 
-        CalculateProjection();
+        CalculateMetrices();
     }
 
 }  // namespace Lorr

@@ -46,6 +46,7 @@ namespace Lorr
                 D3D11Texture *texture = new D3D11Texture;
 
                 texture->Init(ident, pDesc, pData);
+                GetEngine()->GetResourceMan()->Append(texture);
 
                 return (ITexture *)texture;
             }

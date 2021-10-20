@@ -6,17 +6,34 @@
 
 namespace Lorr
 {
+    enum class Direction
+    {
+        NONE,
+        FORWARD = 1 << 0,
+        BACKWARD = 1 << 1,
+        LEFT = 1 << 2,
+        RIGHT = 1 << 3,
+        UP = 1 << 4,
+        DOWN = 1 << 5
+    };
+    BitFlags(Direction);
+
     class Camera3D
     {
     public:
-        void Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear,
-                  float zFar);
+        void Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar);
 
         void CalculateView();
         void CalculateProjection();
 
         void SetPosition(const glm::vec3 &pos);
         void SetSize(const glm::vec2 &size);
+
+        void StartMoving(Direction direction);
+        void StopMoving(Direction direction);
+        void SetDirection(float offX, float offY);
+
+        void Update(float deltaTime);
 
     public:
         const glm::mat4 &GetProjection() const
@@ -32,6 +49,11 @@ namespace Lorr
         const glm::vec3 &GetPosition() const
         {
             return m_Pos;
+        }
+
+        float GetAspect()
+        {
+            return m_Aspect;
         }
 
     private:
@@ -50,7 +72,9 @@ namespace Lorr
         float m_Aspect = 0.f;
         float m_zNear = 0.f;
         float m_zFar = 0.f;
-        float m_Rotation{};
-        float m_Zoom{};
+        float m_MovingSpeed = 1000.f;
+        float m_AngleX = 0, m_AngleY = 0;
+
+        Direction m_MovingDirection = Direction::NONE;
     };
 }  // namespace Lorr

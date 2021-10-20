@@ -9,6 +9,7 @@ namespace Lorr
         m_Ident = ident;
         m_Width = pData->Width;
         m_Height = pData->Height;
+        m_DataSize = pData->DataSize;
 
         DXGI_FORMAT textureFormat = D3D::TextureFormatToDXFormat(pData->Format);
         ID3D11Device *pDevice = D3D11Renderer::Get()->GetDevice();
@@ -28,22 +29,60 @@ namespace Lorr
         textureDesc.Width = m_Width;
         textureDesc.Height = m_Height;
 
-        //* Special texture creation
-        if (textureFormat == DXGI_FORMAT_D32_FLOAT)  // If texture is a depth buffer
+        switch (pDesc->Type)
         {
-            textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL;
-            if (FAILED(hr = pDevice->CreateTexture2D(&textureDesc, 0, &m_Handle)))
+            case TEXTURE_TYPE_DEPTH:
             {
-                LOG_ERROR("Failed to create D3D11 texture!");
-                return;
-            }
+                textureDesc.BindFlags = D3D11_BIND_DEPTH_STENCIL | D3D11_BIND_SHADER_RESOURCE;
+                textureFormat = DXGI_FORMAT_R32_FLOAT;
 
-            LOG_INFO("Created a DepthTexture <{}>({}, {})!", m_Ident, m_Width, m_Height);
-            return;
-        }
-        else  // If texture is regular shader texture
-        {
-            textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+                if (FAILED(hr = pDevice->CreateTexture2D(&textureDesc, 0, &m_pHandle)))
+                {
+                    LOG_ERROR("Failed to create D3D11 texture!");
+                    return;
+                }
+
+                break;
+            }
+            case TEXTURE_TYPE_RENDER_TARGET:
+            {
+                textureFormat = textureDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
+                textureDesc.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
+
+                if (FAILED(hr = pDevice->CreateTexture2D(&textureDesc, 0, &m_pHandle)))
+                {
+                    LOG_ERROR("Failed to create D3D11 texture!");
+                    return;
+                }
+
+                break;
+            }
+            case TEXTURE_TYPE_REGULAR:
+            {
+                textureDesc.BindFlags = D3D11_BIND_SHADER_RESOURCE;
+
+                // Initial definitons
+                int pitch = 0;
+
+                switch (pData->Format)
+                {
+                    case TEXTURE_FORMAT_RGBA8: pitch = 4;
+                    default: break;
+                }
+
+                D3D11_SUBRESOURCE_DATA srd = {};
+                srd.SysMemSlicePitch = 0;
+                srd.pSysMem = pData->Data;
+                srd.SysMemPitch = pitch * m_Width;
+
+                if (FAILED(hr = pDevice->CreateTexture2D(&textureDesc, &srd, &m_pHandle)))
+                {
+                    LOG_ERROR("Failed to create D3D11 texture!");
+                    return;
+                }
+                break;
+            }
+            default: break;
         }
 
         D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
@@ -53,49 +92,22 @@ namespace Lorr
         srvDesc.Format = textureFormat;
 
         D3D11_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.Filter = D3D11_FILTER_ANISOTROPIC;
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
         samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
-        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
+        samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
         samplerDesc.MipLODBias = 0.0f;
-        samplerDesc.MaxAnisotropy = 1;
         samplerDesc.ComparisonFunc = D3D11_COMPARISON_NEVER;
-        samplerDesc.BorderColor[0] = 1.0f;
-        samplerDesc.BorderColor[1] = 1.0f;
-        samplerDesc.BorderColor[2] = 1.0f;
-        samplerDesc.BorderColor[3] = 1.0f;
-        samplerDesc.MinLOD = -FLT_MAX;  // TODO: Add LOD levels
-        samplerDesc.MaxLOD = FLT_MAX;
+        samplerDesc.MinLOD = 0;  // TODO: Add LOD levels
+        samplerDesc.MaxLOD = D3D11_FLOAT32_MAX;
 
-        // Initial definitons
-        int pitch = 0;
-
-        switch (pData->Format)
-        {
-            case TEXTURE_FORMAT_RGBA8: pitch = 4;
-            default: break;
-        }
-
-        D3D11_SUBRESOURCE_DATA srd;
-        ZeroMemory(&srd, sizeof(D3D11_SUBRESOURCE_DATA));
-        srd.SysMemSlicePitch = 0;
-        srd.pSysMem = pData->Data;
-        srd.SysMemPitch = pitch * m_Width;
-        m_DataSize = pData->DataSize;
-
-        if (FAILED(hr = pDevice->CreateTexture2D(&textureDesc, &srd, &m_Handle)))
-        {
-            LOG_ERROR("Failed to create D3D11 texture!");
-            return;
-        }
-
-        if (FAILED(hr = pDevice->CreateShaderResourceView(m_Handle, &srvDesc, &m_ShaderResource)))
+        if (FAILED(hr = pDevice->CreateShaderResourceView(m_pHandle, &srvDesc, &m_pShaderResource)))
         {
             LOG_ERROR("Failed to create D3D11 texture shader resource view!");
             return;
         }
 
-        if (FAILED(hr = pDevice->CreateSamplerState(&samplerDesc, &m_SamplerState)))
+        if (FAILED(hr = pDevice->CreateSamplerState(&samplerDesc, &m_pSamplerState)))
         {
             LOG_ERROR("Failed to create D3D11 texture sampler!");
             return;
@@ -104,18 +116,26 @@ namespace Lorr
         LOG_INFO("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
     }
 
+    void D3D11Texture::Use()
+    {
+        ID3D11DeviceContext *pCtx = D3D11Renderer::Get()->GetDeviceContext();
+
+        pCtx->PSSetShaderResources(0, 1, &m_pShaderResource);
+        pCtx->PSSetSamplers(0, 1, &m_pSamplerState);
+    }
+
     void *D3D11Texture::GetHandle()
     {
-        return m_Handle;
+        return m_pHandle;
     }
 
     void D3D11Texture::Delete()
     {
-        SAFE_RELEASE(m_Handle);
+        SAFE_RELEASE(m_pHandle);
 
-        SAFE_RELEASE(m_ShaderResource);
-        SAFE_RELEASE(m_SamplerState);
-        SAFE_RELEASE(m_RenderTarget);
+        SAFE_RELEASE(m_pShaderResource);
+        SAFE_RELEASE(m_pSamplerState);
+        SAFE_RELEASE(m_pRenderTarget);
     }
 
 }  // namespace Lorr

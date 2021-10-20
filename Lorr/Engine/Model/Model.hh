@@ -17,27 +17,12 @@ namespace Lorr
 
         void Init(const std::string &path);
 
-    public:
-        const RenderBufferHandle &GetVertexBuf() const
-        {
-            return m_VertexBuffer;
-        }
+        void AddSphere(float radius, uint32_t tessellation, TextureHandle texture);
 
-        const RenderBufferHandle &GetIndexBuf() const
-        {
-            return m_IndexBuffer;
-        }
-
-        uint32_t GetIndexCount()
-        {
-            return m_IndexCount;
-        }
+        void Render();
 
     private:
         std::vector<Mesh> m_Meshes;
-
-        RenderBufferHandle m_VertexBuffer = 0;
-        RenderBufferHandle m_IndexBuffer = 0;
 
         uint32_t m_IndexCount = 0;
     };

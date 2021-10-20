@@ -14,7 +14,7 @@
 
 #include "Engine/Graphics/Camera2D.hh"
 #include "Engine/Graphics/Camera3D.hh"
-#include "Engine/Graphics/Renderer.hh"
+#include "Engine/Graphics/Common/IRenderer.hh"
 #include "Engine/Graphics/Renderer/VertexBatcher.hh"
 
 #include "Engine/Managers/ShaderManager.hh"
@@ -45,14 +45,19 @@ namespace Lorr
             return m_pWindow;
         }
 
-        Renderer *GetRenderer() const
+        IRenderer *GetRenderer() const
         {
             return m_pRenderer;
         }
 
-        Camera3D *GetCamera() const
+        Camera3D *GetCamera3D() const
         {
-            return m_pCamera;
+            return m_pCamera3D;
+        }
+
+        Camera2D *GetCamera2D() const
+        {
+            return m_pCamera2D;
         }
 
         ResourceManager *GetResourceMan() const
@@ -83,9 +88,10 @@ namespace Lorr
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
-        Renderer *m_pRenderer = new Renderer;
+        IRenderer *m_pRenderer = 0;
         VertexBatcher *m_pBatcher = new VertexBatcher;
-        Camera3D *m_pCamera = new Camera3D;
+        Camera3D *m_pCamera3D = new Camera3D;
+        Camera2D *m_pCamera2D = new Camera2D;
         ImGuiHandler *m_pImGui = new ImGuiHandler;
         ResourceManager *m_pResourceMan = new ResourceManager;
         ShaderManager *m_pShaderMan = new ShaderManager;

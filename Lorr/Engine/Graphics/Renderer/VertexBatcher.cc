@@ -84,33 +84,33 @@ namespace Lorr
 
     void VertexBatcher::Flush()
     {
-        Renderer *pRenderer = GetEngine()->GetRenderer();
-        auto *pCamera = GetEngine()->GetCamera();
-        glm::mat4 mvp = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
+        // Renderer *pRenderer = GetEngine()->GetRenderer();
+        // auto *pCamera = GetEngine()->GetCamera();
+        // glm::mat4 mvp = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
 
-        for (auto &&event : m_Queue)
-        {
-            TextureHandle texture = event.first;
-            auto &vertexes = event.second.Vertices;
-            auto &indexes = event.second.Indexes;
+        // for (auto &&event : m_Queue)
+        // {
+        //     TextureHandle texture = event.first;
+        //     auto &vertexes = event.second.Vertices;
+        //     auto &indexes = event.second.Indexes;
 
-            if (vertexes.size() > 0)
-            {
-                m_ConstantBuffer->SetData(&mvp[0][0], sizeof(mvp));
-                m_ConstantBuffer->Use(0);
+        //     if (vertexes.size() > 0)
+        //     {
+        //         m_ConstantBuffer->SetData(&mvp[0][0], sizeof(mvp));
+        //         m_ConstantBuffer->Use(0);
 
-                m_VertexShader->Use();
-                m_PixelShader->Use();
+        //         m_VertexShader->Use();
+        //         m_PixelShader->Use();
 
-                m_VertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
-                m_VertexBuffer->Use(0, &m_Layout);
+        //         m_VertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
+        //         m_VertexBuffer->Use(0, &m_Layout);
 
-                m_IndexBuffer->Use(0);
+        //         m_IndexBuffer->Use(0);
 
-                uint32_t indexCount = indexes ? indexes : kMaxRects * 6;
-                pRenderer->Draw(54);
-            }
-        }
+        //         uint32_t indexCount = indexes ? indexes : kMaxRects * 6;
+        //         pRenderer->Draw(54);
+        //     }
+        // }
     }
 
     void VertexBatcher::Reset()
@@ -127,21 +127,21 @@ namespace Lorr
 
     void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)
     {
-        BatcherEvent &event = GetEvent(!texture ? GetEngine()->GetRenderer()->GetPlaceholder() : texture);
-        BatcherVertices &vertices = event.Vertices;
-        vertices.resize(vertices.size() + 4);
+        // BatcherEvent &event = GetEvent(!texture ? GetEngine()->GetRenderer()->GetPlaceholder() : texture);
+        // BatcherVertices &vertices = event.Vertices;
+        // vertices.resize(vertices.size() + 4);
 
-        BatcherVertex *info = &vertices[vertices.size() - 4];
+        // BatcherVertex *info = &vertices[vertices.size() - 4];
 
-        for (size_t i = 0; i < 4; i++)
-        {
-            info->Pos = transform * kVertexPos[i];
-            info->UV = uv[i];
-            info->Color = (glm::vec4)color / 255.f;
-            info++;
-        }
+        // for (size_t i = 0; i < 4; i++)
+        // {
+        //     info->Pos = transform * kVertexPos[i];
+        //     info->UV = uv[i];
+        //     info->Color = (glm::vec4)color / 255.f;
+        //     info++;
+        // }
 
-        event.Indexes += 6;
+        // event.Indexes += 6;
     }
 
     void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color)

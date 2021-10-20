@@ -5,6 +5,15 @@
 
 namespace Lorr
 {
+    static InputLayout kImGuiInputLayout = {
+        { VertexAttribType::Vec2, "POSITION" },
+        { VertexAttribType::Vec2, "TEXCOORD" },
+        { VertexAttribType::UInt, "COLOR" },
+    };
+
+    static uint32_t g_VertexBufferSize = 5000;
+    static uint32_t g_IndexBufferSize = 10000;
+
     void ImGui_ImplSurface_KeyPress(Key eKey, ButtonState eState, KeyMod eMod)
     {
         ZoneScoped;
@@ -164,10 +173,10 @@ namespace Lorr
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
         io.IniFilename = 0;
+        io.Fonts->AddFontFromFileTTF("font.ttf", 14);
 
         ImGui::StyleColorsDark();
 
-        // ImGui_Implbgfx_Init(255); //! FIXME
         InitImGui(pEngine->GetWindow());
     }
 
@@ -175,7 +184,6 @@ namespace Lorr
     {
         ZoneScoped;
 
-        // ImGui_Implbgfx_NewFrame(); //! FIXME
         ImGui_ImplSurface_NewFrame();
         ImGui::NewFrame();
     }
@@ -185,9 +193,9 @@ namespace Lorr
         ZoneScopedN("ImGuiHandler::EndFrame");
 
         ImGui::EndFrame();
-        
+
         ImGui::Render();
-        // ImGui_Implbgfx_RenderDrawLists(ImGui::GetDrawData()); //! FIXME
+        ImGui_ImplIRenderer_Draw();
     }
 
     void ImGuiHandler::InitImGui(PlatformWindow *pWindow)
@@ -232,6 +240,23 @@ namespace Lorr
         pWindow->OnSetKeyState.connect<&ImGui_ImplSurface_KeyPress>();
         pWindow->OnSetMouseState.connect<&ImGui_ImplSurface_MouseStateChange>();
         pWindow->OnChar.connect<&ImGui_ImplSurface_OnChar>();
+
+        //* IRenderer backend initialization *//
+        ShaderDesc vsDesc{ .Layout = kImGuiInputLayout };
+        m_VertexShader = Shader::Create("imgui://vertex-shader", "imguiv.lr", &vsDesc);
+        m_PixelShader = Shader::Create("imgui://pixel-shader", "imguip.lr");
+
+        uint8_t *pFontData;
+        int32_t fontW, fontH;
+        io.Fonts->GetTexDataAsRGBA32(&pFontData, &fontW, &fontH);
+
+        TextureDesc desc;
+        TextureData texData{ .Width = (uint32_t)fontW, .Height = (uint32_t)fontH, .Data = pFontData };
+        m_FontTexture = Texture::Create("imgui://font", &desc, &texData);
+
+        io.Fonts->TexID = m_FontTexture;  // We dont use IDs, so just scrap that in
+
+        m_ConstantBuffer = RenderBuffer::Create(0, sizeof(float[4][4]), RenderBufferType::Constant, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
     }
 
     void ImGuiHandler::ImGui_ImplSurface_Shutdown()
@@ -272,6 +297,103 @@ namespace Lorr
         }
 
         timer.reset();
+    }
+
+    void ImGuiHandler::ImGui_ImplIRenderer_Draw()
+    {
+        ImDrawData *pDrawData = ImGui::GetDrawData();
+        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        Camera2D *pCamera = GetEngine()->GetCamera2D();
+
+        pRenderer->SetDepthFunc(D3D::DepthFunc::Always, false);
+        pRenderer->SetCulling(D3D::Cull::None, false);
+        pRenderer->SetBlend(true, false);
+
+        if (pDrawData->DisplaySize.x <= 0.0f || pDrawData->DisplaySize.y <= 0.0f) return;
+
+        if (!m_VertexBuffer || g_VertexBufferSize < pDrawData->TotalVtxCount)
+        {
+            if (m_VertexBuffer) m_VertexBuffer->Delete();
+            g_VertexBufferSize = pDrawData->TotalVtxCount + 5000;
+
+            m_VertexBuffer =
+                RenderBuffer::Create(0, g_VertexBufferSize * sizeof(ImDrawVert), RenderBufferType::Vertex, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+        }
+
+        if (!m_IndexBuffer || g_IndexBufferSize < pDrawData->TotalIdxCount)
+        {
+            if (m_IndexBuffer) m_IndexBuffer->Delete();
+            g_IndexBufferSize = pDrawData->TotalIdxCount + 10000;
+
+            m_IndexBuffer =
+                RenderBuffer::Create(0, g_IndexBufferSize * sizeof(ImDrawIdx), RenderBufferType::Index, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+        }
+
+        ImDrawVert *pVerices = (ImDrawVert *)m_VertexBuffer->GetNewData();
+        ImDrawIdx *pIndices = (ImDrawIdx *)m_IndexBuffer->GetNewData();
+
+        for (int i = 0; i < pDrawData->CmdListsCount; i++)
+        {
+            const ImDrawList *pDrawList = pDrawData->CmdLists[i];
+            memcpy(pVerices, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.Size * sizeof(ImDrawVert));
+            memcpy(pIndices, pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.Size * sizeof(ImDrawIdx));
+
+            pVerices += pDrawList->VtxBuffer.Size;
+            pIndices += pDrawList->IdxBuffer.Size;
+        }
+
+        m_VertexBuffer->UnmapData();
+        m_IndexBuffer->UnmapData();
+
+        glm::mat4 mvp = pCamera->GetMatrix();
+        m_ConstantBuffer->SetData(&mvp[0][0], sizeof(glm::mat4));
+        glm::vec2 clipOff = { pDrawData->DisplayPos.x, pDrawData->DisplayPos.y };
+
+        m_VertexShader->Use();
+        m_PixelShader->Use();
+        m_ConstantBuffer->Use();
+
+        m_VertexBuffer->Use(0, &kImGuiInputLayout);
+        m_IndexBuffer->Use(0, 0, false);
+
+        uint32_t vertexOff = 0;
+        uint32_t indexOff = 0;
+
+        for (int i = 0; i < pDrawData->CmdListsCount; i++)
+        {
+            const ImDrawList *pDrawList = pDrawData->CmdLists[i];
+
+            for (auto &cmd : pDrawList->CmdBuffer)
+            {
+                if (cmd.UserCallback)
+                {
+                    if (cmd.UserCallback == ImDrawCallback_ResetRenderState)
+                    {
+                        LOG_ERROR("Setup Render state!!!");
+                    }
+                    else
+                    {
+                        cmd.UserCallback(pDrawList, &cmd);
+                    }
+                }
+                else
+                {
+                    glm::vec2 clipMin(cmd.ClipRect.x - clipOff.x, cmd.ClipRect.y - clipOff.y);
+                    glm::vec2 clipMax(cmd.ClipRect.z - clipOff.x, cmd.ClipRect.w - clipOff.y);
+                    if (clipMax.x < clipMin.x || clipMax.y < clipMin.y) continue;
+
+                    // pRenderer->SetScissor({ clipMin.x, clipMin.y, clipMax.x, clipMax.y });
+
+                    TextureHandle texture = (TextureHandle)cmd.TextureId;
+                    texture->Use();
+
+                    pRenderer->DrawIndexed(cmd.ElemCount, cmd.IdxOffset + indexOff, cmd.VtxOffset + vertexOff);
+                }
+            }
+
+            vertexOff += pDrawList->VtxBuffer.Size;
+            indexOff += pDrawList->IdxBuffer.Size;
+        }
     }
 
 }  // namespace Lorr

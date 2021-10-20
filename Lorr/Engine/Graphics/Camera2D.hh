@@ -11,33 +11,21 @@ namespace Lorr
     public:
         void Init(const glm::vec2 &pos, const glm::vec2 &size);
 
-        void CalculateView();
-        void CalculateProjection();
+        void CalculateMetrices();
 
         void SetPosition(const glm::vec2 &pos);
         void SetSize(const glm::vec2 &size);
 
     public:
-        const glm::mat4 &GetProjection() const
+        const glm::mat4 &GetMatrix() const
         {
-            return m_Projection;
-        }
-
-        const glm::mat4 &GetView() const
-        {
-            return m_View;
-        }
-
-        const glm::vec2 &GetPosition() const
-        {
-            return m_Pos;
+            return m_Matrix;
         }
 
     private:
         void OnResolutionChanged(uint32_t width, uint32_t height);
 
-        glm::mat4 m_Projection{};
-        glm::mat4 m_View{};
+        glm::mat4 m_Matrix{};
 
         glm::vec2 m_Pos{};
         glm::vec2 m_Size{};

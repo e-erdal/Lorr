@@ -11,8 +11,7 @@ namespace Lorr
         return (D3D11_CPU_ACCESS_FLAG)d11Flags;
     }
 
-    void D3D11RenderBuffer::Init(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage,
-                                 RenderBufferAccess accessFlags)
+    void D3D11RenderBuffer::Init(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage, RenderBufferAccess accessFlags)
     {
         auto *pDevice = D3D11Renderer::Get()->GetDevice();
         D3D11_BUFFER_DESC desc = {};
@@ -69,16 +68,35 @@ namespace Lorr
     {
         auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
 
-        D3D11_MAPPED_SUBRESOURCE ms = {};
-        if (SUCCEEDED(pCtx->Map(m_pHandle, 0, m_Mapping, 0, &ms)))
+        m_MappedResc = {};
+        if (SUCCEEDED(pCtx->Map(m_pHandle, 0, m_Mapping, 0, &m_MappedResc)))
         {
-            memcpy(ms.pData, pData, dataLen);
+            memcpy(m_MappedResc.pData, pData, dataLen);
 
             pCtx->Unmap(m_pHandle, 0);
         }
     }
 
-    void D3D11RenderBuffer::Use(uint32_t offset, InputLayout *pLayout)
+    void *D3D11RenderBuffer::GetNewData()
+    {
+        auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
+
+        m_MappedResc = {};
+        if (SUCCEEDED(pCtx->Map(m_pHandle, 0, m_Mapping, 0, &m_MappedResc)))
+        {
+            return m_MappedResc.pData;
+        }
+
+        return 0;
+    }
+
+    void D3D11RenderBuffer::UnmapData()
+    {
+        auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
+        pCtx->Unmap(m_pHandle, 0);
+    }
+
+    void D3D11RenderBuffer::Use(uint32_t offset, InputLayout *pLayout, bool index32)
     {
         auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
 
@@ -90,12 +108,21 @@ namespace Lorr
                 pCtx->IASetVertexBuffers(0, 1, &m_pHandle, &stride, &offset);
                 break;
             }
-            case RenderBufferType::Index: pCtx->IASetIndexBuffer(m_pHandle, DXGI_FORMAT_R32_UINT, offset); break;
+            case RenderBufferType::Index: pCtx->IASetIndexBuffer(m_pHandle, index32 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, offset); break;
             case RenderBufferType::Constant:
                 pCtx->VSSetConstantBuffers(0, 1, &m_pHandle);
                 pCtx->PSSetConstantBuffers(0, 1, &m_pHandle);
                 break;
             default: break;
+        }
+    }
+
+    void D3D11RenderBuffer::Delete()
+    {
+        if (m_pHandle)
+        {
+            m_pHandle->Release();
+            m_pHandle = 0;
         }
     }
 

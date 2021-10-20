@@ -13,7 +13,8 @@ namespace Lorr
         Vec2,
         Vec3,
         Vec4,
-        Mat4
+        Mat4,
+        UInt,
     };
 
     static uint32_t VertexAttribSize(VertexAttribType type)
@@ -25,6 +26,7 @@ namespace Lorr
             case VertexAttribType::Vec3: return sizeof(glm::vec3);
             case VertexAttribType::Vec4: return sizeof(glm::vec4);
             case VertexAttribType::Mat4: return sizeof(glm::mat4);
+            case VertexAttribType::UInt: return sizeof(uint32_t);
             default: return 0;
         }
     }

@@ -72,6 +72,12 @@ namespace Lorr
 
         bool ExportResource(ResourceType type, const std::string &path, BufferStream &buf);
 
+        template<typename T>
+        inline void Append(T *pResource)
+        {
+            m_Resources.emplace(pResource->GetIdentifier(), pResource);
+        }
+
     public:
         static bool LoadResourceFile(const std::string &path, BufferStream &buf);
 

@@ -1,5 +1,7 @@
 #include "Engine.hh"
 
+#include "Engine/Graphics/D3D11/D3D11Renderer.hh"
+
 namespace Lorr
 {
     BufferStreamMemoyWatcher *g_pBSWatcher;
@@ -9,9 +11,10 @@ namespace Lorr
         ZoneScoped;
 
         delete m_pWindow;
-        delete m_pRenderer;
+        // delete m_pRenderer;
         delete m_pImGui;
-        delete m_pCamera;
+        delete m_pCamera2D;
+        delete m_pCamera3D;
     }
 
     bool Engine::Init(ApplicationDesc const &description)
@@ -23,11 +26,14 @@ namespace Lorr
 
         g_pBSWatcher = new BufferStreamMemoyWatcher(false);
 
+        // TODO: Auto select
+        m_pRenderer = new D3D11Renderer;
+
         if (description.ConsoleApp)
         {
             m_pResourceMan->Init();
             m_pAudioSystem->Init();
-            m_pRenderer->Init(0);
+            m_pRenderer->Init(0, 0, 0);
             return true;
         }
 
@@ -39,11 +45,11 @@ namespace Lorr
 
         //* Graphics
         m_pShaderMan->Init();
-        m_pRenderer->Init(m_pWindow);
+        m_pRenderer->Init(m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight());
         m_pBatcher->Init();
-        // m_pCamera->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
-        m_pCamera->Init({ 0, 0, -5 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, { 0, 0, 1 }, { 0, 1, 0 }, 60.f, 0.1f, 10000.f);
-        // m_pImGui->Init(this);
+        m_pCamera2D->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
+        m_pCamera3D->Init({ 0, 0, -5 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, { 0, 0, 1 }, { 0, 1, 0 }, 60.f, 0.1f, 10000.f);
+        m_pImGui->Init(this);
 
         //* Audio system
         m_pAudioSystem->Init();
@@ -61,16 +67,17 @@ namespace Lorr
 
         // m_pRenderer->SetViewTransform(0, m_pCamera->GetProjection(), m_pCamera->GetView());
 
-        m_pRenderer->BeginFrame();
-        // m_pImGui->BeginFrame();
+        m_pRenderer->HandlePreFrame();
+        m_pRenderer->SetClearColor({ 0.1, 0.1, 0.1, 1.0 });
+        m_pImGui->BeginFrame();
     }
 
     void Engine::EndFrame()
     {
         ZoneScoped;
 
-        // m_pImGui->EndFrame();
-        m_pRenderer->EndFrame();
+        m_pImGui->EndFrame();
+        m_pRenderer->Frame(0);
     }
 
     void Engine::Tick(float deltaTime)

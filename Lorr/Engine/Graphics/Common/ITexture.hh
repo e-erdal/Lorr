@@ -14,11 +14,23 @@ namespace Lorr
     enum TextureFormat : uint16_t
     {
         TEXTURE_FORMAT_RGBA8,
-        TEXTURE_FORMAT_DEPTH_32,
+        TEXTURE_FORMAT_DEPTH_32F,
+        TEXTURE_FORMAT_DEPTH_D24UNS8U,
+        TEXTURE_FORMAT_R24G8_TYPELESS,
+        TEXTURE_FORMAT_R32_TYPELESS,
+        TEXTURE_FORMAT_R32_FLOAT
+    };
+
+    enum TextureType : uint8_t
+    {
+        TEXTURE_TYPE_REGULAR,
+        TEXTURE_TYPE_DEPTH,
+        TEXTURE_TYPE_RENDER_TARGET,
     };
 
     struct TextureDesc
     {
+        TextureType Type = TEXTURE_TYPE_REGULAR;
         uint32_t Filters = 0;
     };
 
@@ -37,6 +49,7 @@ namespace Lorr
     {
     public:
         virtual void Init(const Identifier &ident, TextureDesc *pDesc, TextureData *pData) = 0;
+        virtual void Use() = 0;
         virtual void Delete() = 0;
         virtual void *GetHandle() = 0;
 

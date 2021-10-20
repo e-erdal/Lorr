@@ -32,16 +32,14 @@ namespace Lorr
     {
         ZoneScoped;
 
-        m_View = glm::lookAtLH(m_Pos, m_Pos + m_Direction, m_Up);
+        m_View = glm::lookAtRH(m_Pos, m_Pos + m_Direction, m_Up);
     }
 
     void Camera3D::CalculateProjection()
     {
         ZoneScoped;
 
-        m_Projection = glm::perspectiveFovLH_ZO(glm::radians(m_Fov), m_Size.x, m_Size.y, m_zNear, m_zFar);
-
-        GetEngine()->GetRenderer()->SetView(m_Size.x, m_Size.y);
+        m_Projection = glm::perspectiveFovRH_ZO(glm::radians(m_Fov), m_Size.x, m_Size.y, m_zNear, m_zFar);
     }
 
     void Camera3D::SetPosition(const glm::vec3 &pos)
@@ -60,6 +58,58 @@ namespace Lorr
         m_Size = size;
 
         CalculateProjection();
+    }
+
+    void Camera3D::StartMoving(Direction direction)
+    {
+        m_MovingDirection |= direction;
+    }
+
+    void Camera3D::StopMoving(Direction direction)
+    {
+        m_MovingDirection &= ~direction;
+    }
+
+    void Camera3D::SetDirection(float offX, float offY)
+    {
+        ZoneScoped;
+
+        offX *= 0.3f;
+        offY *= 0.3f;
+
+        m_AngleX += offX;
+        m_AngleY -= offY;
+
+        // Block camera direction
+        if (m_AngleY > 89.f) m_AngleY = 89.f;
+        if (m_AngleY < -89.f) m_AngleY = -89.f;
+
+        glm::vec3 front;
+        front.x = cos(glm::radians(m_AngleX)) * cos(glm::radians(m_AngleY));
+        front.y = sin(glm::radians(m_AngleY));
+        front.z = sin(glm::radians(m_AngleX)) * cos(glm::radians(m_AngleY));
+        m_Direction = glm::normalize(front);
+
+        m_Right = glm::normalize(glm::cross(m_Direction, { 0, 1, 0 }));
+        m_Up = glm::normalize(glm::cross(m_Right, m_Direction));
+
+        CalculateView();
+    }
+
+    void Camera3D::Update(float deltaTime)
+    {
+        ZoneScoped;
+
+        auto lastPos = m_Pos;
+
+        if (m_MovingDirection & Direction::FORWARD) m_Pos += m_Direction * m_MovingSpeed * deltaTime;
+        if (m_MovingDirection & Direction::BACKWARD) m_Pos -= m_Direction * m_MovingSpeed * deltaTime;
+        if (m_MovingDirection & Direction::LEFT) m_Pos -= m_Right * m_MovingSpeed * deltaTime;
+        if (m_MovingDirection & Direction::RIGHT) m_Pos += m_Right * m_MovingSpeed * deltaTime;
+        if (m_MovingDirection & Direction::UP) m_Pos.y += m_MovingSpeed * deltaTime;
+        if (m_MovingDirection & Direction::DOWN) m_Pos.y -= m_MovingSpeed * deltaTime;
+
+        if (m_Pos != lastPos) CalculateView();
     }
 
 }  // namespace Lorr

@@ -2,6 +2,8 @@
 
 #include "Engine.hh"
 
+#include "Engine/Utils/FPSLimiter.hh"
+
 namespace Lorr
 {
     BaseApp::BaseApp() : m_pEngine(new Engine)
@@ -31,6 +33,7 @@ namespace Lorr
 
         PlatformWindow *pWindow = m_pEngine->GetWindow();
 
+        FrameLimiter<200> limiter;
         Timer timer;
 
         while (!pWindow->ShouldClose())
@@ -47,6 +50,8 @@ namespace Lorr
             m_pEngine->EndFrame();
 
             pWindow->Poll();
+
+            limiter.Wait();
 
             FrameMark;
         }

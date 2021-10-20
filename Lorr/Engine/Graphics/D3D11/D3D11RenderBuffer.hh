@@ -14,12 +14,17 @@ namespace Lorr
     public:
         void Init(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage, RenderBufferAccess accessFlags) override;
         void SetData(void *pData, size_t dataLen) override;
-        void Use(uint32_t offset, InputLayout *pLayout) override;
+        void *GetNewData() override;
+        void UnmapData() override;
+        void Use(uint32_t offset, InputLayout *pLayout, bool index32) override;
+        void Delete() override;
 
     private:
         ID3D11Buffer *m_pHandle = 0;
 
-        D3D11_MAP m_Mapping;
         RenderBufferType m_Type;
+
+        D3D11_MAP m_Mapping;
+        D3D11_MAPPED_SUBRESOURCE m_MappedResc;
     };
 }  // namespace Lorr

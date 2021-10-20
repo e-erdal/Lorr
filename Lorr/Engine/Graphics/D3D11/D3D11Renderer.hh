@@ -5,11 +5,14 @@
 
 #pragma once
 
+#include <d3d11.h>
+
 #include "Engine/Graphics/Common/IRenderer.hh"
 #include "Engine/Graphics/Common/IShader.hh"
 #include "Engine/Graphics/Common/ITexture.hh"
 
-#include <d3d11.h>
+#include "D3D11RendererStateManager.hh"
+#include "D3D11RenderTargetManager.hh"
 
 namespace Lorr
 {
@@ -20,12 +23,21 @@ namespace Lorr
         bool Init(PlatformWindow *pWindow, uint32_t width, uint32_t height) override;
 
         void ChangeResolution(uint32_t width, uint32_t height) override;
+
         void SetViewport(uint32_t width, uint32_t height, float farZ, float nearZ) override;
         void SetClearColor(const glm::vec4 &color) override;
+        void SetScissor(const glm::vec4 &lrtb) override;
+        void SetDepthFunc(D3D::DepthFunc func, bool depthEnabled) override;
+        void SetCulling(D3D::Cull cull, bool counterClockwise) override;
+        void SetBlend(bool enableBlending, bool alphaCoverage) override;
+        void CreateTarget(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle texture = 0) override;
+        void SetCurrentTarget(const Identifier &ident) override;
+        TextureHandle GetTargetTexture(const Identifier &ident) override;
+
         void Frame(uint32_t interval) override;
         void HandlePreFrame() override;
 
-        void DrawIndexed(uint32_t indexCount) override;
+        void DrawIndexed(uint32_t indexCount, uint32_t startIndex, uint32_t baseVertex) override;
 
         static D3D11Renderer *&Get();
 
@@ -33,7 +45,9 @@ namespace Lorr
         bool CreateDevice();
         bool CreateSwapChain(PlatformWindow *pWindow, uint32_t width, uint32_t height);
         bool CreateBackBuffer();
-        bool CreateDepthStencil(uint32_t width, uint32_t height);
+        bool CreateDepthTexture(uint32_t width, uint32_t height);
+        bool CreateDepthStencil();
+        bool CreateBlendState();
         bool CreateRasterizer();
 
     public:
@@ -47,26 +61,6 @@ namespace Lorr
             return m_pDeviceContext;
         }
 
-        ID3D11RasterizerState *GetRasterizerState() const
-        {
-            return m_pRasterizerState;
-        }
-
-        ID3D11DepthStencilState *GetDepthStencilState() const
-        {
-            return m_pDepthStencilState;
-        }
-
-        ID3D11DepthStencilView *GetDepthStencilView() const
-        {
-            return m_pDepthStencilView;
-        }
-
-        ID3D11RenderTargetView *GetRenderTargetView() const
-        {
-            return m_pRenderTargetView;
-        }
-
     private:
         //* Main API *//
         ID3D11Device *m_pDevice = 0;
@@ -74,18 +68,23 @@ namespace Lorr
         IDXGISwapChain *m_pSwapChain = 0;
         DXGI_SWAP_CHAIN_DESC m_SwapChainDesc;
 
-        //* View handles *//
-        ID3D11RenderTargetView *m_pRenderTargetView = 0;
-        ID3D11DepthStencilView *m_pDepthStencilView = 0;
-        TextureHandle m_DepthTexture = 0;
-        D3D11_DEPTH_STENCIL_VIEW_DESC m_DepthStencilViewDesc;
+        //* API Managers *//
+        D3D11RendererStateManager m_StateManager;
+        D3D11RenderTargetManager m_TargetManager;
 
-        //* API states *//
+        //* View handles *//
+        TextureHandle m_DepthTexture = 0;
+
+        //* Current API states *//
+        D3D11_BLEND_DESC m_BlendDesc = {};
+        D3D11_RASTERIZER_DESC m_RasterizerDesc = {};
+        D3D11_DEPTH_STENCIL_VIEW_DESC m_DepthStencilViewDesc = {};
+        D3D11_DEPTH_STENCIL_DESC m_DepthStencilDesc = {};
+
         ID3D11BlendState *m_pBlendState = 0;
-        ID3D11DepthStencilState *m_pDepthStencilState = 0;
-        D3D11_DEPTH_STENCIL_DESC m_DepthStencilDesc;
         ID3D11RasterizerState *m_pRasterizerState = 0;
-        D3D11_RASTERIZER_DESC m_RasterizerDesc;
+        ID3D11DepthStencilView *m_pDepthStencilView = 0;
+        ID3D11DepthStencilState *m_pDepthStencilState = 0;
 
         bool m_NeedToPresent = true;
         bool m_IsContextReady = false;
