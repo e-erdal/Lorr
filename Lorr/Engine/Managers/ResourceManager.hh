@@ -29,6 +29,8 @@ namespace Lorr
         template<typename T>
         inline T *GetResource(const Identifier &ident)
         {
+            ZoneScoped;
+
             auto found = m_Resources.find(ident);
             return (found == m_Resources.end() ? 0 : (T *)found->second);
         }
@@ -36,6 +38,8 @@ namespace Lorr
         template<typename T>
         inline T *LoadResource(const Identifier &ident, const std::string &path, decltype(T::m_DescType) *pDesc)
         {
+            ZoneScoped;
+
             decltype(T::m_DataType) data;
             if (!ImportResource(T::m_ResType, path, data)) return 0;
 
@@ -49,6 +53,8 @@ namespace Lorr
         template<typename T>
         inline bool ImportResource(ResourceType type, const std::string &path, T &outData)
         {
+            ZoneScoped;
+
             BufferStream resourceBuf;
             if (!ResourceManager::LoadResourceFile(path, resourceBuf))
             {

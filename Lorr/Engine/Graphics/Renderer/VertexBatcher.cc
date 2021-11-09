@@ -4,33 +4,15 @@
 
 namespace Lorr
 {
-
-    BatcherVertex cubeVertices[] = {
-        { { -1.0, 1.0, -1.0 }, { 0.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },  { { 1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },
-        { { -1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } }, { { -1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } },
-        { { 1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, -1.0, -1.0 } },   { { 1.0, -1.0, -1.0 }, { 1.0, 1.0 }, { 0.0, 0.0, -1.0, -1.0 } },
-        { { 1.0, 1.0, -1.0 }, { 0.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },    { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },
-        { { 1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },   { { 1.0, -1.0, -1.0 }, { 0.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },
-        { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 1.0, 0.0, 0.0, -1.0 } },     { { 1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 1.0, 0.0, 0.0, -1.0 } },
-        { { 1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },     { { -1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },
-        { { 1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },    { { 1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },
-        { { -1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 0.0, 1.0, -1.0 } },    { { -1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 0.0, 0.0, 1.0, -1.0 } },
-        { { -1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },   { { -1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },
-        { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },  { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },
-        { { -1.0, 1.0, -1.0 }, { 1.0, 0.0 }, { -1.0, 0.0, 0.0, -1.0 } },  { { -1.0, -1.0, -1.0 }, { 1.0, 1.0 }, { -1.0, 0.0, 0.0, -1.0 } },
-        { { -1.0, 1.0, 1.0 }, { 0.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },    { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },
-        { { -1.0, 1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },   { { -1.0, 1.0, -1.0 }, { 0.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },
-        { { 1.0, 1.0, 1.0 }, { 1.0, 0.0 }, { 0.0, 1.0, 0.0, -1.0 } },     { { 1.0, 1.0, -1.0 }, { 1.0, 1.0 }, { 0.0, 1.0, 0.0, -1.0 } },
-        { { -1.0, -1.0, -1.0 }, { 0.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } }, { { 1.0, -1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } },
-        { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },  { { -1.0, -1.0, 1.0 }, { 0.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },
-        { { 1.0, -1.0, -1.0 }, { 1.0, 0.0 }, { 0.0, -1.0, 0.0, -1.0 } },  { { 1.0, -1.0, 1.0 }, { 1.0, 1.0 }, { 0.0, -1.0, 0.0, -1.0 } },
-    };
-
-    constexpr uint32_t kMaxRects = _countof(cubeVertices) / 4;
+    constexpr uint32_t kMaxRects = 4000;
     constexpr uint32_t kTransientBufSize = kMaxRects * sizeof(BatcherVertex) * 4;
+
+    InputLayout VertexBatcher::m_Layout;
 
     void VertexBatcher::Init()
     {
+        ZoneScoped;
+        
         m_Layout = {
             { VertexAttribType::Vec3, "POSITION" },
             { VertexAttribType::Vec2, "TEXCOORD" },
@@ -53,24 +35,14 @@ namespace Lorr
             offset += 4;
         }
 
-        // TODO: Create a buffer manager, this will also help to keep track on buffer lifetime and types
-        void *pTempData = malloc(kTransientBufSize);
-        memset(pTempData, 0, kTransientBufSize);
+        RenderBufferDesc desc;
+        desc.pData = quads;
+        desc.DataLen = kMaxRects * 6 * sizeof(uint32_t);
+        desc.Type = RenderBufferType::Index;
 
-        m_VertexBuffer =
-            RenderBuffer::Create(pTempData, kTransientBufSize, RenderBufferType::Vertex, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
-        free(pTempData);
+        m_IndexBuffer = RenderBuffer::Create(desc);
 
-        m_IndexBuffer = RenderBuffer::Create(quads, kMaxRects * 6 * sizeof(uint32_t), RenderBufferType::Index);
         delete[] quads;
-
-        m_ConstantBuffer =
-            RenderBuffer::Create(0, sizeof(glm::mat4), RenderBufferType::Constant, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
-
-        ShaderDesc vertDesc;
-        vertDesc.Layout = m_Layout;
-        m_VertexShader = Shader::Create("engine://batcher-program-vert", "batchv.lr", &vertDesc);
-        m_PixelShader = Shader::Create("engine://batcher-program-pixel", "batchp.lr");
     }
 
     void VertexBatcher::Begin()
@@ -79,86 +51,104 @@ namespace Lorr
 
     void VertexBatcher::End()
     {
+        ZoneScoped;
+        
         Reset();
     }
 
     void VertexBatcher::Flush()
     {
-        // Renderer *pRenderer = GetEngine()->GetRenderer();
-        // auto *pCamera = GetEngine()->GetCamera();
-        // glm::mat4 mvp = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
+        ZoneScoped;
+        
+        IRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        // for (auto &&event : m_Queue)
-        // {
-        //     TextureHandle texture = event.first;
-        //     auto &vertexes = event.second.Vertices;
-        //     auto &indexes = event.second.Indexes;
+        SAFE_DELETE(m_VertexBuffer);
 
-        //     if (vertexes.size() > 0)
-        //     {
-        //         m_ConstantBuffer->SetData(&mvp[0][0], sizeof(mvp));
-        //         m_ConstantBuffer->Use(0);
+        if (m_Vertices.size() > 0)
+        {
+            pRenderer->UseShader(m_pShaderProgram->Vertex);
+            pRenderer->UseShader(m_pShaderProgram->Pixel);
 
-        //         m_VertexShader->Use();
-        //         m_PixelShader->Use();
+            RenderBufferDesc desc;
+            desc.pData = &m_Vertices[0];
+            desc.DataLen = m_Vertices.size() * sizeof(BatcherVertex);
+            desc.Type = RenderBufferType::Vertex;
+            desc.Usage = RenderBufferUsage::Dynamic;
+            desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
 
-        //         m_VertexBuffer->SetData(cubeVertices, sizeof(cubeVertices));
-        //         m_VertexBuffer->Use(0, &m_Layout);
+            m_VertexBuffer = RenderBuffer::Create(desc);
 
-        //         m_IndexBuffer->Use(0);
+            pRenderer->UseVertexBuffer(m_VertexBuffer, &m_Layout);
+            pRenderer->UseIndexBuffer(m_IndexBuffer);
 
-        //         uint32_t indexCount = indexes ? indexes : kMaxRects * 6;
-        //         pRenderer->Draw(54);
-        //     }
-        // }
+            m_CurrentTexture->Use();
+            pRenderer->DrawIndexed(m_Indexes);
+        }
     }
 
     void VertexBatcher::Reset()
     {
+        ZoneScoped;
+        
         Flush();
-        m_Queue.clear();
+        m_Vertices.clear();
+        m_Indexes = 0;
     }
 
-    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
+    void VertexBatcher::SetCurrentTexture(TextureHandle texture)
     {
+        ZoneScoped;
+        
+        if (texture != m_CurrentTexture)
+        {
+            Reset();
+            m_CurrentTexture = texture;
+        }
+    }
+
+    void VertexBatcher::SetCurrentProgram(ShaderProgram *pProgram)
+    {
+        ZoneScoped;
+        
+        if (pProgram != m_pShaderProgram)
+        {
+            Reset();
+            m_pShaderProgram = pProgram;
+        }
+    }
+
+    void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
+    {
+        ZoneScoped;
+        
         const glm::mat4x2 uvMat = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
-        PushRect(texture, glm::transpose(transform), uvMat, color);
+        PushRect(glm::transpose(transform), uvMat, color);
     }
 
-    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)
+    void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)
     {
-        // BatcherEvent &event = GetEvent(!texture ? GetEngine()->GetRenderer()->GetPlaceholder() : texture);
-        // BatcherVertices &vertices = event.Vertices;
-        // vertices.resize(vertices.size() + 4);
+        ZoneScoped;
+        
+        m_Vertices.resize(m_Vertices.size() + 4);
 
-        // BatcherVertex *info = &vertices[vertices.size() - 4];
+        BatcherVertex *info = &m_Vertices[m_Vertices.size() - 4];
 
-        // for (size_t i = 0; i < 4; i++)
-        // {
-        //     info->Pos = transform * kVertexPos[i];
-        //     info->UV = uv[i];
-        //     info->Color = (glm::vec4)color / 255.f;
-        //     info++;
-        // }
+        for (size_t i = 0; i < 4; i++)
+        {
+            info->Position = transform * kVertexPos[i];
+            info->TexCoord = uv[i];
+            info->Color = (glm::vec4)color / 255.f;
+            info++;
+        }
 
-        // event.Indexes += 6;
+        m_Indexes += 6;
     }
 
-    void VertexBatcher::PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color)
+    void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::ivec4 &color)
     {
-        PushRect(texture, transform, kVertexUV, color);
-    }
-
-    BatcherEvent &VertexBatcher::GetEvent(TextureHandle texture)
-    {
-        constexpr uint32_t allocSize = 128 * 4 * sizeof(BatcherVertex);
-
-        if (m_Queue.size() > 0 && m_Queue.back().first == texture) return m_Queue.back().second;
-
-        m_Queue.push_back(std::make_pair(texture, BatcherEvent{}));
-        m_Queue.back().second.Vertices.reserve(allocSize);
-
-        return m_Queue.back().second;
+        ZoneScoped;
+        
+        PushRect(transform, kVertexUV, color);
     }
 
 }  // namespace Lorr

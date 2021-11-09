@@ -3,7 +3,8 @@
 #include "Components/TransformComponent.hh"
 
 #include "Systems/TransformSystem.hh"
-#include "Systems/RendererSystem.hh"
+#include "Systems/Renderer/ModelRendererSystem.hh"
+#include "Systems/Renderer/Renderer2DSystem.hh"
 #include "Systems/PhysicsSystem.hh"
 
 namespace Lorr
@@ -19,7 +20,8 @@ namespace Lorr
 
         RegisterSystem<System::PhysicsSystem>();
         RegisterSystem<System::TransformSystem>();
-        RegisterSystem<System::RendererSystem>();
+        RegisterSystem<System::ModelRendererSystem>();
+        RegisterSystem<System::Renderer2DSystem>();
     }
 
     void Scene::Tick(float deltaTime)

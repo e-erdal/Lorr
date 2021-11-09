@@ -5,7 +5,10 @@
 
 #pragma once
 
-#include <freetype-gl.h>
+#include <msdfgen.h>
+#include <msdfgen-ext.h>
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
+
 #include <tinyutf8/tinyutf8.h>
 
 #include "Engine/Graphics/Common/ITexture.hh"
@@ -37,7 +40,7 @@ namespace Lorr
         void Init(const Identifier &ident, FontDesc *pDesc, FontData *pData) override;
         static void ParseToMemory(FontData *pOutData, BufferStream &outBuf);
 
-        ftgl::texture_glyph_t *GetGlyph(char32_t target);
+        // ftgl::texture_glyph_t *GetGlyph(char32_t target);
         float GetKerning(char32_t before, char32_t current);
 
         static constexpr ResourceType m_ResType = ResourceType::Font;
@@ -48,14 +51,9 @@ namespace Lorr
             return m_Texture;
         }
 
-        ftgl::texture_font_t *GetHandle() const
-        {
-            return m_pHandle;
-        }
-
     private:
-        ftgl::texture_atlas_t *m_pAtlas = 0;
-        ftgl::texture_font_t *m_pHandle = 0;
+        msdfgen::FontHandle *m_pHandle = 0;
+        std::vector<msdf_atlas::GlyphGeometry> m_Glyphs;
 
         TextureHandle m_Texture = 0;
     };

@@ -33,16 +33,14 @@ namespace Lorr
 
         PlatformWindow *pWindow = m_pEngine->GetWindow();
 
-        FrameLimiter<200> limiter;
         Timer timer;
-
+        
         while (!pWindow->ShouldClose())
         {
             auto elapsed = timer.elapsed();
             timer.reset();
 
             m_pEngine->Tick(elapsed);
-
             Tick(elapsed);
 
             m_pEngine->BeginFrame();
@@ -50,8 +48,6 @@ namespace Lorr
             m_pEngine->EndFrame();
 
             pWindow->Poll();
-
-            limiter.Wait();
 
             FrameMark;
         }

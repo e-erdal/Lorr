@@ -6,6 +6,8 @@ namespace Lorr
 {
     void D3D11Shader::Init(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData)
     {
+        ZoneScoped;
+        
         m_Type = pData->Type;
 
         HRESULT hr;
@@ -15,7 +17,7 @@ namespace Lorr
         {
             case ShaderType::Vertex:
             {
-                if (FAILED(hr = pDevice->CreateVertexShader(pData->Buffer.GetData(), pData->Buffer.GetSize(), 0, &m_pVertexShader)))
+                if (FAILED(hr = pDevice->CreateVertexShader(pData->Buffer.GetData(), pData->Buffer.GetSize(), 0, &m_Shader.m_pVertexShader)))
                 {
                     LOG_ERROR("Failed to create D3D11 vertex shader!");
                     break;
@@ -33,7 +35,7 @@ namespace Lorr
             }
             case ShaderType::Pixel:
             {
-                if (FAILED(hr = pDevice->CreatePixelShader(pData->Buffer.GetData(), pData->Buffer.GetSize(), 0, &m_pPixelShader)))
+                if (FAILED(hr = pDevice->CreatePixelShader(pData->Buffer.GetData(), pData->Buffer.GetSize(), 0, &m_Shader.m_pPixelShader)))
                 {
                     LOG_ERROR("Failed to create D3D11 pixel shader!");
                     break;
@@ -42,25 +44,13 @@ namespace Lorr
             }
             case ShaderType::Compute:
             {
-                // TODO
+                if (FAILED(hr = pDevice->CreateComputeShader(pData->Buffer.GetData(), pData->Buffer.GetSize(), 0, &m_Shader.m_pComputeShader)))
+                {
+                    LOG_ERROR("Failed to create D3D11 compute shader!");
+                    break;
+                }
                 break;
             }
-        }
-    }
-
-    void D3D11Shader::Use()
-    {
-        auto *pContext = D3D11Renderer::Get()->GetDeviceContext();
-
-        switch (m_Type)
-        {
-            case ShaderType::Vertex:
-                pContext->IASetInputLayout(m_pLayout);
-                pContext->VSSetShader(m_pVertexShader, 0, 0);
-                break;
-
-            case ShaderType::Pixel: pContext->PSSetShader(m_pPixelShader, 0, 0); break;
-            case ShaderType::Compute: break;
         }
     }
 

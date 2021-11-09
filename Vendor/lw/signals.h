@@ -23,7 +23,7 @@ SOFTWARE.
 #include <cstdlib>
 #include <vector>
 
-namespace signals
+namespace sig
 {
     namespace details
     {
@@ -362,4 +362,4 @@ namespace signals
             }
         }
     };
-}  // namespace signals
+}  // namespace sig

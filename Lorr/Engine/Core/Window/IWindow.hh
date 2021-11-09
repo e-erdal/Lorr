@@ -48,14 +48,14 @@ namespace Lorr
         virtual void SetCursor(Cursor cursor) = 0;
 
     public:
-        signals::signal<void(Key, ButtonState, KeyMod)> OnSetKeyState;
-        signals::signal<void(KeyMod, MouseButton, ButtonState, const glm::ivec2 &)> OnSetMouseState;
-        signals::signal<void(glm::ivec2, glm::ivec2)> OnSetMousePosition;
-        signals::signal<void()> OnLoseFocus;
-        signals::signal<void()> OnGainFocus;
-        signals::signal<void(uint32_t, uint32_t)> OnResolutionChanged;
+        sig::signal<void(Key, ButtonState, KeyMod)> OnSetKeyState;
+        sig::signal<void(KeyMod, MouseButton, ButtonState, const glm::ivec2 &)> OnSetMouseState;
+        sig::signal<void(glm::ivec2, glm::ivec2)> OnSetMousePosition;
+        sig::signal<void()> OnLoseFocus;
+        sig::signal<void()> OnGainFocus;
+        sig::signal<void(uint32_t, uint32_t)> OnResolutionChanged;
 
-        signals::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
+        sig::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
 
     public:
         virtual void *GetHandle() = 0;

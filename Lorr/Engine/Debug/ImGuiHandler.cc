@@ -243,8 +243,8 @@ namespace Lorr
 
         //* IRenderer backend initialization *//
         ShaderDesc vsDesc{ .Layout = kImGuiInputLayout };
-        m_VertexShader = Shader::Create("imgui://vertex-shader", "imguiv.lr", &vsDesc);
-        m_PixelShader = Shader::Create("imgui://pixel-shader", "imguip.lr");
+        m_VertexShader = Shader::Create("imgui://vertex-shader", "shaders/imguiv.lr", &vsDesc);
+        m_PixelShader = Shader::Create("imgui://pixel-shader", "shaders/imguip.lr");
 
         uint8_t *pFontData;
         int32_t fontW, fontH;
@@ -256,7 +256,16 @@ namespace Lorr
 
         io.Fonts->TexID = m_FontTexture;  // We dont use IDs, so just scrap that in
 
-        m_ConstantBuffer = RenderBuffer::Create(0, sizeof(float[4][4]), RenderBufferType::Constant, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+        RenderBufferDesc cbDesc;
+        cbDesc.DataLen = sizeof(float[4][4]);
+        cbDesc.Type = RenderBufferType::Constant;
+        cbDesc.Usage = RenderBufferUsage::Dynamic;
+        cbDesc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+        m_VertexConstantBuffer = RenderBuffer::Create(cbDesc);
+
+        cbDesc.DataLen = sizeof(glm::vec4);
+        m_PixelConstantBuffer = RenderBuffer::Create(cbDesc);
     }
 
     void ImGuiHandler::ImGui_ImplSurface_Shutdown()
@@ -301,9 +310,13 @@ namespace Lorr
 
     void ImGuiHandler::ImGui_ImplIRenderer_Draw()
     {
+        ZoneScopedN("ImGuiHandler::Render");
+
         ImDrawData *pDrawData = ImGui::GetDrawData();
         IRenderer *pRenderer = GetEngine()->GetRenderer();
         Camera2D *pCamera = GetEngine()->GetCamera2D();
+
+        pRenderer->SetCurrentTarget("renderer://backbuffer");
 
         pRenderer->SetDepthFunc(D3D::DepthFunc::Always, false);
         pRenderer->SetCulling(D3D::Cull::None, false);
@@ -316,8 +329,13 @@ namespace Lorr
             if (m_VertexBuffer) m_VertexBuffer->Delete();
             g_VertexBufferSize = pDrawData->TotalVtxCount + 5000;
 
-            m_VertexBuffer =
-                RenderBuffer::Create(0, g_VertexBufferSize * sizeof(ImDrawVert), RenderBufferType::Vertex, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+            RenderBufferDesc desc;
+            desc.DataLen = g_VertexBufferSize * sizeof(ImDrawVert);
+            desc.Type = RenderBufferType::Vertex;
+            desc.Usage = RenderBufferUsage::Dynamic;
+            desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+            m_VertexBuffer = RenderBuffer::Create(desc);
         }
 
         if (!m_IndexBuffer || g_IndexBufferSize < pDrawData->TotalIdxCount)
@@ -325,12 +343,17 @@ namespace Lorr
             if (m_IndexBuffer) m_IndexBuffer->Delete();
             g_IndexBufferSize = pDrawData->TotalIdxCount + 10000;
 
-            m_IndexBuffer =
-                RenderBuffer::Create(0, g_IndexBufferSize * sizeof(ImDrawIdx), RenderBufferType::Index, RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW);
+            RenderBufferDesc desc;
+            desc.DataLen = g_IndexBufferSize * sizeof(ImDrawIdx);
+            desc.Type = RenderBufferType::Index;
+            desc.Usage = RenderBufferUsage::Dynamic;
+            desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+            m_IndexBuffer = RenderBuffer::Create(desc);
         }
 
-        ImDrawVert *pVerices = (ImDrawVert *)m_VertexBuffer->GetNewData();
-        ImDrawIdx *pIndices = (ImDrawIdx *)m_IndexBuffer->GetNewData();
+        ImDrawVert *pVerices = (ImDrawVert *)m_VertexBuffer->GetData();
+        ImDrawIdx *pIndices = (ImDrawIdx *)m_IndexBuffer->GetData();
 
         for (int i = 0; i < pDrawData->CmdListsCount; i++)
         {
@@ -346,15 +369,15 @@ namespace Lorr
         m_IndexBuffer->UnmapData();
 
         glm::mat4 mvp = pCamera->GetMatrix();
-        m_ConstantBuffer->SetData(&mvp[0][0], sizeof(glm::mat4));
+        m_VertexConstantBuffer->SetData(&mvp[0][0], sizeof(glm::mat4));
         glm::vec2 clipOff = { pDrawData->DisplayPos.x, pDrawData->DisplayPos.y };
 
-        m_VertexShader->Use();
-        m_PixelShader->Use();
-        m_ConstantBuffer->Use();
+        pRenderer->UseShader(m_VertexShader);
+        pRenderer->UseShader(m_PixelShader);
 
-        m_VertexBuffer->Use(0, &kImGuiInputLayout);
-        m_IndexBuffer->Use(0, 0, false);
+        pRenderer->UseConstantBuffer(m_VertexConstantBuffer, RenderBufferTarget::Vertex, 0);
+        pRenderer->UseVertexBuffer(m_VertexBuffer, &kImGuiInputLayout);
+        pRenderer->UseIndexBuffer(m_IndexBuffer, false);
 
         uint32_t vertexOff = 0;
         uint32_t indexOff = 0;
@@ -385,6 +408,10 @@ namespace Lorr
                     // pRenderer->SetScissor({ clipMin.x, clipMin.y, clipMax.x, clipMax.y });
 
                     TextureHandle texture = (TextureHandle)cmd.TextureId;
+                    glm::vec4 mips = { texture->m_UsingMip, 0.f, 0.f, 0.f };
+
+                    m_PixelConstantBuffer->SetData(&mips, sizeof(glm::vec4));
+                    pRenderer->UseConstantBuffer(m_PixelConstantBuffer, RenderBufferTarget::Pixel, 0);
                     texture->Use();
 
                     pRenderer->DrawIndexed(cmd.ElemCount, cmd.IdxOffset + indexOff, cmd.VtxOffset + vertexOff);

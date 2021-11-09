@@ -1,3 +1,5 @@
+#if LR_BACKEND_D3D11
+
 #include "D3D11RenderTargetManager.hh"
 
 namespace Lorr
@@ -11,6 +13,8 @@ namespace Lorr
 
     void D3D11RenderTargetManager::ClearAll(ID3D11DeviceContext *pContext)
     {
+        ZoneScoped;
+
         for (const auto &target : m_Targets) pContext->ClearRenderTargetView(target.second.pView, &color[0]);
     }
 
@@ -21,23 +25,31 @@ namespace Lorr
         }
     }
 
-    ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle pTargetTexture)
+    ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle pTargetTexture,
+                                                             uint32_t mipLevels)
     {
+        ZoneScoped;
+
         HRESULT hr;
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end())
         {
             TextureDesc desc;
+            desc.MipMapLevels = mipLevels;
             TextureData data;
             desc.Type = TEXTURE_TYPE_RENDER_TARGET;
             data.Width = width;
             data.Height = height;
 
-            if (!pTargetTexture) pTargetTexture = Texture::Create(ident, &desc, &data);
+            if (!pTargetTexture) pTargetTexture = Texture::Create(ident, 0, 0);
+
+            pTargetTexture->CreateHandle(&desc, &data);
 
             D3D11_RENDER_TARGET_VIEW_DESC viewDesc = {};
             viewDesc.Format = DXGI_FORMAT_R32G32B32A32_FLOAT;
             viewDesc.ViewDimension = D3D11_RTV_DIMENSION_TEXTURE2D;
+            viewDesc.Texture2D.MipSlice = 1;
+            viewDesc.Texture2D.MipSlice = 0;
 
             ID3D11RenderTargetView *newTarget;
 
@@ -46,6 +58,9 @@ namespace Lorr
                 LOG_ERROR("Failed to create new blend state into state manager stack!");
                 return 0;
             }
+
+            pTargetTexture->CreateShaderResource(&desc);
+            pTargetTexture->CreateSampler(&desc);
 
             RenderTarget target;
             target.pView = newTarget;
@@ -61,6 +76,8 @@ namespace Lorr
 
     ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, ID3D11Texture2D *pTexture)
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end())
@@ -84,6 +101,8 @@ namespace Lorr
 
     ID3D11RenderTargetView *D3D11RenderTargetManager::GetView(const Identifier &ident)
     {
+        ZoneScoped;
+        
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end()) return 0;
 
@@ -92,6 +111,8 @@ namespace Lorr
 
     TextureHandle D3D11RenderTargetManager::GetTexture(const Identifier &ident)
     {
+        ZoneScoped;
+        
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end()) return 0;
 
@@ -100,6 +121,8 @@ namespace Lorr
 
     void D3D11RenderTargetManager::Release(const Identifier &ident)
     {
+        ZoneScoped;
+        
         auto it = m_Targets.find(ident);
         if (it != m_Targets.end())
         {
@@ -110,3 +133,5 @@ namespace Lorr
         }
     }
 }  // namespace Lorr
+
+#endif

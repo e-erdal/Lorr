@@ -30,7 +30,7 @@ namespace Lorr
     {
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Texture>(ident, path, pDesc);
+            case RendererType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Texture>(ident, path, pDesc);
             default: break;
         }
 
@@ -41,7 +41,7 @@ namespace Lorr
     {
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11:
+            case RendererType::D3D11:
             {
                 D3D11Texture *texture = new D3D11Texture;
 

@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "IRenderer.hh"
 #include "InputLayout.hh"
 
+#include "Engine/Graphics/Types.hh"
 #include "Engine/Resource/IResource.hh"
 
 namespace Lorr
@@ -25,7 +25,7 @@ namespace Lorr
 
     struct ShaderData
     {
-        APIType Renderer;
+        RendererType Renderer;
         ShaderType Type;
         BufferStream Buffer;
     };
@@ -34,7 +34,6 @@ namespace Lorr
     {
     public:
         virtual void Init(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData) = 0;
-        virtual void Use() = 0;
         static void ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer);
 
         static constexpr ResourceType m_ResType = ResourceType::Shader;
@@ -45,8 +44,14 @@ namespace Lorr
             return m_Ident;
         }
 
+        ShaderType GetType()
+        {
+            return m_Type;
+        }
+
     protected:
         Identifier m_Ident = kEmptyIdentifier;
+        ShaderType m_Type = ShaderType::Vertex;
     };
 
     typedef IShader *ShaderHandle;
@@ -55,6 +60,6 @@ namespace Lorr
     {
         ShaderHandle Create(const Identifier &ident, const std::string &path, ShaderDesc *pDesc = 0);
         ShaderHandle Create(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData);
-    }
+    }  // namespace Shader
 
 }  // namespace Lorr

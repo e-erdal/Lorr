@@ -4,6 +4,10 @@ namespace Lorr
 {
     void Model::Init(const std::string &path)
     {
+        ZoneScoped;
+
+        LOG_TRACE("Loadimg model {}...", path);
+
         QuickOBJLoader::ModelResult result = QuickOBJLoader::LoadFromFile(path);
 
         std::vector<MeshVertex> vertexArr;
@@ -28,6 +32,8 @@ namespace Lorr
 
     void Model::AddSphere(float radius, uint32_t tessellation, TextureHandle texture)
     {
+        ZoneScoped;
+
         Mesh mesh;
         mesh.Init(radius, tessellation, texture);
         m_Meshes.push_back(mesh);
@@ -35,6 +41,8 @@ namespace Lorr
 
     void Model::Render()
     {
+        ZoneScoped;
+
         for (auto &mesh : m_Meshes) mesh.Render();
     }
 

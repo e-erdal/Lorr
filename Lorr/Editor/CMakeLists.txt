@@ -13,13 +13,13 @@ LorrComponent(
     NAME
         LorrEditorLayers
     INCLUDE
-        src/
+        ./
     SOURCE
-        src/Layers/*.cc
+        ./Layers/*.cc
     VENDOR
         ${EDITOR_VENDOR}
 )
 
-add_executable(Editor src/main.cc)
+add_executable(Editor ./main.cc)
     target_link_libraries(Editor PUBLIC ${EDITOR_VENDOR} PUBLIC ${EDITOR_COMPONENTS})
-    target_include_directories(Editor PUBLIC src/)
+    target_include_directories(Editor PUBLIC ./)

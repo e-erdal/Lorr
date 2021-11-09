@@ -11,4 +11,5 @@ namespace Lorr::D3D
     std::string_view GetLatestShaderFeature(ShaderType type);
     std::string_view GetLatestVSProfile(D3D_FEATURE_LEVEL level);
     std::string_view GetLatestPSProfile(D3D_FEATURE_LEVEL level);
+    std::string_view GetLatestCSProfile(D3D_FEATURE_LEVEL level);
 }  // namespace Lorr::D3D

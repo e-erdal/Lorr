@@ -65,10 +65,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        // m_pRenderer->SetViewTransform(0, m_pCamera->GetProjection(), m_pCamera->GetView());
-
         m_pRenderer->HandlePreFrame();
-        m_pRenderer->SetClearColor({ 0.1, 0.1, 0.1, 1.0 });
         m_pImGui->BeginFrame();
     }
 

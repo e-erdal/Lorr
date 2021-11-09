@@ -7,9 +7,15 @@
 #include "Engine/Graphics/Common/ITexture.hh"
 #include "Engine/Graphics/Common/IShader.hh"
 #include "Engine/Graphics/Common/IRenderBuffer.hh"
+#include "Engine/Managers/ShaderManager.hh"
 
 namespace Lorr
 {
+    struct BatcerCBuffer
+    {
+        glm::mat4 matrix;
+    };
+
     // The idea behind using glm functions:
     //
     // (pos)
@@ -42,18 +48,10 @@ namespace Lorr
 
     struct BatcherVertex
     {
-        glm::vec3 Pos;
-        glm::vec2 UV;
-        glm::vec4 Color;
+        glm::vec3 Position = {};
+        glm::vec2 TexCoord = {};
+        glm::vec4 Color = {};
     };
-    typedef std::vector<BatcherVertex> BatcherVertices;
-
-    struct BatcherEvent
-    {
-        BatcherVertices Vertices;
-        uint32_t Indexes = 0;
-    };
-    typedef std::vector<std::pair<TextureHandle, BatcherEvent>> BatcherQueue;
 
     class VertexBatcher
     {
@@ -68,24 +66,26 @@ namespace Lorr
         void Flush();
         void Reset();
 
-        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::vec4 &uv,
-                      const glm::ivec4 &color = { 255, 255, 255, 255 });
-        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::mat4x2 &uv,
-                      const glm::ivec4 &color = { 255, 255, 255, 255 });
-        void PushRect(TextureHandle texture, const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void SetCurrentTexture(TextureHandle texture);
+        void SetCurrentProgram(ShaderProgram *pProgram);
+
+        void PushRect(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
+        void PushRect(const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 });
 
     private:
-        BatcherEvent &GetEvent(TextureHandle texture);
+        ShaderProgram *m_pShaderProgram = 0;
+        
+        RenderBufferHandle m_VertexBuffer = 0;
+        RenderBufferHandle m_IndexBuffer = 0;
 
-    private:
-        ShaderHandle m_VertexShader;
-        ShaderHandle m_PixelShader;
-        RenderBufferHandle m_VertexBuffer;
-        RenderBufferHandle m_IndexBuffer;
-        RenderBufferHandle m_ConstantBuffer;
-        InputLayout m_Layout;
+        TextureHandle m_CurrentTexture = 0;
 
-        BatcherQueue m_Queue;
+        std::vector<BatcherVertex> m_Vertices;
+        u32 m_Indexes = 0;
+
+    public:
+        static InputLayout m_Layout;
     };
 
 }  // namespace Lorr

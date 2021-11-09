@@ -73,9 +73,9 @@ namespace Lorr
         }
 
         // Tick on each second
-        signals::signal<void(uint32_t, uint32_t)> OnTick;
-        signals::signal<void(uint32_t)> OnCounterFinished;
-        signals::signal<void(uint32_t, uint32_t)> OnReset;
+        sig::signal<void(uint32_t, uint32_t)> OnTick;
+        sig::signal<void(uint32_t)> OnCounterFinished;
+        sig::signal<void(uint32_t, uint32_t)> OnReset;
 
     private:
         uint32_t m_ID = 0;

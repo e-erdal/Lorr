@@ -4,26 +4,16 @@
 
 #pragma once
 
+#include "Engine/Graphics/Types.hh"
 #include "Engine/Graphics/D3D/D3DType.hh"
 #include "Engine/Core/Window/PlatformWindow.hh"
-#include "Engine/Graphics/Common/ITexture.hh"
+
+#include "IRenderBuffer.hh"
+#include "IShader.hh"
+#include "ITexture.hh"
 
 namespace Lorr
 {
-    enum class APIType : uint8_t
-    {
-        None,
-        D3D11,
-        D3D12,
-    };
-
-    enum RendererReset : uint32_t
-    {
-        RESET_DEPTH_TESTING = 1 << 0,
-        RESET_RASTER_CULL = 1 << 1,
-        RESET_ALPHA_BLENDING = 1 << 3,
-    };
-    BitFlags(RendererReset);
 
     class Engine;
     class IRenderer
@@ -31,27 +21,42 @@ namespace Lorr
     public:
         IRenderer() = default;
 
-        virtual bool Init(PlatformWindow *pWindow, uint32_t width, uint32_t height) = 0;
+        virtual bool Init(PlatformWindow *pWindow, u32 width, u32 height) = 0;
 
-        virtual void ChangeResolution(uint32_t width, uint32_t height) = 0;
+        virtual void ChangeResolution(u32 width, u32 height) = 0;
 
-        virtual void SetViewport(uint32_t width, uint32_t height, float farZ, float nearZ) = 0;
-        virtual void SetClearColor(const glm::vec4 &color) = 0;
+        virtual void SetViewport(u32 width, u32 height, float farZ, float nearZ) = 0;
+        virtual void SetClearColor() = 0;
         virtual void SetScissor(const glm::vec4 &lrtb) = 0;
         virtual void SetDepthFunc(D3D::DepthFunc func, bool depthEnabled) = 0;
         virtual void SetCulling(D3D::Cull cull, bool counterClockwise) = 0;
         virtual void SetBlend(bool enableBlending, bool alphaCoverage) = 0;
-        virtual void CreateTarget(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle texture = 0) = 0;
+        virtual void CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture = 0, u32 mipLevels = 1) = 0;
         virtual void SetCurrentTarget(const Identifier &ident) = 0;
         virtual TextureHandle GetTargetTexture(const Identifier &ident) = 0;
 
-        virtual void Frame(uint32_t interval) = 0;
+        virtual void UseVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset = 0) = 0;
+        virtual void UseIndexBuffer(RenderBufferHandle buffer, bool index32 = true, u32 offset = 0) = 0;
+        virtual void UseConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) = 0;
+        virtual void UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) = 0;
+        virtual void UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot) = 0;
+        virtual void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) = 0;
+
+        // virtual void MapBuffer(RenderBufferHandle buffer) = 0;
+        // virtual void UnmapBuffer(RenderBufferHandle buffer) = 0;
+
+        virtual void UseShader(ShaderHandle shader) = 0;
+
+        virtual void TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer) = 0;
+
+        virtual void Frame(u32 interval) = 0;
         virtual void HandlePreFrame() = 0;
 
-        virtual void DrawIndexed(uint32_t indexCount, uint32_t startIndex = 0, uint32_t baseVertex = 0) = 0;
+        virtual void DrawIndexed(u32 indexCount, u32 startIndex = 0, u32 baseVertex = 0) = 0;
+        virtual void Dispatch(u32 thrX, u32 thrY, u32 thrZ) = 0;
 
     public:
-        static APIType CurrentAPI()
+        static RendererType CurrentAPI()
         {
             return m_CurrentAPI;
         }
@@ -62,10 +67,8 @@ namespace Lorr
         }
 
     protected:
-        static APIType m_CurrentAPI;
+        static RendererType m_CurrentAPI;
         TextureHandle m_PlaceholderTexture = 0;
-
-        RendererReset m_ResetFlags;
     };
 
 }  // namespace Lorr

@@ -88,14 +88,57 @@ namespace Lorr
         return "";
     }
 
+    std::string_view D3D::GetLatestCSProfile(D3D_FEATURE_LEVEL level)
+    {
+        switch (level)
+        {
+            case D3D_FEATURE_LEVEL_12_1:
+            case D3D_FEATURE_LEVEL_12_0:
+            {
+                return "cs_6_0";
+            }
+
+            case D3D_FEATURE_LEVEL_11_1:
+            case D3D_FEATURE_LEVEL_11_0:
+            {
+                return "cs_5_0";
+            }
+
+            case D3D_FEATURE_LEVEL_10_1:
+            {
+                return "cs_4_1";
+            }
+
+            case D3D_FEATURE_LEVEL_10_0:
+            {
+                return "cs_4_0";
+            }
+
+            case D3D_FEATURE_LEVEL_9_3:
+            {
+                return "cs_4_0_level_9_3";
+            }
+
+            case D3D_FEATURE_LEVEL_9_2:
+            case D3D_FEATURE_LEVEL_9_1:
+            {
+                return "cs_4_0_level_9_1";
+            }
+
+            default: break;
+        }
+
+        return "";
+    }
+
     std::string_view D3D::GetLatestShaderFeature(ShaderType type)
     {
         D3D_FEATURE_LEVEL level;
 
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11: level = D3D11Renderer::Get()->GetDevice()->GetFeatureLevel(); break;
-            case APIType::D3D12: break;
+            case RendererType::D3D11: level = D3D11Renderer::Get()->GetDevice()->GetFeatureLevel(); break;
+            case RendererType::D3D12: break;
             default: break;
         }
 
@@ -103,7 +146,7 @@ namespace Lorr
         {
             case ShaderType::Vertex: return GetLatestVSProfile(level);
             case ShaderType::Pixel: return GetLatestPSProfile(level);
-            case ShaderType::Compute: return "";
+            case ShaderType::Compute: return GetLatestCSProfile(level);
         }
         return "";
     }

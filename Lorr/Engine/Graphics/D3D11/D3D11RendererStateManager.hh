@@ -5,9 +5,9 @@
 
 #pragma once
 
-#include <d3d11.h>
+#if LR_BACKEND_D3D11
 
-#include "Engine/Graphics/Common/IRendererStateManager.hh"
+#include <d3d11.h>
 
 #include "Engine/Utils/Hash.hh"
 
@@ -17,7 +17,7 @@ HASH_INTERFACE(D3D11_BLEND_DESC);
 
 namespace Lorr
 {
-    class D3D11RendererStateManager : public IRendererStateManager
+    class D3D11RendererStateManager
     {
     public:
         void SetDevice(ID3D11Device *pDevice);
@@ -40,3 +40,5 @@ namespace Lorr
 OPR_INTERFACE_CMP(D3D11_RASTERIZER_DESC);
 OPR_INTERFACE_CMP(D3D11_DEPTH_STENCIL_DESC);
 OPR_INTERFACE_CMP(D3D11_BLEND_DESC);
+
+#endif

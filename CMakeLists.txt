@@ -15,7 +15,7 @@ set(CMAKE_CXX_STANDARD_REQUIRED ON)
 add_definitions(-DNOMINMAX)
 add_definitions(-D_CRT_SECURE_NO_WARNINGS)
 
-option(ENGINE_TRACING_ENABLED "Enable Tracing" OFF)
+option(ENGINE_TRACING_ENABLED "Enable Tracing" ON)
 if (ENGINE_TRACING_ENABLED)
     message("Tracy is enabled!")
     add_definitions(-DTRACY_ENABLE) # Enable tracing solution wide.

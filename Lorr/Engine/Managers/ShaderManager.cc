@@ -6,8 +6,10 @@ namespace Lorr
     {
     }
 
-    void ShaderManager::CreateProgram(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath, std::string_view pixelPath)
+    ShaderProgram *ShaderManager::CreateProgram(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath, std::string_view pixelPath)
     {
+        ZoneScoped;
+        
         ShaderProgram program;
 
         ShaderDesc vertexDesc;
@@ -17,29 +19,71 @@ namespace Lorr
 
         if (program.Vertex && program.Pixel)
         {
-            m_Programs.emplace(ident, program);
+            return &m_Programs.emplace(ident, program).first->second;  // ?
         }
+
+        return nullptr;
     }
 
-    ShaderProgram *ShaderManager::Get(const Identifier &ident)
+    ShaderProgram *ShaderManager::GetProgram(const Identifier &ident)
     {
+        ZoneScoped;
+        
         const auto &it = m_Programs.find(ident);
-
         if (it == m_Programs.end()) return 0;
-
         return &it->second;
     }
 
-    void ShaderManager::Use(const Identifier &ident)
+    ShaderHandle ShaderManager::CreateShader(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath)
     {
+        ZoneScoped;
+        
+        ShaderDesc vertexDesc;
+        vertexDesc.Layout = layout;
+        if (ShaderHandle shader = Shader::Create(fmt::format("{}", ident), vertexPath.data(), &vertexDesc))
+        {
+            return m_Shaders.emplace(ident, shader).first->second;
+        }
+
+        return nullptr;
     }
 
-    RenderBufferHandle ShaderManager::GetCBuf(const Identifier &ident)
+    ShaderHandle ShaderManager::CreateShader(const Identifier &ident, std::string_view path)
     {
-        const auto &it = m_CBuffers.find(ident);
+        ZoneScoped;
+        
+        if (ShaderHandle shader = Shader::Create(fmt::format("{}", ident), path.data()))
+        {
+            return m_Shaders.emplace(ident, shader).first->second;
+        }
 
-        if (it == m_CBuffers.end()) return 0;
+        return nullptr;
+    }
 
+    ShaderHandle ShaderManager::GetShader(const Identifier &ident)
+    {
+        ZoneScoped;
+        
+        const auto &it = m_Shaders.find(ident);
+        if (it == m_Shaders.end()) return 0;
+        return it->second;
+    }
+
+    RenderBufferHandle ShaderManager::CreateRenderBuffer(const Identifier &ident, const RenderBufferDesc &desc)
+    {
+        ZoneScoped;
+        
+        RenderBufferHandle buffer = RenderBuffer::Create(desc);
+        if (buffer) m_Buffers.emplace(ident, buffer);
+        return buffer;  // no need for null check
+    }
+
+    RenderBufferHandle ShaderManager::GetRenderBuffer(const Identifier &ident)
+    {
+        ZoneScoped;
+        
+        const auto &it = m_Buffers.find(ident);
+        if (it == m_Buffers.end()) return 0;
         return it->second;
     }
 

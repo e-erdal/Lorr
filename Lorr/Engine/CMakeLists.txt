@@ -8,13 +8,25 @@ if (NOT "${ENGINE_VERSION_PATCH}" STREQUAL "")
     message("Current patch(rev) is ${ENGINE_VERSION_PATCH}.")
 endif()
 
+option(LR_BACKEND_D3D11 "Support for D3D11 backend." ON)
+option(LR_BACKEND_D3D12 "Support for D3D12 backend." ON)
+
 set(ENGINE_GPU_LIBS)
 
-if (WIN32)
+if (LR_BACKEND_D3D11 OR LR_BACKEND_D3D12)
     set(ENGINE_GPU_LIBS
         d3dcompiler
-        d3d11
+        dxgi
+        dxguid
     )
+
+    if (LR_BACKEND_D3D11)
+        set(ENGINE_GPU_LIBS ${ENGINE_GPU_LIBS} d3d11)
+    endif()
+
+    if (LR_BACKEND_D3D12)
+        set(ENGINE_GPU_LIBS ${ENGINE_GPU_LIBS} d3d12)
+    endif()
 endif()
 
 # Third party applications
@@ -32,7 +44,7 @@ set(ENGINE_VENDOR
     vorbisfile
     zlib1
     box2d
-    freetype-gl
+    msdf-atlas-gen
 )
 
 set(ENGINE_COMPONENTS
@@ -41,6 +53,7 @@ set(ENGINE_COMPONENTS
     LorrDebug
     LorrECS
     LorrGraphics
+    LorrJob
     LorrManagers
     LorrModel
     LorrSystems
@@ -117,6 +130,20 @@ LorrComponent(
         ${ENGINE_VENDOR}
 )
 
+# Job
+LorrComponent(
+    NAME
+        LorrJob
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Job/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
 # Managers
 LorrComponent(
     NAME
@@ -167,3 +194,12 @@ LorrComponent(
     VENDOR
         ${ENGINE_COMPONENTS} ${ENGINE_GPU_LIBS} 
 )
+
+
+if (LR_BACKEND_D3D11)
+    target_compile_definitions(LorrGraphics PUBLIC "LR_BACKEND_D3D11=1")
+endif()
+
+if (LR_BACKEND_D3D12)
+    target_compile_definitions(LorrGraphics PUBLIC "LR_BACKEND_D3D12=1")
+endif()

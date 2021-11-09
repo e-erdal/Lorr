@@ -82,7 +82,7 @@ AllowShortIfStatementsOnASingleLine: WithoutElse
 # auto lambda = [](int a) {}
 # auto lambda2 = [](int a) { return a; };
 #
-AllowShortLambdasOnASingleLine: All
+AllowShortLambdasOnASingleLine: None
 
 #
 # class A {
@@ -161,7 +161,6 @@ Cpp11BracedListStyle: false
 FixNamespaceComments: true
 IndentCaseLabels: true
 IndentGotoLabels: false
-IndentPPDirectives: BeforeHash
 KeepEmptyLinesAtTheStartOfBlocks: false
 MaxEmptyLinesToKeep: 1
 NamespaceIndentation: All

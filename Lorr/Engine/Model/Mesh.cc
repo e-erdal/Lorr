@@ -6,6 +6,8 @@ namespace Lorr
 {
     void Mesh::Init(OBJVertices &vertices, OBJIndices &indices, QuickOBJLoader::VertexFormat &format, QuickOBJLoader::Material &material)
     {
+        ZoneScoped;
+        
         size_t offset = 0;
 
         while (offset != vertices.size())
@@ -47,15 +49,37 @@ namespace Lorr
 
         m_IndexCount = indices.size();
 
-        TextureDesc desc;
-        // RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW
-        m_Texture = Texture::Create(fmt::format("model://{}", material.DiffuseTexture), material.DiffuseTexture + ".lr", &desc);
-        m_VertexBuffer = RenderBuffer::Create(&m_Vertices[0], m_Vertices.size() * sizeof(MeshVertex), RenderBufferType::Vertex);
-        m_IndexBuffer = RenderBuffer::Create(&indices[0], indices.size() * sizeof(uint32_t), RenderBufferType::Index);
+        if (material.DiffuseTexture != "")
+        {
+            TextureDesc desc;
+            desc.MipMapLevels = 4;
+            // RenderBufferUsage::Dynamic, RB_ACCESS_TYPE_CPUW
+            m_Texture = Texture::Create(fmt::format("model://{}", material.DiffuseTexture), material.DiffuseTexture + ".lr", &desc);
+        }
+        else
+        {
+            m_Texture = GetEngine()->GetRenderer()->GetPlaceholder();
+        }
+
+        RenderBufferDesc vertexDesc;
+        vertexDesc.pData = &m_Vertices[0];
+        vertexDesc.DataLen = m_Vertices.size() * sizeof(MeshVertex);
+        vertexDesc.Type = RenderBufferType::Vertex;
+
+        m_VertexBuffer = RenderBuffer::Create(vertexDesc);
+
+        RenderBufferDesc indexDesc;
+        indexDesc.pData = &indices[0];
+        indexDesc.DataLen = indices.size() * sizeof(uint32_t);
+        indexDesc.Type = RenderBufferType::Index;
+
+        m_IndexBuffer = RenderBuffer::Create(indexDesc);
     }
 
     void Mesh::Init(float radius, uint32_t tessellation, TextureHandle texture)
     {
+        ZoneScoped;
+        
         m_Texture = texture;
 
         std::vector<MeshVertex> vertexArray;
@@ -128,15 +152,31 @@ namespace Lorr
         }
 
         m_IndexCount = indexArray.size();
-        m_VertexBuffer = RenderBuffer::Create(&vertexArray[0], vertexArray.size() * sizeof(MeshVertex), RenderBufferType::Vertex);
-        m_IndexBuffer = RenderBuffer::Create(&indexArray[0], indexArray.size() * sizeof(uint32_t), RenderBufferType::Index);
+
+        RenderBufferDesc vertexDesc;
+        vertexDesc.pData = &vertexArray[0];
+        vertexDesc.DataLen = vertexArray.size() * sizeof(MeshVertex);
+        vertexDesc.Type = RenderBufferType::Vertex;
+
+        m_VertexBuffer = RenderBuffer::Create(vertexDesc);
+
+        RenderBufferDesc indexDesc;
+        indexDesc.pData = &indexArray[0];
+        indexDesc.DataLen = indexArray.size() * sizeof(uint32_t);
+        indexDesc.Type = RenderBufferType::Index;
+
+        m_IndexBuffer = RenderBuffer::Create(indexDesc);
     }
 
     void Mesh::Render()
     {
+        ZoneScoped;
+        
+        IRenderer *pRenderer = GetEngine()->GetRenderer();
+
         m_Texture->Use();
-        m_VertexBuffer->Use(0, &kMeshLayout);
-        m_IndexBuffer->Use(0);
+        pRenderer->UseVertexBuffer(m_VertexBuffer, &kMeshLayout);
+        pRenderer->UseIndexBuffer(m_IndexBuffer);
 
         GetEngine()->GetRenderer()->DrawIndexed(m_IndexCount);
     }

@@ -8,7 +8,7 @@
 
 namespace Lorr
 {
-    enum class RenderBufferUsage
+    enum class RenderBufferUsage : uint8_t
     {
         Default,    // GPU RW
         Dynamic,    // GPU R     CPU W
@@ -16,42 +16,76 @@ namespace Lorr
         Staging     // GPU RW    CPU RW
     };
 
-    enum RenderBufferAccess
+    // MemoryFlags is the probably best naming for this, DataFlags looks weird
+    enum class RenderBufferMemoryFlags : uint16_t
     {
-        RB_ACCESS_TYPE_NONE = 0,
-        RB_ACCESS_TYPE_CPUW = 1 << 0,
-        RB_ACCESS_TYPE_CPUR = 1 << 1
-    };
-    BitFlags(RenderBufferAccess);
+        None = 0,
+        Structured = 1 << 0,
+        AllowRawViews = 1 << 1,
 
-    enum class RenderBufferType
+        // Access
+        Access_CPUW = 1 << 2,
+        Access_CPUR = 1 << 3,
+
+        // UAV
+        UAV_Counter = 1 << 4,
+        UAV_Append = 1 << 5
+    };
+    BitFlags(RenderBufferMemoryFlags);
+
+    enum class RenderBufferType : uint8_t
     {
-        Vertex,
-        Index,
-        Constant,
-        ShaderResource
+        None,
+        Vertex = 1 << 0,
+        Index = 1 << 1,
+        Constant = 1 << 2,
+        ShaderResource = 1 << 3,
+        UAV = 1 << 4
+    };
+    BitFlags(RenderBufferType);
+
+    enum RenderBufferTarget : uint8_t
+    {
+        Vertex = 1 << 0,
+        Pixel = 1 << 1,
+        Compute = 1 << 2,
+    };
+    BitFlags(RenderBufferTarget);
+
+    struct RenderBufferDesc
+    {
+        RenderBufferType Type = RenderBufferType::None;
+        RenderBufferUsage Usage = RenderBufferUsage::Default;
+        RenderBufferMemoryFlags MemFlags = RenderBufferMemoryFlags::None;
+
+        void *pData = nullptr;  // Data if available
+        size_t DataLen = 0;
+
+        uint32_t ByteStride = 0;
+        uint32_t UAVElements = 0;  // The number of elements in the resource. For structured buffers, this is the number of structures in the buffer.
     };
 
     class IRenderBuffer
     {
     public:
-        virtual void Init(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage, RenderBufferAccess accessFlags) = 0;
+        virtual void Init(const RenderBufferDesc &desc) = 0;
         // If we already have data, just pass it
         virtual void SetData(void *pData, size_t dataLen) = 0;
         // If we don't have data, get buffer's data and pass it so we save memory
-        virtual void *GetNewData() = 0;
+        virtual void *GetData() = 0;
         virtual void UnmapData() = 0;
-
-        virtual void Use(uint32_t offset = 0, InputLayout *pLayout = 0, bool index32 = true) = 0;
         virtual void Delete() = 0;
+
+        virtual void *GetHandle() = 0;
+
+        virtual ~IRenderBuffer() = default;
     };
 
     typedef IRenderBuffer *RenderBufferHandle;
 
     namespace RenderBuffer
     {
-        RenderBufferHandle Create(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage = RenderBufferUsage::Default,
-                                  RenderBufferAccess accessFlags = RB_ACCESS_TYPE_NONE);
+        RenderBufferHandle Create(const RenderBufferDesc &desc);
     }
 
 }  // namespace Lorr

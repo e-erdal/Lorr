@@ -8,6 +8,8 @@ namespace Lorr
 
     bool ResourceManager::ExportResource(ResourceType type, const std::string &path, BufferStream &buf)
     {
+        ZoneScoped;
+        
         buf.Reset();
 
         BufferStream compBuf;
@@ -27,6 +29,8 @@ namespace Lorr
 
     bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
     {
+        ZoneScoped;
+        
         BufferStream fileBuf;
         if (!FileSystem::ReadBinaryFile(path, fileBuf))
         {
@@ -48,6 +52,8 @@ namespace Lorr
 
     bool ResourceManager::LoadResourceFile(const std::string &path, BufferStream &buf)
     {
+        ZoneScoped;
+        
         BufferStream rawBuf;
         if (!FileSystem::ReadBinaryFile(path.data(), rawBuf))
         {
@@ -96,6 +102,8 @@ namespace Lorr
 
     bool ResourceManager::ParseTextureDataFromFile(TextureData &outData, BufferStream &resourceBuf)
     {
+        ZoneScoped;
+        
         resourceBuf.StartOver();
         outData.Width = resourceBuf.Get<uint32_t>();
         outData.Height = resourceBuf.Get<uint32_t>();
@@ -108,6 +116,8 @@ namespace Lorr
 
     bool ResourceManager::ParseAudioDataFromFile(AudioData &outData, BufferStream &resourceBuf)
     {
+        ZoneScoped;
+        
         resourceBuf.StartOver();
         outData.PCMFrequency = resourceBuf.Get<uint32_t>();
         outData.PCMFormat = resourceBuf.Get<uint32_t>();
@@ -119,8 +129,10 @@ namespace Lorr
 
     bool ResourceManager::ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf)
     {
+        ZoneScoped;
+        
         resourceBuf.StartOver();
-        outData.Renderer = resourceBuf.Get<APIType>();
+        outData.Renderer = resourceBuf.Get<RendererType>();
         outData.Type = resourceBuf.Get<ShaderType>();
         uint32_t len = resourceBuf.Get<uint32_t>();
         outData.Buffer.Reset(resourceBuf.GetPtr<uint8_t>(len), len);
@@ -130,6 +142,8 @@ namespace Lorr
 
     bool ResourceManager::ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf)
     {
+        ZoneScoped;
+        
         outData.TTFData.Reset(resourceBuf);
 
         return true;
@@ -141,6 +155,8 @@ namespace Lorr
 
     bool ResourceManager::ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
+        ZoneScoped;
+        
         TextureData data;
         ITexture::ParseToMemory(&data, inBuf);
 
@@ -156,6 +172,8 @@ namespace Lorr
 
     bool ResourceManager::ParseAudioToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
+        ZoneScoped;
+        
         AudioData data;
         Audio::ParseToMemory(&data, inBuf);
 
@@ -170,6 +188,8 @@ namespace Lorr
 
     bool ResourceManager::ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
+        ZoneScoped;
+        
         ShaderData data;
         IShader::ParseToMemory(&data, inBuf);
 
@@ -184,6 +204,8 @@ namespace Lorr
 
     bool ResourceManager::ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
+        ZoneScoped;
+        
         FontData data;
         Font::ParseToMemory(&data, inBuf);
 

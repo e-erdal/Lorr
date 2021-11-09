@@ -8,10 +8,11 @@
 #include "Engine/ECS/Components/TextComponent.hh"
 
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
-
 #include "Engine/Graphics/Font.hh"
 
 #include "Engine/Model/Model.hh"
+
+#include "Engine/Job/Worker.hh"
 
 using namespace Lorr;
 
@@ -66,27 +67,81 @@ void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
     }
 }
 
+TextureHandle texture;
+ShaderHandle compute;
+RenderBufferHandle computeInputBuffer;
+RenderBufferHandle computeOutputBuffer;
+RenderBufferHandle computeOutputResultBuffer;
+
 void GameApp::Init()
 {
+    //* Init signals
     GetEngine()->GetWindow()->OnSetMouseState.connect<MouseDown>();
     GetEngine()->GetWindow()->OnSetKeyState.connect<KeyDown>();
     GetEngine()->GetWindow()->OnSetMousePosition.connect<MouseMove>();
 
-    m_pCurrentScene = new Scene;
-    m_pCurrentScene->Init("game://default-scene");
-
-    GetEngine()->GetRenderer()->CreateTarget("renderer://test", GetEngine()->GetWindow()->GetWidth(), GetEngine()->GetWindow()->GetHeight());
-
+    //* Required vars
+    IRenderer *pRenderer = GetEngine()->GetRenderer();
+    u32 width = GetEngine()->GetWindow()->GetWidth();
+    u32 height = GetEngine()->GetWindow()->GetHeight();
     glm::mat4 mat = {};
-    GetEngine()->GetShaderMan()->CreateProgram("game://model", kMeshLayout, "modelv.lr", "modelp.lr");
-    GetEngine()->GetShaderMan()->CreateCBuffer("game://model", mat, true);
+
+    //* Scene initialization
+    m_pCurrentScene = new Scene;
+    m_pCurrentScene->Init("scene://default-scene");
+
+    //* Preload resources
+    FontDesc desc;
+    desc.SizePX = 32;
+    Font *pFont = GetEngine()->GetResourceMan()->LoadResource<Font>("font://font", "font.lr", &desc);
+
+    // Post-process target
+    pRenderer->CreateTarget("renderer://postprocess", width, height, 0, 6);
+
+    // Load shaders
+    GetEngine()->GetShaderMan()->CreateProgram("shader://model", kMeshLayout, "shaders/modelv.lr", "shaders/modelp.lr");
+    GetEngine()->GetShaderMan()->CreateProgram("shader://batcher", VertexBatcher::m_Layout, "shaders/batchv.lr", "shaders/batchp.lr");
+
+    RenderBufferDesc modelCBuf;
+    modelCBuf.DataLen = sizeof(mat);
+    modelCBuf.Type = RenderBufferType::Constant;
+    modelCBuf.Usage = RenderBufferUsage::Dynamic;
+    modelCBuf.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+    GetEngine()->GetShaderMan()->CreateRenderBuffer("cbuffer://model", modelCBuf);
+
+    modelCBuf.DataLen = sizeof(mat);
+    GetEngine()->GetShaderMan()->CreateRenderBuffer("cbuffer://batcher", modelCBuf);
+
+    //* Init entities
+    // Create entities
+    Entity postProcess = m_pCurrentScene->CreateEntity("test");
+    postProcess.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(width, height, 1));
+    auto &rend = postProcess.AddComponent<Component::Renderable>(true);
+    texture = rend.texture = pRenderer->GetTargetTexture("renderer://postprocess");
 
     Entity modelEntity = m_pCurrentScene->CreateEntity("test");
     modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
     Model &model = modelEntity.AddComponent<Model>();
 
+    model.Init("teapot.obj");
     // model.Init("sponza.obj");
-    model.AddSphere(100, 128, GetEngine()->GetRenderer()->GetPlaceholder());
+    // model.AddSphere(100, 128, pRenderer->GetPlaceholder());
+
+    //** Compute Shader Test **//
+    compute = Shader::Create("test://compute", "shaders/testc.lr");
+
+    RenderBufferDesc computeBufferDesc;
+    computeBufferDesc.UAVElements = 1;
+    computeBufferDesc.Type = RenderBufferType::UAV;
+    computeBufferDesc.MemFlags = RenderBufferMemoryFlags::Texture2D;
+    computeOutputBuffer = RenderBuffer::Create(computeBufferDesc);
+
+    RenderBufferDesc computeResult;
+    // computeResult.DataLen = sizeof(glm::vec4) * texture->GetWidth() * texture->GetHeight();
+    // computeResult.ByteStride = sizeof(glm::vec4);
+    computeResult.Usage = RenderBufferUsage::Staging;
+    computeResult.MemFlags = RenderBufferMemoryFlags::Access_CPUR | RenderBufferMemoryFlags::Texture2D;
+    computeOutputResultBuffer = RenderBuffer::Create(computeResult);
 }
 
 void GameApp::Tick(float fDelta)
@@ -97,11 +152,31 @@ void GameApp::Tick(float fDelta)
 
 void GameApp::Draw()
 {
+    IRenderer *pRenderer = GetEngine()->GetRenderer();
+
+    pRenderer->UseShader(compute);
+
+    pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
+    pRenderer->UseUAV(computeOutputBuffer, RenderBufferTarget::Compute, 0);
+    pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Compute, 0);
+
+    pRenderer->Dispatch(8, 8, 1);
+
+    pRenderer->TransferResourceData(computeOutputBuffer, computeOutputResultBuffer);
+
+    // TextureHandle outTexture = (TextureHandle)computeOutputResultBuffer->GetData();
+    computeOutputResultBuffer->UnmapData();
+
+    pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
+    pRenderer->UseUAV(0, RenderBufferTarget::Compute, 0);
+
     m_pCurrentScene->Draw();
 
     ImGui::Begin("GameApp", nullptr);
-    ImGui::Text("Max FPS set to 200.");
-    ImGui::Image((ImTextureID)GetEngine()->GetRenderer()->GetTargetTexture("renderer://test"),
-                 { GetEngine()->GetWindow()->GetWidth() / 2.f, GetEngine()->GetWindow()->GetHeight() / 2.f });
+    ImGui::Text("FPS: %2.f", ImGui::GetIO().Framerate);
+
+    ImGui::SliderInt("Mip", (int *)&texture->m_UsingMip, 0, 6);
+    ImGui::Image((ImTextureID)texture, { 1280 / 2.f, 720 / 2.f });
+
     ImGui::End();
 }

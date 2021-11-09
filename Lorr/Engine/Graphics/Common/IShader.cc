@@ -29,6 +29,10 @@ namespace Lorr
         {
             currentType = ShaderType::Pixel;
         }
+        else if (shader.substr(0, 9) == "//$TYPE c")
+        {
+            currentType = ShaderType::Compute;
+        }
 
         constexpr uint32_t flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY | D3DCOMPILE_OPTIMIZATION_LEVEL3;
         ID3DBlob *pCode = 0;
@@ -45,7 +49,7 @@ namespace Lorr
         // clang-format on
 
         pOutData->Type = currentType;
-        pOutData->Renderer = APIType::D3D11;
+        pOutData->Renderer = RendererType::D3D11;
         pOutData->Buffer.Reset((uint8_t *)pCode->GetBufferPointer(), pCode->GetBufferSize());
 
         SAFE_RELEASE(pCode);
@@ -56,7 +60,7 @@ namespace Lorr
     {
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Shader>(ident, path, pDesc);
+            case RendererType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Shader>(ident, path, pDesc);
             default: break;
         }
 
@@ -67,7 +71,7 @@ namespace Lorr
     {
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11:
+            case RendererType::D3D11:
             {
                 D3D11Shader *shader = new D3D11Shader;
 

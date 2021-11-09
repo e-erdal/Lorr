@@ -1,4 +1,6 @@
-#include "D3D11RendererStateManager.hh"
+#if LR_BACKEND_D3D11
+
+    #include "D3D11RendererStateManager.hh"
 
 namespace Lorr
 {
@@ -9,6 +11,8 @@ namespace Lorr
 
     ID3D11RasterizerState *D3D11RendererStateManager::Get(D3D11_RASTERIZER_DESC &desc)
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto it = m_RasterizerStack.find(desc);
         if (it == m_RasterizerStack.end())
@@ -29,6 +33,8 @@ namespace Lorr
 
     ID3D11DepthStencilState *D3D11RendererStateManager::Get(D3D11_DEPTH_STENCIL_DESC &desc)
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto it = m_DepthStack.find(desc);
         if (it == m_DepthStack.end())
@@ -49,6 +55,8 @@ namespace Lorr
 
     ID3D11BlendState *D3D11RendererStateManager::Get(D3D11_BLEND_DESC &desc)
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto it = m_BlendStack.find(desc);
         if (it == m_BlendStack.end())
@@ -68,3 +76,5 @@ namespace Lorr
     }
 
 }  // namespace Lorr
+
+#endif

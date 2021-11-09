@@ -13,7 +13,6 @@ namespace Lorr
     {
         ShaderHandle Vertex = 0;
         ShaderHandle Pixel;
-        ShaderHandle Compute;
     };
 
     class ShaderManager
@@ -23,24 +22,19 @@ namespace Lorr
 
         void Init();
 
-        void CreateProgram(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath, std::string_view pixelPath);
-        ShaderProgram *Get(const Identifier &ident);
-        void Use(const Identifier &ident);
+        ShaderProgram *CreateProgram(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath, std::string_view pixelPath);
+        ShaderProgram *GetProgram(const Identifier &ident);
 
-        template<typename T>
-        void CreateCBuffer(const Identifier &ident, T &t, bool dynamic = false)
-        {
-            RenderBufferUsage usage = dynamic ? RenderBufferUsage::Dynamic : RenderBufferUsage::Default;
-            RenderBufferAccess access = dynamic ? RB_ACCESS_TYPE_CPUW : RB_ACCESS_TYPE_NONE;
-            RenderBufferHandle buffer = RenderBuffer::Create(&t, sizeof(T), RenderBufferType::Constant, usage, access);
+        ShaderHandle CreateShader(const Identifier &ident, const InputLayout &layout, std::string_view vertexPath);  // Vertex shader
+        ShaderHandle CreateShader(const Identifier &ident, std::string_view path);                                   // Other shaders
+        ShaderHandle GetShader(const Identifier &ident);
 
-            if (buffer) m_CBuffers.emplace(ident, buffer);
-        }
-
-        RenderBufferHandle GetCBuf(const Identifier &ident);
+        RenderBufferHandle CreateRenderBuffer(const Identifier &ident, const RenderBufferDesc &desc);
+        RenderBufferHandle GetRenderBuffer(const Identifier &ident);
 
     private:
+        std::unordered_map<Identifier, ShaderHandle> m_Shaders;
         std::unordered_map<Identifier, ShaderProgram> m_Programs;
-        std::unordered_map<Identifier, RenderBufferHandle> m_CBuffers;  // TODO: Move this to BufferManager
+        std::unordered_map<Identifier, RenderBufferHandle> m_Buffers;  // TODO: Move this to BufferManager
     };
 }  // namespace Lorr

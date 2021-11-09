@@ -37,7 +37,8 @@ namespace Lorr
 
         RenderBufferHandle m_VertexBuffer = 0;
         RenderBufferHandle m_IndexBuffer = 0;
-        RenderBufferHandle m_ConstantBuffer = 0;
+        RenderBufferHandle m_VertexConstantBuffer = 0;
+        RenderBufferHandle m_PixelConstantBuffer = 0;
 
         TextureHandle m_FontTexture = 0;
     };

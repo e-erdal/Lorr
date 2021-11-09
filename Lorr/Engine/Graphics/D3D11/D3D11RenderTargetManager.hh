@@ -5,6 +5,8 @@
 
 #pragma once
 
+#if LR_BACKEND_D3D11
+
 #include "Engine/Graphics/Common/ITexture.hh"
 
 #include <d3d11.h>
@@ -20,7 +22,7 @@ namespace Lorr
         void ClearAll(ID3D11DeviceContext *pContext);
         void ReInitAll(ID3D11DepthStencilView *pDepthStencil);
 
-        ID3D11RenderTargetView *Create(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle pTargetTexture);
+        ID3D11RenderTargetView *Create(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle pTargetTexture, uint32_t mipLevels = 1);
         ID3D11RenderTargetView *Create(const Identifier &ident, ID3D11Texture2D *pTexture);
 
         ID3D11RenderTargetView *GetView(const Identifier &ident);
@@ -42,3 +44,5 @@ namespace Lorr
     };
 
 }  // namespace Lorr
+
+#endif

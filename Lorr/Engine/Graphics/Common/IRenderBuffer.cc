@@ -4,15 +4,14 @@
 
 namespace Lorr
 {
-    RenderBufferHandle RenderBuffer::Create(void *pData, size_t dataLen, RenderBufferType type, RenderBufferUsage usage,
-                                            RenderBufferAccess accessFlags)
+    RenderBufferHandle RenderBuffer::Create(const RenderBufferDesc &desc)
     {
         switch (IRenderer::CurrentAPI())
         {
-            case APIType::D3D11:
+            case RendererType::D3D11:
             {
                 RenderBufferHandle buf = new D3D11RenderBuffer;
-                buf->Init(pData, dataLen, type, usage, accessFlags);
+                buf->Init(desc);
                 return buf;
             }
 

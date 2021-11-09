@@ -14,6 +14,7 @@ namespace Lorr
     enum TextureFormat : uint16_t
     {
         TEXTURE_FORMAT_RGBA8,
+        TEXTURE_FORMAT_RGBAF32,
         TEXTURE_FORMAT_DEPTH_32F,
         TEXTURE_FORMAT_DEPTH_D24UNS8U,
         TEXTURE_FORMAT_R24G8_TYPELESS,
@@ -26,12 +27,14 @@ namespace Lorr
         TEXTURE_TYPE_REGULAR,
         TEXTURE_TYPE_DEPTH,
         TEXTURE_TYPE_RENDER_TARGET,
+        TEXTURE_TYPE_RW,
     };
 
     struct TextureDesc
     {
         TextureType Type = TEXTURE_TYPE_REGULAR;
         uint32_t Filters = 0;
+        uint32_t MipMapLevels = 1;
     };
 
     struct TextureData
@@ -53,6 +56,14 @@ namespace Lorr
         virtual void Delete() = 0;
         virtual void *GetHandle() = 0;
 
+        // Step by step functions
+        virtual void CreateHandle(TextureDesc *pDesc, TextureData *pData) = 0;
+        virtual void CreateShaderResource(TextureDesc *pDesc) = 0;
+        virtual void CreateSampler(TextureDesc *pDesc) = 0;
+        virtual void CreateUAV() = 0;
+
+        virtual void GenerateMips() = 0;
+
         static void ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer);
         static constexpr ResourceType m_ResType = ResourceType::Texture;
 
@@ -71,6 +82,8 @@ namespace Lorr
         {
             return m_DataSize;
         }
+
+        uint32_t m_UsingMip = 0;
 
     protected:
         uint32_t m_Width = 0;

@@ -14,19 +14,19 @@ namespace Lorr
         void Init();
 
     public:
-        signals::signal<void(KeyMod, MouseButton, const glm::ivec2 &)> OnMouseDown;
-        signals::signal<void(KeyMod, MouseButton, const glm::ivec2 &)> OnMouseRelease;
-        signals::signal<void(const glm::ivec2 &)> OnMouseMove;
-        signals::signal<void(const glm::vec2 &)> OnMouseScroll;
+        sig::signal<void(KeyMod, MouseButton, const glm::ivec2 &)> OnMouseDown;
+        sig::signal<void(KeyMod, MouseButton, const glm::ivec2 &)> OnMouseRelease;
+        sig::signal<void(const glm::ivec2 &)> OnMouseMove;
+        sig::signal<void(const glm::vec2 &)> OnMouseScroll;
 
         // Key when it's down and sending continuous messages, aka almost no delay
-        signals::signal<void(Key, KeyMod)> OnKeyDown;
+        sig::signal<void(Key, KeyMod)> OnKeyDown;
         // Key when it's released and sending continuous messages, aka almost no
         // delay
-        signals::signal<void(Key, KeyMod)> OnKeyRelease;
+        sig::signal<void(Key, KeyMod)> OnKeyRelease;
 
         // This is when writing made just right for text boxes
-        signals::signal<void(uint32_t, KeyMod)> OnCharInput;
+        sig::signal<void(uint32_t, KeyMod)> OnCharInput;
 
     private:
         glm::vec2 m_MouseScrollAxis;

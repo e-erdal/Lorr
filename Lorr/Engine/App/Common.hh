@@ -37,11 +37,11 @@
 #define _MALLOC(len) (uint8_t *)malloc(len)
 #define _ZEROM(x, len) memset((void *)x, 0, len)
 
-#define PACK_VERSION(major, minor, build) ((uint32_t)((uint8_t)major << 28 | ((uint16_t)minor & 0x0fff) << 16 | _byteswap_ushort((uint16_t)build)))
+#define PACK_VERSION(major, minor, build) ((u32)((uint8_t)major << 28 | ((uint16_t)minor & 0x0fff) << 16 | _byteswap_ushort((uint16_t)build)))
 #define UNPACK_VERSION(packedVersion, major, minor, build)                                                                                                               \
     {                                                                                                                                                                    \
-        major = ((uint8_t)((uint32_t)packedVersion >> 24) >> 4);                                                                                                         \
-        minor = (uint16_t)(((uint32_t)packedVersion >> 16) & 0x0fff);                                                                                                    \
+        major = ((uint8_t)((u32)packedVersion >> 24) >> 4);                                                                                                         \
+        minor = (uint16_t)(((u32)packedVersion >> 16) & 0x0fff);                                                                                                    \
         build = _byteswap_ushort((uint16_t)packedVersion & 0x0000ffff);                                                                                                  \
     }
 
@@ -62,3 +62,15 @@
 
 #define ENGINE_VERSION_TAG "alpha"
 #define ENGINE_VERSION_PACKED PACK_VERSION(ENGINE_VERSION_MAJOR, ENGINE_VERSION_MINOR, ENGINE_VERSION_PATCH)
+
+typedef unsigned long long u64;
+typedef signed long long i64;
+
+typedef unsigned int u32;
+typedef signed int i32;
+
+typedef unsigned short u16;
+typedef signed short i16;
+
+typedef unsigned char u8;
+typedef signed char i8;

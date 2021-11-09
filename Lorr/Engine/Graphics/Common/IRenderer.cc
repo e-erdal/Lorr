@@ -2,6 +2,6 @@
 
 namespace Lorr
 {
-    APIType IRenderer::m_CurrentAPI = APIType::None;
+    RendererType IRenderer::m_CurrentAPI = RendererType::None;
 
 }  // namespace Lorr
