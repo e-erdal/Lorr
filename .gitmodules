@@ -31,3 +31,6 @@
 [submodule "Vendor/msdf-atlas-gen"]
 	path = Vendor/msdf-atlas-gen
 	url = https://github.com/Chlumsky/msdf-atlas-gen.git
+[submodule "Vendor/optick"]
+	path = Vendor/optick
+	url = https://github.com/bombomby/optick.git
