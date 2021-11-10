@@ -8,8 +8,8 @@
 
 namespace Lorr
 {
-    constexpr uint32_t kResourceFileSignature = 1920102220;
-    constexpr uint16_t kResourceMinVersion = 1;
+    constexpr u32 kResourceFileSignature = 1920102220;
+    constexpr u16 kResourceMinVersion = 1;
 
     enum
     {
@@ -20,12 +20,12 @@ namespace Lorr
 #pragma pack(push, 1)
     struct ResourceHeader
     {
-        uint32_t Signature = kResourceFileSignature;
-        uint16_t Version = 1;
-        uint32_t EngineVersion = ENGINE_VERSION_PACKED;
-        uint32_t GameVersion = 0xffffffff;
-        uint32_t OriginalSize = 0xffffffff;
-        uint32_t Flags = 0;
+        u32 Signature = kResourceFileSignature;
+        u16 Version = 1;
+        u32 EngineVersion = ENGINE_VERSION_PACKED;
+        u32 GameVersion = 0xffffffff;
+        u32 OriginalSize = 0xffffffff;
+        u32 Flags = 0;
         ResourceType Type = ResourceType::Invalid;
     };
 #pragma pack(pop)

@@ -81,11 +81,11 @@ namespace Lorr::AudioLoader
 
         vorbis_info *vi = ov_info(&vf, -1);
         long sampleRate = vi->rate;
-        uint32_t channels = vi->channels;
-        uint64_t samples = ov_pcm_total(&vf, -1);
+        u32 channels = vi->channels;
+        u64 samples = ov_pcm_total(&vf, -1);
 
-        uint32_t dataLen = sizeof(int16_t) * channels * samples;
-        uint8_t *pcmBuf = (uint8_t *)malloc(dataLen);
+        u32 dataLen = sizeof(i16) * channels * samples;
+        u8 *pcmBuf = (u8 *)malloc(dataLen);
 
         bool finished = false;
         uintptr_t offset = 0;

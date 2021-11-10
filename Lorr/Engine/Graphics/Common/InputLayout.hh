@@ -17,7 +17,7 @@ namespace Lorr
         UInt,
     };
 
-    static uint32_t VertexAttribSize(VertexAttribType type)
+    static u32 VertexAttribSize(VertexAttribType type)
     {
         switch (type)
         {
@@ -26,7 +26,7 @@ namespace Lorr
             case VertexAttribType::Vec3: return sizeof(glm::vec3);
             case VertexAttribType::Vec4: return sizeof(glm::vec4);
             case VertexAttribType::Mat4: return sizeof(glm::mat4);
-            case VertexAttribType::UInt: return sizeof(uint32_t);
+            case VertexAttribType::UInt: return sizeof(u32);
             default: return 0;
         }
     }
@@ -40,8 +40,8 @@ namespace Lorr
 
         std::string m_Name;
         VertexAttribType m_Type;
-        uint32_t m_Size;
-        uint32_t m_Offset;
+        u32 m_Size;
+        u32 m_Offset;
         bool m_IsNormalized;
     };
 
@@ -52,7 +52,7 @@ namespace Lorr
         InputLayout(std::initializer_list<VertexAttrib> elements);
 
     public:
-        uint32_t GetStride() const
+        u32 GetStride() const
         {
             return m_Stride;
         }
@@ -84,7 +84,7 @@ namespace Lorr
 
     private:
         std::vector<VertexAttrib> m_Elements;
-        uint32_t m_Stride = 0;
+        u32 m_Stride = 0;
     };
 
 }  // namespace Lorr

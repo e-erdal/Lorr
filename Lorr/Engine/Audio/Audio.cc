@@ -30,10 +30,10 @@ namespace Lorr
 
     void Audio::ParseToMemory(AudioData *outData, BufferStream &audioBuffer)
     {
-        const uint32_t kWavSig = 1179011410;
-        const uint32_t kOggSig = 1399285583;
+        const u32 kWavSig = 1179011410;
+        const u32 kOggSig = 1399285583;
 
-        uint32_t curSig = audioBuffer.Get<uint32_t>();
+        u32 curSig = audioBuffer.Get<u32>();
         audioBuffer.StartOver();
 
         AudioLoader::AudioLoaderType type;

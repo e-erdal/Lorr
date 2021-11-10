@@ -85,7 +85,7 @@ namespace Lorr
     {
     }
 
-    void Win32Window::Init(const std::string &title, uint32_t width, uint32_t height, WindowFlags flags)
+    void Win32Window::Init(const std::string &title, u32 width, u32 height, WindowFlags flags)
     {
         ZoneScoped;
 
@@ -256,9 +256,9 @@ namespace Lorr
                 if (pWindow->m_SizeEnded)
                 {
                     LOG_TRACE("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
-                    pWindow->OnResolutionChanged((uint32_t)LOWORD(lParam), (uint32_t)HIWORD(lParam));
-                    pWindow->m_Width = (uint32_t)LOWORD(lParam);
-                    pWindow->m_Height = (uint32_t)HIWORD(lParam);
+                    pWindow->OnResolutionChanged((u32)LOWORD(lParam), (u32)HIWORD(lParam));
+                    pWindow->m_Width = (u32)LOWORD(lParam);
+                    pWindow->m_Height = (u32)HIWORD(lParam);
                 }
 
                 break;
@@ -268,9 +268,9 @@ namespace Lorr
                 RECT rc;
                 GetClientRect(pWindow->m_Handle, &rc);
                 LOG_TRACE("Window size changed to {}, {}", rc.right, rc.bottom);
-                pWindow->OnResolutionChanged((uint32_t)rc.right, (uint32_t)rc.bottom);
-                pWindow->m_Width = (uint32_t)rc.right;
-                pWindow->m_Height = (uint32_t)rc.bottom;
+                pWindow->OnResolutionChanged((u32)rc.right, (u32)rc.bottom);
+                pWindow->m_Width = (u32)rc.right;
+                pWindow->m_Height = (u32)rc.bottom;
 
                 break;
             case WM_ENTERSIZEMOVE: pWindow->m_SizeEnded = false; break;

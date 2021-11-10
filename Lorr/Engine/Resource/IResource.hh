@@ -8,7 +8,7 @@
 
 namespace Lorr
 {
-    enum class ResourceType : uint8_t
+    enum class ResourceType : u8
     {
         Invalid,
         Texture,

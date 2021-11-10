@@ -19,9 +19,9 @@ namespace Lorr
 
     struct AudioData
     {
-        uint32_t PCMFrequency;
-        uint32_t PCMFormat;
-
+        u32 PCMFrequency;
+        u32 PCMFormat;
+        
         BufferStream PCMFrames;
     };
 
@@ -56,8 +56,8 @@ namespace Lorr
         float m_Volume = 1.0f;
         float m_Pitch = 1.0f;
 
-        uint32_t m_Buffer;
-        uint32_t m_Source;
+        u32 m_Buffer;
+        u32 m_Source;
 
         bool m_Looping = false;
 

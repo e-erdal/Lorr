@@ -33,16 +33,16 @@
         var = nullptr;                                                                                                                                                   \
     }
 
-#define _REALLOC(x, len) (uint8_t *)realloc((void *)x, len)
-#define _MALLOC(len) (uint8_t *)malloc(len)
+#define _REALLOC(x, len) (u8 *)realloc((void *)x, len)
+#define _MALLOC(len) (u8 *)malloc(len)
 #define _ZEROM(x, len) memset((void *)x, 0, len)
 
-#define PACK_VERSION(major, minor, build) ((u32)((uint8_t)major << 28 | ((uint16_t)minor & 0x0fff) << 16 | _byteswap_ushort((uint16_t)build)))
+#define PACK_VERSION(major, minor, build) ((u32)((u8)major << 28 | ((u16)minor & 0x0fff) << 16 | _byteswap_ushort((u16)build)))
 #define UNPACK_VERSION(packedVersion, major, minor, build)                                                                                                               \
     {                                                                                                                                                                    \
-        major = ((uint8_t)((u32)packedVersion >> 24) >> 4);                                                                                                         \
-        minor = (uint16_t)(((u32)packedVersion >> 16) & 0x0fff);                                                                                                    \
-        build = _byteswap_ushort((uint16_t)packedVersion & 0x0000ffff);                                                                                                  \
+        major = ((u8)((u32)packedVersion >> 24) >> 4);                                                                                                         \
+        minor = (u16)(((u32)packedVersion >> 16) & 0x0fff);                                                                                                    \
+        build = _byteswap_ushort((u16)packedVersion & 0x0000ffff);                                                                                                  \
     }
 
 //

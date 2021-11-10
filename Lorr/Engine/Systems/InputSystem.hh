@@ -26,18 +26,18 @@ namespace Lorr
         sig::signal<void(Key, KeyMod)> OnKeyRelease;
 
         // This is when writing made just right for text boxes
-        sig::signal<void(uint32_t, KeyMod)> OnCharInput;
+        sig::signal<void(u32, KeyMod)> OnCharInput;
 
     private:
         glm::vec2 m_MouseScrollAxis;
         glm::vec2 m_MouseMoveDelta;
 
-        uint8_t m_MouseButtonState;
+        u8 m_MouseButtonState;
         KeyMod m_KeyMods;
 
     private:
         void OnSetKeyState(Key, ButtonState, KeyMod);
-        void OnChar(uint32_t, KeyMod);
+        void OnChar(u32, KeyMod);
         void OnSetMouseState(KeyMod, MouseButton, ButtonState, const glm::ivec2 &);
         void OnSetMousePosition(const glm::ivec2 &);
     };

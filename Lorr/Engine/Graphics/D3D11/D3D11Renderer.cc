@@ -172,11 +172,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11Buffer *d11Buffer = 0;
-        if (buffer)
-            d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
-        else
-            d11Buffer = *kNullBuffer;
+        ID3D11Buffer *d11Buffer = *kNullBuffer;
+        if (buffer) d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
 
         if (target & RenderBufferTarget::Vertex) m_pContext->VSSetConstantBuffers(slot, 1, &d11Buffer);
         if (target & RenderBufferTarget::Pixel) m_pContext->PSSetConstantBuffers(slot, 1, &d11Buffer);
@@ -187,11 +184,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11ShaderResourceView *pSRV = 0;
-        if (buffer)
-            pSRV = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
-        else
-            pSRV = *kNullSRV;
+        ID3D11ShaderResourceView *pSRV = *kNullSRV;
+        if (buffer) pSRV = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
 
         if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, &pSRV);
         if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, &pSRV);
@@ -202,11 +196,8 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11ShaderResourceView *pSRV = 0;
-        if (texture)
-            pSRV = ((D3D11Texture *)texture)->GetShaderResource();
-        else
-            pSRV = *kNullSRV;
+        ID3D11ShaderResourceView *pSRV = *kNullSRV;
+        if (texture) pSRV = ((D3D11Texture *)texture)->GetShaderResource();
 
         if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, &pSRV);
         if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, &pSRV);
@@ -217,11 +208,18 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11UnorderedAccessView *pUAV = 0;
-        if (buffer)
-            pUAV = ((D3D11RenderBuffer *)buffer)->GetUAV();
-        else
-            pUAV = *kNullUAV;
+        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
+        if (buffer) pUAV = ((D3D11RenderBuffer *)buffer)->GetUAV();
+
+        m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
+    }
+
+    void D3D11Renderer::UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
+        if (texture) pUAV = ((D3D11Texture *)texture)->GetUAV();
 
         m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
     }

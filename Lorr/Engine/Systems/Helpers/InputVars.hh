@@ -8,14 +8,14 @@
 
 namespace Lorr
 {
-    enum class ButtonState : uint8_t
+    enum class ButtonState : u8
     {
         Released,
         Pressed,
         DoubleClicked
     };
 
-    enum class KeyMod : uint8_t
+    enum class KeyMod : u8
     {
         None = 0,
         SHIFT = 1 << 0,
@@ -27,7 +27,7 @@ namespace Lorr
     };
     BitFlags(KeyMod);
 
-    enum class Key : uint8_t
+    enum class Key : u8
     {
         Key_UNKNOWN = 0,
 
@@ -158,7 +158,7 @@ namespace Lorr
         Key_WORLD_2 = 137, /* non-US #2 */
     };
 
-    enum class MouseButton : uint8_t
+    enum class MouseButton : u8
     {
         NONE,
 

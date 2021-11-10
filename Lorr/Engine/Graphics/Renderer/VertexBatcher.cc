@@ -4,8 +4,8 @@
 
 namespace Lorr
 {
-    constexpr uint32_t kMaxRects = 4000;
-    constexpr uint32_t kTransientBufSize = kMaxRects * sizeof(BatcherVertex) * 4;
+    constexpr u32 kMaxRects = 4000;
+    constexpr u32 kTransientBufSize = kMaxRects * sizeof(BatcherVertex) * 4;
 
     InputLayout VertexBatcher::m_Layout;
 
@@ -19,10 +19,10 @@ namespace Lorr
             { VertexAttribType::Vec4, "COLOR" },
         };
 
-        uint32_t *quads = new uint32_t[kMaxRects * 6];
-        uint32_t offset = 0;
+        u32 *quads = new u32[kMaxRects * 6];
+        u32 offset = 0;
 
-        for (uint32_t i = 0; i < (kMaxRects * 6); i += 6)
+        for (u32 i = 0; i < (kMaxRects * 6); i += 6)
         {
             quads[i + 0] = offset + 0;
             quads[i + 1] = offset + 1;
@@ -37,7 +37,7 @@ namespace Lorr
 
         RenderBufferDesc desc;
         desc.pData = quads;
-        desc.DataLen = kMaxRects * 6 * sizeof(uint32_t);
+        desc.DataLen = kMaxRects * 6 * sizeof(u32);
         desc.Type = RenderBufferType::Index;
 
         m_IndexBuffer = RenderBuffer::Create(desc);

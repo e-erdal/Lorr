@@ -43,6 +43,7 @@ namespace Lorr
         void UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
         void UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
         void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
+        void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
 
         void UseShader(ShaderHandle shader) override;
 
@@ -106,5 +107,7 @@ namespace Lorr
     };
 
 }  // namespace Lorr
+
+#define DX11Renderer D3D11Renderer::Get()
 
 #endif

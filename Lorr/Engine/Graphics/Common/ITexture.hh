@@ -11,7 +11,7 @@
 
 namespace Lorr
 {
-    enum TextureFormat : uint16_t
+    enum TextureFormat : u16
     {
         TEXTURE_FORMAT_RGBA8,
         TEXTURE_FORMAT_RGBAF32,
@@ -22,30 +22,45 @@ namespace Lorr
         TEXTURE_FORMAT_R32_FLOAT
     };
 
-    enum TextureType : uint8_t
+    constexpr u32 TextureFormatToSize(TextureFormat format)
+    {
+        switch (format)
+        {
+            case TEXTURE_FORMAT_RGBA8: return sizeof(float);
+            case TEXTURE_FORMAT_RGBAF32: return sizeof(float) * 4;
+            case TEXTURE_FORMAT_DEPTH_32F: return sizeof(float);
+            case TEXTURE_FORMAT_DEPTH_D24UNS8U: return sizeof(u32);
+            case TEXTURE_FORMAT_R24G8_TYPELESS: return sizeof(u32);
+            case TEXTURE_FORMAT_R32_TYPELESS: return sizeof(u32);
+            case TEXTURE_FORMAT_R32_FLOAT: return sizeof(float);
+            default: return 0;
+        }
+    }
+
+    enum TextureType : u8
     {
         TEXTURE_TYPE_REGULAR,
         TEXTURE_TYPE_DEPTH,
         TEXTURE_TYPE_RENDER_TARGET,
-        TEXTURE_TYPE_RW,
+        TEXTURE_TYPE_RW
     };
 
     struct TextureDesc
     {
         TextureType Type = TEXTURE_TYPE_REGULAR;
-        uint32_t Filters = 0;
-        uint32_t MipMapLevels = 1;
+        u32 Filters = 0;
+        u32 MipMapLevels = 1;
     };
 
     struct TextureData
     {
-        uint32_t Width = 0;
-        uint32_t Height = 0;
+        u32 Width = 0;
+        u32 Height = 0;
 
         TextureFormat Format = TEXTURE_FORMAT_RGBA8;
 
-        uint32_t DataSize = 0;
-        uint8_t *Data = 0;
+        u32 DataSize = 0;
+        u8 *Data = 0;
     };
 
     class ITexture : public IResource<TextureDesc, TextureData>
@@ -55,12 +70,6 @@ namespace Lorr
         virtual void Use() = 0;
         virtual void Delete() = 0;
         virtual void *GetHandle() = 0;
-
-        // Step by step functions
-        virtual void CreateHandle(TextureDesc *pDesc, TextureData *pData) = 0;
-        virtual void CreateShaderResource(TextureDesc *pDesc) = 0;
-        virtual void CreateSampler(TextureDesc *pDesc) = 0;
-        virtual void CreateUAV() = 0;
 
         virtual void GenerateMips() = 0;
 
@@ -83,13 +92,16 @@ namespace Lorr
             return m_DataSize;
         }
 
-        uint32_t m_UsingMip = 0;
+        u32 m_UsingMip = 0;
 
     protected:
-        uint32_t m_Width = 0;
-        uint32_t m_Height = 0;
-        uint32_t m_DataSize = 0;
-        uint32_t m_Filters = 0;
+        u32 m_Width = 0;
+        u32 m_Height = 0;
+        u32 m_DataSize = 0;
+        u32 m_Filters = 0;
+        u32 m_TotalMips = 1;
+
+        TextureFormat m_Format;
     };
 
     typedef ITexture *TextureHandle;

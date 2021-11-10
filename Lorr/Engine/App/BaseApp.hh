@@ -16,8 +16,8 @@ namespace Lorr
 
         WindowFlags Flags = WindowFlags::None;
 
-        uint32_t Width = 0;
-        uint32_t Height = 0;
+        u32 Width = 0;
+        u32 Height = 0;
 
         bool ConsoleApp = false;
     };

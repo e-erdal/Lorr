@@ -20,11 +20,6 @@ namespace Lorr
         void *GetHandle() override;
         void Delete() override;
 
-        void CreateHandle(TextureDesc *pDesc, TextureData *pData) override;
-        void CreateShaderResource(TextureDesc *pDesc) override;
-        void CreateSampler(TextureDesc *pDesc) override;
-        void CreateUAV() override;
-
         void GenerateMips() override;
 
     public:
@@ -33,15 +28,34 @@ namespace Lorr
             return m_pShaderResource;
         }
 
+        ID3D11UnorderedAccessView *GetUAV()
+        {
+            return m_pUAV;
+        }
+
+        ID3D11RenderTargetView *GetRenderTarget()
+        {
+            return m_pRenderTarget;
+        }
+
+    private:
+        void CreateTexture2D(TextureData *pData);
+        void CreateDepthTexture();
+        void CreateRenderTarget();
+        void CreateRWTexture();
+
+        void CreateShaderResource();
+        void CreateSampler();
+
     private:
         ID3D11Texture2D *m_pHandle = 0;
+        D3D11_TEXTURE2D_DESC m_TextureDesc = {};
+
         ID3D11SamplerState *m_pSamplerState = 0;
-        ID3D11RenderTargetView *m_pRenderTarget = 0;
-
         ID3D11ShaderResourceView *m_pShaderResource = 0;
-        ID3D11UnorderedAccessView *m_pUAV = 0;
 
-        DXGI_FORMAT m_Format;
+        ID3D11UnorderedAccessView *m_pUAV = 0;
+        ID3D11RenderTargetView *m_pRenderTarget = 0;
     };
 }  // namespace Lorr
 

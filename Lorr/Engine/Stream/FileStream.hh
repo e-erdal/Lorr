@@ -93,7 +93,7 @@ namespace Lorr
                 fwrite(&t, 1, sizeof(T), m_File);
         }
 
-        inline void WritePtr(const uint8_t *t, size_t size = 0)
+        inline void WritePtr(const u8 *t, size_t size = 0)
         {
             fwrite(t, 1, size, m_File);
         }

@@ -23,7 +23,7 @@ namespace Lorr
         pOutData->Height = imageContainer->m_height;
         // pOutData->Format = imageContainer->m_format;
         pOutData->DataSize = imageContainer->m_size;
-        pOutData->Data = (uint8_t *)imageContainer->m_data;
+        pOutData->Data = (u8 *)imageContainer->m_data;
     }
 
     TextureHandle Texture::Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc)

@@ -39,7 +39,7 @@ namespace Lorr
     public:
         virtual ~IWindow(){};
 
-        virtual void Init(const std::string &title, uint32_t width, uint32_t height, WindowFlags flags) = 0;
+        virtual void Init(const std::string &title, u32 width, u32 height, WindowFlags flags) = 0;
         virtual void Poll() = 0;
 
         virtual int GetMonitorWidth() = 0;
@@ -53,19 +53,19 @@ namespace Lorr
         sig::signal<void(glm::ivec2, glm::ivec2)> OnSetMousePosition;
         sig::signal<void()> OnLoseFocus;
         sig::signal<void()> OnGainFocus;
-        sig::signal<void(uint32_t, uint32_t)> OnResolutionChanged;
+        sig::signal<void(u32, u32)> OnResolutionChanged;
 
-        sig::signal<void(uint32_t, KeyMod)> OnChar;  // Text input
+        sig::signal<void(u32, KeyMod)> OnChar;  // Text input
 
     public:
         virtual void *GetHandle() = 0;
 
-        uint32_t GetWidth() const
+        u32 GetWidth() const
         {
             return m_Width;
         }
 
-        uint32_t GetHeight() const
+        u32 GetHeight() const
         {
             return m_Height;
         }
@@ -86,8 +86,8 @@ namespace Lorr
         }
 
     protected:
-        uint32_t m_Width = 0;
-        uint32_t m_Height = 0;
+        u32 m_Width = 0;
+        u32 m_Height = 0;
 
         bool m_ShouldClose = false;
         bool m_IsFullscreen = false;

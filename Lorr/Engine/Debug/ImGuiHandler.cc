@@ -11,8 +11,8 @@ namespace Lorr
         { VertexAttribType::UInt, "COLOR" },
     };
 
-    static uint32_t g_VertexBufferSize = 5000;
-    static uint32_t g_IndexBufferSize = 10000;
+    static u32 g_VertexBufferSize = 5000;
+    static u32 g_IndexBufferSize = 10000;
 
     void ImGui_ImplSurface_KeyPress(Key eKey, ButtonState eState, KeyMod eMod)
     {
@@ -41,7 +41,7 @@ namespace Lorr
         }
     }
 
-    void ImGui_ImplSurface_OnChar(uint32_t Char, KeyMod eMod)
+    void ImGui_ImplSurface_OnChar(u32 Char, KeyMod eMod)
     {
         ZoneScoped;
 
@@ -246,12 +246,12 @@ namespace Lorr
         m_VertexShader = Shader::Create("imgui://vertex-shader", "shaders/imguiv.lr", &vsDesc);
         m_PixelShader = Shader::Create("imgui://pixel-shader", "shaders/imguip.lr");
 
-        uint8_t *pFontData;
-        int32_t fontW, fontH;
+        u8 *pFontData;
+        i32 fontW, fontH;
         io.Fonts->GetTexDataAsRGBA32(&pFontData, &fontW, &fontH);
 
         TextureDesc desc;
-        TextureData texData{ .Width = (uint32_t)fontW, .Height = (uint32_t)fontH, .Data = pFontData };
+        TextureData texData{ .Width = (u32)fontW, .Height = (u32)fontH, .Data = pFontData };
         m_FontTexture = Texture::Create("imgui://font", &desc, &texData);
 
         io.Fonts->TexID = m_FontTexture;  // We dont use IDs, so just scrap that in
@@ -379,8 +379,8 @@ namespace Lorr
         pRenderer->UseVertexBuffer(m_VertexBuffer, &kImGuiInputLayout);
         pRenderer->UseIndexBuffer(m_IndexBuffer, false);
 
-        uint32_t vertexOff = 0;
-        uint32_t indexOff = 0;
+        u32 vertexOff = 0;
+        u32 indexOff = 0;
 
         for (int i = 0; i < pDrawData->CmdListsCount; i++)
         {

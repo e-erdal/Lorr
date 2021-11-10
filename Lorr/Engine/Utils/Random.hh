@@ -24,9 +24,9 @@ namespace Lorr
             return distribution(m_Device);
         }
 
-        static inline uint32_t UInt(uint32_t rangeMin, uint32_t rangeMax)
+        static inline u32 UInt(u32 rangeMin, u32 rangeMax)
         {
-            std::uniform_int_distribution<uint32_t> distribution(rangeMin, rangeMax);
+            std::uniform_int_distribution<u32> distribution(rangeMin, rangeMax);
             return distribution(m_Device);
         }
 

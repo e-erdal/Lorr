@@ -190,7 +190,7 @@ namespace Lorr::FileSystem
             return false;
         }
 
-        uint8_t *fileData = f.ReadAll<uint8_t>();
+        u8 *fileData = f.ReadAll<u8>();
         size_t fileLen = f.Size();
         f.Close();
 

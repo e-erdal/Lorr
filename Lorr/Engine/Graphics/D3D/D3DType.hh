@@ -11,7 +11,7 @@
 
 namespace Lorr::D3D
 {
-    enum class DepthFunc : uint8_t
+    enum class DepthFunc : u8
     {
         Never = 1,
         Less,
@@ -23,14 +23,14 @@ namespace Lorr::D3D
         Always
     };
 
-    enum class Cull : uint8_t
+    enum class Cull : u8
     {
         None = 1,
         Front,
         Back,
     };
 
-    inline DXGI_FORMAT TextureFormatToDXFormat(uint32_t format)
+    inline DXGI_FORMAT TextureFormatToDXFormat(u32 format)
     {
         switch (format)
         {

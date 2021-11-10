@@ -30,7 +30,7 @@ namespace Lorr
         }
     }
 
-    void InputSystem::OnChar(uint32_t key, KeyMod mod)
+    void InputSystem::OnChar(u32 key, KeyMod mod)
     {
         ZoneScoped;
 

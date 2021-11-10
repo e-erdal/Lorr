@@ -34,7 +34,7 @@ namespace Lorr
             currentType = ShaderType::Compute;
         }
 
-        constexpr uint32_t flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY | D3DCOMPILE_OPTIMIZATION_LEVEL3;
+        constexpr u32 flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY | D3DCOMPILE_OPTIMIZATION_LEVEL3;
         ID3DBlob *pCode = 0;
         ID3DBlob *pError = 0;
 
@@ -50,7 +50,7 @@ namespace Lorr
 
         pOutData->Type = currentType;
         pOutData->Renderer = RendererType::D3D11;
-        pOutData->Buffer.Reset((uint8_t *)pCode->GetBufferPointer(), pCode->GetBufferSize());
+        pOutData->Buffer.Reset((u8 *)pCode->GetBufferPointer(), pCode->GetBufferSize());
 
         SAFE_RELEASE(pCode);
         SAFE_RELEASE(pError);

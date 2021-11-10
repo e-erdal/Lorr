@@ -82,9 +82,9 @@ namespace Lorr
         }
 
         // Dumb piece of shit
-        operator std::span<uint8_t>() const
+        operator std::span<u8>() const
         {
-            return std::span<uint8_t>{(uint8_t *)m_vString.data(), m_vString.size()};
+            return std::span<u8>{(u8 *)m_vString.data(), m_vString.size()};
         }
 
         constexpr bool operator==(const Identifier &other) const
@@ -95,8 +95,8 @@ namespace Lorr
     private:
         std::array<char, 64> m_vString{};
 
-        uint32_t m_iProtoEnd = 0;
-        uint32_t m_iProtoSize = 0;
+        u32 m_iProtoEnd = 0;
+        u32 m_iProtoSize = 0;
     };
 
     constexpr Identifier kEmptyIdentifier = "engine://empty";

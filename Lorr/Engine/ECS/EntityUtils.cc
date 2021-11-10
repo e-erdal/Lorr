@@ -72,7 +72,7 @@ namespace Lorr
         return *this;
     }
 
-    Entity &Entity::AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, uint32_t maxWidth)
+    Entity &Entity::AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth)
     {
         if (!HasComponent<Component::Transform>()) AddComponent<Component::Transform>(pos);
         AddComponent<Component::Text>(GetEngine()->GetResourceMan()->GetResource<Font>(fontIdent), text, maxWidth);

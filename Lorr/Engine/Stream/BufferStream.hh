@@ -51,14 +51,14 @@ namespace Lorr
             StartOver();
         }
 
-        BufferStream(uint8_t *pData, size_t dataLen)
+        BufferStream(u8 *pData, size_t dataLen)
         {
             Expand(dataLen);
             AssignPtr(pData, dataLen);
             StartOver();
         }
 
-        BufferStream(std::vector<uint8_t> &data)
+        BufferStream(std::vector<u8> &data)
         {
             Expand(data.size());
             AssignPtr(&data[0], data.size());
@@ -89,7 +89,7 @@ namespace Lorr
             StartOver();
         }
 
-        inline void Reset(uint8_t *pData, size_t dataLen)
+        inline void Reset(u8 *pData, size_t dataLen)
         {
             SAFE_FREE(m_Data);
             m_DataLen = 0;
@@ -99,7 +99,7 @@ namespace Lorr
             StartOver();
         }
 
-        inline void Reset(std::vector<uint8_t> &data)
+        inline void Reset(std::vector<u8> &data)
         {
             SAFE_FREE(m_Data);
             m_DataLen = 0;
@@ -120,7 +120,7 @@ namespace Lorr
             StartOver();
         }
 
-        inline uint8_t *GetOffsetPtr()
+        inline u8 *GetOffsetPtr()
         {
             return (m_Data + m_Offset);
         }
@@ -137,7 +137,7 @@ namespace Lorr
             printf("\n");
         }
 
-        inline void Seek(uint8_t seekTo, intptr_t pos)
+        inline void Seek(u8 seekTo, intptr_t pos)
         {
             switch (seekTo)
             {
@@ -166,7 +166,7 @@ namespace Lorr
         template<typename T>
         inline void Assign(T &&pData, size_t dataLen = 0)
         {
-            uint8_t *pRaw = (uint8_t *)&pData;
+            u8 *pRaw = (u8 *)&pData;
             size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
 
             assert(m_Data != NULL);     // Our data has to be valid
@@ -181,7 +181,7 @@ namespace Lorr
         template<typename T>
         inline void AssignPtr(T *pData, size_t dataLen = 0)
         {
-            uint8_t *pRaw = (uint8_t *)pData;
+            u8 *pRaw = (u8 *)pData;
             size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
 
             assert(m_Data != NULL);     // Our data has to be valid
@@ -231,7 +231,7 @@ namespace Lorr
 
             Expand(size);
 
-            memcpy(m_Data + m_Offset, (uint8_t *)&pData, size);
+            memcpy(m_Data + m_Offset, (u8 *)&pData, size);
             m_Offset += size;
         }
 
@@ -250,7 +250,7 @@ namespace Lorr
 
             Expand(size);
 
-            memcpy(m_Data + m_Offset, (uint8_t *)pData, size);
+            memcpy(m_Data + m_Offset, (u8 *)pData, size);
             m_Offset += size;
         }
 
@@ -323,7 +323,7 @@ namespace Lorr
         {
             g_pBSWatcher->Deallocated(m_DataLen);
 
-            uint8_t *dcompData = zLibInflateToMemory(m_Data, m_DataLen, decompressedSize);
+            u8 *dcompData = zLibInflateToMemory(m_Data, m_DataLen, decompressedSize);
 
             m_DataLen = decompressedSize;
 
@@ -339,8 +339,8 @@ namespace Lorr
         {
             g_pBSWatcher->Deallocated(m_DataLen);
 
-            uint32_t outSize = 0;
-            uint8_t *compData = zlibDeflateToMemory(m_Data, m_DataLen, &outSize);
+            u32 outSize = 0;
+            u8 *compData = zlibDeflateToMemory(m_Data, m_DataLen, &outSize);
 
             m_DataLen = outSize;
 
@@ -353,7 +353,7 @@ namespace Lorr
         }
 
     public:
-        inline uint8_t *GetData()
+        inline u8 *GetData()
         {
             return m_Data;
         }
@@ -369,7 +369,7 @@ namespace Lorr
         }
 
     private:
-        static uint8_t *zlibDeflateToMemory(uint8_t *input, int sizeBytes, uint32_t *outDataSize)
+        static u8 *zlibDeflateToMemory(u8 *input, int sizeBytes, u32 *outDataSize)
         {
             z_stream strm;
             int ret;
@@ -382,7 +382,7 @@ namespace Lorr
             ret = deflateInit(&strm, Z_BEST_COMPRESSION);
             if (ret != Z_OK) return nullptr;
 
-            uint8_t *outData = (uint8_t *)malloc(sizeBytes + ZLIB_PADDING_BYTES);
+            u8 *outData = (u8 *)malloc(sizeBytes + ZLIB_PADDING_BYTES);
 
             if (!outData) return nullptr;
 
@@ -398,7 +398,7 @@ namespace Lorr
             return outData;
         }
 
-        static uint8_t *zLibInflateToMemory(uint8_t *input, unsigned int compressedSize, unsigned int decompressedSize)
+        static u8 *zLibInflateToMemory(u8 *input, unsigned int compressedSize, unsigned int decompressedSize)
         {
             int ret;
             z_stream strm;
@@ -412,7 +412,7 @@ namespace Lorr
             ret = inflateInit(&strm);
             if (ret != Z_OK) return 0;
 
-            uint8_t *dstData = (uint8_t *)malloc(decompressedSize);
+            u8 *dstData = (u8 *)malloc(decompressedSize);
             if (!dstData)
             {
                 return nullptr;
@@ -437,7 +437,7 @@ namespace Lorr
         }
 
     private:
-        uint8_t *m_Data = 0;
+        u8 *m_Data = 0;
         size_t m_DataLen = 0;
 
         uintptr_t m_Offset = 0;

@@ -11,7 +11,7 @@ namespace Lorr
         QuickOBJLoader::ModelResult result = QuickOBJLoader::LoadFromFile(path);
 
         std::vector<MeshVertex> vertexArr;
-        std::vector<uint32_t> indexArr;
+        std::vector<u32> indexArr;
 
         for (auto &o : result.meshes)
         {
@@ -30,7 +30,7 @@ namespace Lorr
         }
     }
 
-    void Model::AddSphere(float radius, uint32_t tessellation, TextureHandle texture)
+    void Model::AddSphere(float radius, u32 tessellation, TextureHandle texture)
     {
         ZoneScoped;
 

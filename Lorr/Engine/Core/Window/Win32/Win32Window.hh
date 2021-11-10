@@ -13,7 +13,7 @@ namespace Lorr
     public:
         ~Win32Window();
 
-        void Init(const std::string &title, uint32_t width, uint32_t height, WindowFlags flags) override;
+        void Init(const std::string &title, u32 width, u32 height, WindowFlags flags) override;
         void Poll() override;
 
         int GetMonitorWidth() override;

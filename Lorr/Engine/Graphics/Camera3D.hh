@@ -57,7 +57,7 @@ namespace Lorr
         }
 
     private:
-        void OnResolutionChanged(uint32_t width, uint32_t height);
+        void OnResolutionChanged(u32 width, u32 height);
 
         glm::mat4 m_Projection{};
         glm::mat4 m_View{};

@@ -58,7 +58,7 @@ namespace Lorr
     public:
         Entity &AttachDynamicBox(float destiny, float friction);
         Entity &AttachStaticBox(float destiny = 0.f);
-        Entity &AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, uint32_t maxWidth = 0);
+        Entity &AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth = 0);
 
     private:
         Identifier m_Identifier = kEmptyIdentifier;

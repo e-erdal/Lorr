@@ -11,7 +11,7 @@
 
 namespace Lorr
 {
-    enum class ShaderType : uint8_t
+    enum class ShaderType : u8
     {
         Vertex,
         Pixel,

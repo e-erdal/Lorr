@@ -20,9 +20,8 @@ namespace Lorr
 
         void Init(ID3D11Device *pDevice);
         void ClearAll(ID3D11DeviceContext *pContext);
-        void ReInitAll(ID3D11DepthStencilView *pDepthStencil);
 
-        ID3D11RenderTargetView *Create(const Identifier &ident, uint32_t width, uint32_t height, TextureHandle pTargetTexture, uint32_t mipLevels = 1);
+        ID3D11RenderTargetView *Create(const Identifier &ident, u32 width, u32 height, TextureHandle pTargetTexture, u32 mipLevels = 1);
         ID3D11RenderTargetView *Create(const Identifier &ident, ID3D11Texture2D *pTexture);
 
         ID3D11RenderTargetView *GetView(const Identifier &ident);

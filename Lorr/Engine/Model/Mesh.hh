@@ -13,7 +13,7 @@
 namespace Lorr
 {
     typedef std::vector<float> OBJVertices;
-    typedef std::vector<uint32_t> OBJIndices;
+    typedef std::vector<u32> OBJIndices;
     static InputLayout kMeshLayout = {
         { VertexAttribType::Vec3, "POSITION" },
         { VertexAttribType::Vec3, "NORMAL" },
@@ -35,7 +35,7 @@ namespace Lorr
         Mesh() = default;
 
         void Init(OBJVertices &vertices, OBJIndices &indices, QuickOBJLoader::VertexFormat &format, QuickOBJLoader::Material &material);
-        void Init(float radius, uint32_t tessellation, TextureHandle texture);
+        void Init(float radius, u32 tessellation, TextureHandle texture);
         void Render();
 
     public:
@@ -51,7 +51,7 @@ namespace Lorr
         RenderBufferHandle m_IndexBuffer = 0;
 
         std::vector<MeshVertex> m_Vertices;
-        uint32_t m_IndexCount = 0;
+        u32 m_IndexCount = 0;
     };
 
 }  // namespace Lorr

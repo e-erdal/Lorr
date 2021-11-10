@@ -25,7 +25,7 @@ namespace Lorr
 
     struct FontDesc
     {
-        uint8_t SizePX = 0;
+        u8 SizePX = 0;
     };
 
     struct FontData

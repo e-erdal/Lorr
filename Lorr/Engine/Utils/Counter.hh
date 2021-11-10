@@ -11,10 +11,10 @@ namespace Lorr
     class Counter
     {
     public:
-        Counter(uint32_t counterID) : m_ID(counterID), m_Finished(true){};
-        Counter(uint32_t counterID, uint32_t timeMS, bool looping) : m_ID(counterID), m_Target(timeMS), m_Looping(looping){};
+        Counter(u32 counterID) : m_ID(counterID), m_Finished(true){};
+        Counter(u32 counterID, u32 timeMS, bool looping) : m_ID(counterID), m_Target(timeMS), m_Looping(looping){};
 
-        inline void Reset(uint32_t timeMS, bool looping)
+        inline void Reset(u32 timeMS, bool looping)
         {
             m_Total = 0;
             m_TotalInSeconds = 0;
@@ -62,26 +62,26 @@ namespace Lorr
             m_Finished = true;
         }
 
-        inline uint32_t GetSeconds()
+        inline u32 GetSeconds()
         {
             return m_Seconds;
         }
 
-        inline uint32_t GetTargetSeconds()
+        inline u32 GetTargetSeconds()
         {
             return m_Target / 1000;
         }
 
         // Tick on each second
-        sig::signal<void(uint32_t, uint32_t)> OnTick;
-        sig::signal<void(uint32_t)> OnCounterFinished;
-        sig::signal<void(uint32_t, uint32_t)> OnReset;
+        sig::signal<void(u32, u32)> OnTick;
+        sig::signal<void(u32)> OnCounterFinished;
+        sig::signal<void(u32, u32)> OnReset;
 
     private:
-        uint32_t m_ID = 0;
+        u32 m_ID = 0;
         float m_Total = 0;
-        uint32_t m_Target = 0;
-        uint32_t m_Seconds = 0;
+        u32 m_Target = 0;
+        u32 m_Seconds = 0;
         float m_TotalInSeconds = 0;
         bool m_Looping = false;
         bool m_Finished = false;

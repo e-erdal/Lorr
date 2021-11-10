@@ -69,7 +69,7 @@ void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
 
 TextureHandle texture;
 ShaderHandle compute;
-RenderBufferHandle computeInputBuffer;
+TextureHandle RWTexture;
 RenderBufferHandle computeOutputBuffer;
 RenderBufferHandle computeOutputResultBuffer;
 
@@ -130,18 +130,21 @@ void GameApp::Init()
     //** Compute Shader Test **//
     compute = Shader::Create("test://compute", "shaders/testc.lr");
 
-    RenderBufferDesc computeBufferDesc;
-    computeBufferDesc.UAVElements = 1;
-    computeBufferDesc.Type = RenderBufferType::UAV;
-    computeBufferDesc.MemFlags = RenderBufferMemoryFlags::Texture2D;
-    computeOutputBuffer = RenderBuffer::Create(computeBufferDesc);
+    TextureDesc rwDesc;
+    rwDesc.Type = TEXTURE_TYPE_RW;
 
-    RenderBufferDesc computeResult;
-    // computeResult.DataLen = sizeof(glm::vec4) * texture->GetWidth() * texture->GetHeight();
-    // computeResult.ByteStride = sizeof(glm::vec4);
-    computeResult.Usage = RenderBufferUsage::Staging;
-    computeResult.MemFlags = RenderBufferMemoryFlags::Access_CPUR | RenderBufferMemoryFlags::Texture2D;
-    computeOutputResultBuffer = RenderBuffer::Create(computeResult);
+    TextureData rwData;
+    rwData.Format = TEXTURE_FORMAT_RGBAF32;
+    rwData.Width = width;
+    rwData.Height = height;
+    RWTexture = Texture::Create("test", &rwDesc, &rwData);
+
+    // RenderBufferDesc computeResult;
+    // // computeResult.DataLen = sizeof(glm::vec4) * texture->GetWidth() * texture->GetHeight();
+    // // computeResult.ByteStride = sizeof(glm::vec4);
+    // computeResult.Usage = RenderBufferUsage::Staging;
+    // computeResult.MemFlags = RenderBufferMemoryFlags::Access_CPUR;
+    // computeOutputResultBuffer = RenderBuffer::Create(computeResult);
 }
 
 void GameApp::Tick(float fDelta)
@@ -157,18 +160,18 @@ void GameApp::Draw()
     pRenderer->UseShader(compute);
 
     pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
-    pRenderer->UseUAV(computeOutputBuffer, RenderBufferTarget::Compute, 0);
+    pRenderer->UseUAV(RWTexture, RenderBufferTarget::Compute, 0);
     pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Compute, 0);
 
     pRenderer->Dispatch(8, 8, 1);
 
-    pRenderer->TransferResourceData(computeOutputBuffer, computeOutputResultBuffer);
+    // // pRenderer->TransferResourceData(computeOutputBuffer, computeOutputResultBuffer);
 
-    // TextureHandle outTexture = (TextureHandle)computeOutputResultBuffer->GetData();
-    computeOutputResultBuffer->UnmapData();
+    // // TextureHandle outTexture = (TextureHandle)computeOutputResultBuffer->GetData();
+    // // computeOutputResultBuffer->UnmapData();
 
     pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
-    pRenderer->UseUAV(0, RenderBufferTarget::Compute, 0);
+    pRenderer->UseUAV((TextureHandle)0, RenderBufferTarget::Compute, 0);
 
     m_pCurrentScene->Draw();
 

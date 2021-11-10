@@ -8,7 +8,7 @@
 
 namespace Lorr
 {
-    enum class RenderBufferUsage : uint8_t
+    enum class RenderBufferUsage : u8
     {
         Default,    // GPU RW
         Dynamic,    // GPU R     CPU W
@@ -17,7 +17,7 @@ namespace Lorr
     };
 
     // MemoryFlags is the probably best naming for this, DataFlags looks weird
-    enum class RenderBufferMemoryFlags : uint16_t
+    enum class RenderBufferMemoryFlags : u16
     {
         None = 0,
         Structured = 1 << 0,
@@ -33,7 +33,7 @@ namespace Lorr
     };
     BitFlags(RenderBufferMemoryFlags);
 
-    enum class RenderBufferType : uint8_t
+    enum class RenderBufferType : u8
     {
         None,
         Vertex = 1 << 0,
@@ -44,7 +44,7 @@ namespace Lorr
     };
     BitFlags(RenderBufferType);
 
-    enum RenderBufferTarget : uint8_t
+    enum RenderBufferTarget : u8
     {
         Vertex = 1 << 0,
         Pixel = 1 << 1,
@@ -61,8 +61,8 @@ namespace Lorr
         void *pData = nullptr;  // Data if available
         size_t DataLen = 0;
 
-        uint32_t ByteStride = 0;
-        uint32_t UAVElements = 0;  // The number of elements in the resource. For structured buffers, this is the number of structures in the buffer.
+        u32 ByteStride = 0;
+        u32 UAVElements = 0;  // The number of elements in the resource. For structured buffers, this is the number of structures in the buffer.
     };
 
     class IRenderBuffer

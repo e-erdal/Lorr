@@ -69,7 +69,7 @@ namespace Lorr
 
         auto header = rawBuf.Get<ResourceHeader>();
         size_t newSize = rawBuf.GetSize() - rawBuf.GetOffset();
-        buf.InsertPtr(rawBuf.GetPtr<uint8_t>(newSize), newSize);
+        buf.InsertPtr(rawBuf.GetPtr<u8>(newSize), newSize);
 
         // Validate resource file
         if (header.Signature != kResourceFileSignature)
@@ -105,11 +105,11 @@ namespace Lorr
         ZoneScoped;
         
         resourceBuf.StartOver();
-        outData.Width = resourceBuf.Get<uint32_t>();
-        outData.Height = resourceBuf.Get<uint32_t>();
+        outData.Width = resourceBuf.Get<u32>();
+        outData.Height = resourceBuf.Get<u32>();
         outData.Format = resourceBuf.Get<TextureFormat>();
-        outData.DataSize = resourceBuf.Get<uint32_t>();
-        outData.Data = resourceBuf.GetPtrNew<uint8_t>(outData.DataSize);
+        outData.DataSize = resourceBuf.Get<u32>();
+        outData.Data = resourceBuf.GetPtrNew<u8>(outData.DataSize);
 
         return true;
     }
@@ -119,10 +119,10 @@ namespace Lorr
         ZoneScoped;
         
         resourceBuf.StartOver();
-        outData.PCMFrequency = resourceBuf.Get<uint32_t>();
-        outData.PCMFormat = resourceBuf.Get<uint32_t>();
-        uint32_t frameCount = resourceBuf.Get<uint32_t>();
-        outData.PCMFrames.Reset(resourceBuf.GetPtr<uint8_t>(frameCount), frameCount);
+        outData.PCMFrequency = resourceBuf.Get<u32>();
+        outData.PCMFormat = resourceBuf.Get<u32>();
+        u32 frameCount = resourceBuf.Get<u32>();
+        outData.PCMFrames.Reset(resourceBuf.GetPtr<u8>(frameCount), frameCount);
 
         return true;
     }
@@ -134,8 +134,8 @@ namespace Lorr
         resourceBuf.StartOver();
         outData.Renderer = resourceBuf.Get<RendererType>();
         outData.Type = resourceBuf.Get<ShaderType>();
-        uint32_t len = resourceBuf.Get<uint32_t>();
-        outData.Buffer.Reset(resourceBuf.GetPtr<uint8_t>(len), len);
+        u32 len = resourceBuf.Get<u32>();
+        outData.Buffer.Reset(resourceBuf.GetPtr<u8>(len), len);
 
         return true;
     }
@@ -180,7 +180,7 @@ namespace Lorr
         outBuf.Reset();
         outBuf.Insert(data.PCMFrequency);
         outBuf.Insert(data.PCMFormat);
-        outBuf.Insert((uint32_t)data.PCMFrames.GetSize());
+        outBuf.Insert((u32)data.PCMFrames.GetSize());
         outBuf.InsertPtr(data.PCMFrames.GetData(), data.PCMFrames.GetSize());
 
         return true;
@@ -196,7 +196,7 @@ namespace Lorr
         outBuf.Reset();
         outBuf.Insert(data.Renderer);
         outBuf.Insert(data.Type);
-        outBuf.Insert<uint32_t>(data.Buffer.GetSize());
+        outBuf.Insert<u32>(data.Buffer.GetSize());
         outBuf.Insert(data.Buffer);
 
         return true;

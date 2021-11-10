@@ -15,7 +15,7 @@ namespace Lorr::AudioLoader
         }
 
         size_t dataLen = wav.totalPCMFrameCount * wav.channels * wav.bitsPerSample;
-        uint8_t *data = (uint8_t *)malloc(dataLen);
+        u8 *data = (u8 *)malloc(dataLen);
 
         drwav_read_pcm_frames(&wav, wav.totalPCMFrameCount, data);
 

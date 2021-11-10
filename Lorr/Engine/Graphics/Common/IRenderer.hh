@@ -14,7 +14,6 @@
 
 namespace Lorr
 {
-
     class Engine;
     class IRenderer
     {
@@ -41,6 +40,7 @@ namespace Lorr
         virtual void UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) = 0;
         virtual void UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot) = 0;
         virtual void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) = 0;
+        virtual void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) = 0;
 
         // virtual void MapBuffer(RenderBufferHandle buffer) = 0;
         // virtual void UnmapBuffer(RenderBufferHandle buffer) = 0;

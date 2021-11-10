@@ -14,13 +14,13 @@ namespace Lorr::AudioLoader
             return false;
         }
 
-        uint64_t frameCount = drmp3_get_pcm_frame_count(&mp3);
-        size_t dataLen = frameCount * mp3.channels * sizeof(uint16_t);
+        u64 frameCount = drmp3_get_pcm_frame_count(&mp3);
+        size_t dataLen = frameCount * mp3.channels * sizeof(u16);
         drmp3_int16 *data = (drmp3_int16 *)malloc(dataLen);
 
         drmp3_read_pcm_frames_s16(&mp3, frameCount, data);
 
-        audioData->PCMFrames.Reset((uint8_t *)data, dataLen);
+        audioData->PCMFrames.Reset((u8 *)data, dataLen);
         audioData->PCMFrequency = mp3.mp3FrameSampleRate;
 
         switch (mp3.channels)

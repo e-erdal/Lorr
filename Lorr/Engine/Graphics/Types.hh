@@ -6,7 +6,7 @@
 
 namespace Lorr
 {
-    enum class RendererType : uint8_t
+    enum class RendererType : u8
     {
         None,
         D3D11,

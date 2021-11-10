@@ -70,20 +70,20 @@ namespace Lorr
 
         RenderBufferDesc indexDesc;
         indexDesc.pData = &indices[0];
-        indexDesc.DataLen = indices.size() * sizeof(uint32_t);
+        indexDesc.DataLen = indices.size() * sizeof(u32);
         indexDesc.Type = RenderBufferType::Index;
 
         m_IndexBuffer = RenderBuffer::Create(indexDesc);
     }
 
-    void Mesh::Init(float radius, uint32_t tessellation, TextureHandle texture)
+    void Mesh::Init(float radius, u32 tessellation, TextureHandle texture)
     {
         ZoneScoped;
         
         m_Texture = texture;
 
         std::vector<MeshVertex> vertexArray;
-        std::vector<uint32_t> indexArray;
+        std::vector<u32> indexArray;
 
         if (tessellation < 3)
         {
@@ -162,7 +162,7 @@ namespace Lorr
 
         RenderBufferDesc indexDesc;
         indexDesc.pData = &indexArray[0];
-        indexDesc.DataLen = indexArray.size() * sizeof(uint32_t);
+        indexDesc.DataLen = indexArray.size() * sizeof(u32);
         indexDesc.Type = RenderBufferType::Index;
 
         m_IndexBuffer = RenderBuffer::Create(indexDesc);

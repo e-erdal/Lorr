@@ -17,14 +17,14 @@ namespace Lorr
 
         void Init(const std::string &path);
 
-        void AddSphere(float radius, uint32_t tessellation, TextureHandle texture);
+        void AddSphere(float radius, u32 tessellation, TextureHandle texture);
 
         void Render();
 
     private:
         std::vector<Mesh> m_Meshes;
 
-        uint32_t m_IndexCount = 0;
+        u32 m_IndexCount = 0;
     };
 
 }  // namespace Lorr

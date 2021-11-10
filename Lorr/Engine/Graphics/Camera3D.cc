@@ -4,7 +4,7 @@
 
 namespace Lorr
 {
-    void Camera3D::OnResolutionChanged(uint32_t width, uint32_t height)
+    void Camera3D::OnResolutionChanged(u32 width, u32 height)
     {
         SetSize({ width, height });
     }
