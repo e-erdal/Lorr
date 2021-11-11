@@ -68,9 +68,6 @@ void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
 }
 
 TextureHandle texture;
-ShaderHandle compute;
-TextureHandle RWTexture;
-TextureHandle computeOutput;
 
 void GameApp::Init()
 {
@@ -122,37 +119,14 @@ void GameApp::Init()
     modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
     Model &model = modelEntity.AddComponent<Model>();
 
-    model.Init("teapot.obj");
+    ModelDesc modelDesc;
+    modelDesc.Dynamic = false;
+    ModelData modelData;
+    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "sponza.lr", modelData);
+    model.Init("resource://teapot", &modelDesc, &modelData);
+
     // model.Init("sponza.obj");
     // model.AddSphere(100, 128, pRenderer->GetPlaceholder());
-
-    //** Compute Shader Test **//
-    compute = Shader::Create("test://compute", "shaders/testc.lr");
-
-    TextureDesc rwDesc;
-    rwDesc.Type = TEXTURE_TYPE_RW;
-
-    TextureData rwData;
-    rwData.Format = TEXTURE_FORMAT_RGBAF32;
-    rwData.Width = width;
-    rwData.Height = height;
-    RWTexture = Texture::Create("test", &rwDesc, &rwData);
-
-    TextureDesc outputDesc;
-    outputDesc.Type = TEXTURE_TYPE_REGULAR;
-    
-    TextureData outputData;
-    outputData.Format = TEXTURE_FORMAT_RGBAF32;
-    outputData.Width = width;
-    outputData.Height = height;
-    computeOutput = Texture::Create("test", &outputDesc, &outputData);
-
-    // RenderBufferDesc computeResult;
-    // // computeResult.DataLen = sizeof(glm::vec4) * texture->GetWidth() * texture->GetHeight();
-    // // computeResult.ByteStride = sizeof(glm::vec4);
-    // computeResult.Usage = RenderBufferUsage::Staging;
-    // computeResult.MemFlags = RenderBufferMemoryFlags::Access_CPUR;
-    // computeOutputResultBuffer = RenderBuffer::Create(computeResult);
 }
 
 void GameApp::Tick(float fDelta)
@@ -165,29 +139,7 @@ void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
 
-    IRenderer *pRenderer = GetEngine()->GetRenderer();
-
-    pRenderer->UseShader(compute);
-
-    pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
-    pRenderer->UseUAV(RWTexture, RenderBufferTarget::Compute, 0);
-    pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Compute, 0);
-
-    pRenderer->Dispatch(64, 64, 1);
-
-    pRenderer->TransferResourceData(RWTexture, computeOutput);
-
-    // // TextureHandle outTexture = (TextureHandle)computeOutputResultBuffer->GetData();
-    // // computeOutputResultBuffer->UnmapData();
-
-    pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
-    pRenderer->UseUAV((TextureHandle)0, RenderBufferTarget::Compute, 0);
-
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %2.f", ImGui::GetIO().Framerate);
-
-    ImGui::SliderInt("Mip", (int *)&texture->m_UsingMip, 0, 6);
-    ImGui::Image((ImTextureID)computeOutput, { 1280 / 2.f, 720 / 2.f });
-
     ImGui::End();
 }

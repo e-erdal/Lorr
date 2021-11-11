@@ -1,33 +1,25 @@
 #include "Model.hh"
 
+#include "Loader/ModelLoader.hh"
+
 namespace Lorr
 {
-    void Model::Init(const std::string &path)
+    void Model::Init(const Identifier &ident, ModelDesc *pDesc, ModelData *pData)
     {
         ZoneScoped;
 
-        LOG_TRACE("Loadimg model {}...", path);
-
-        QuickOBJLoader::ModelResult result = QuickOBJLoader::LoadFromFile(path);
-
-        std::vector<MeshVertex> vertexArr;
-        std::vector<u32> indexArr;
-
-        for (auto &o : result.meshes)
+        for (auto &mesh : pData->Meshes)
         {
-            QuickOBJLoader::MaterialResult matResult = QuickOBJLoader::LoadMaterialFromFile(o.materialPath);
-
-            QuickOBJLoader::Material mat = {};
-            for (auto &m : matResult.materials)
-                if (m.Name == o.materialName) mat = m;
-
-            Mesh mesh;
-            mesh.Init(o.vertexData, o.indexData, o.format, mat);
-
-            m_Meshes.push_back(mesh);
-
-            m_IndexCount += o.indexData.size();
+            Mesh staticMesh;
+            staticMesh.Init(mesh.Vertices, mesh.Indices);
+            m_Meshes.push_back(staticMesh);
         }
+    }
+
+    void Model::ParseToMemory(ModelData *outData, BufferStream &modelBuffer)
+    {
+        ModelLoader::ModelLoaderType type = ModelLoader::ModelLoaderType::OBJ;
+        ModelLoader::LoadModel(type, outData, modelBuffer);
     }
 
     void Model::AddSphere(float radius, u32 tessellation, TextureHandle texture)

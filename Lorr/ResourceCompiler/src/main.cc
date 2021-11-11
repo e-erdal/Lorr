@@ -6,6 +6,7 @@
 #include "Compilers/FontCompiler.hh"
 #include "Compilers/ShaderCompiler.hh"
 #include "Compilers/TextureCompiler.hh"
+#include "Compilers/ModelCompiler.hh"
 
 class RCApp : public Lorr::BaseApp
 {
@@ -84,6 +85,18 @@ int main(int argc, char **argv)
             if (parser.GetConfig("o", &targetPath))
             {
                 FontCompiler c(path, targetPath);
+            }
+            else
+            {
+                PERROR("You have to specifiy the output path.");
+            }
+        }
+        else if (parser.HasArg("model"))
+        {
+            std::string targetPath = "";
+            if (parser.GetConfig("o", &targetPath))
+            {
+                ModelCompiler c(path, targetPath);
             }
             else
             {

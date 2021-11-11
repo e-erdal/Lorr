@@ -9,7 +9,7 @@ namespace Lorr
     bool ResourceManager::ExportResource(ResourceType type, const std::string &path, BufferStream &buf)
     {
         ZoneScoped;
-        
+
         buf.Reset();
 
         BufferStream compBuf;
@@ -30,7 +30,7 @@ namespace Lorr
     bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
     {
         ZoneScoped;
-        
+
         BufferStream fileBuf;
         if (!FileSystem::ReadBinaryFile(path, fileBuf))
         {
@@ -46,6 +46,7 @@ namespace Lorr
             case ResourceType::Audio: return ParseAudioToBuffer(fileBuf, outBuf);
             case ResourceType::Shader: return ParseShaderToBuffer(fileBuf, outBuf);
             case ResourceType::Font: return ParseFontToBuffer(fileBuf, outBuf);
+            case ResourceType::Model: return ParseModelToBuffer(fileBuf, outBuf);
             default: return false;
         }
     }
@@ -53,7 +54,7 @@ namespace Lorr
     bool ResourceManager::LoadResourceFile(const std::string &path, BufferStream &buf)
     {
         ZoneScoped;
-        
+
         BufferStream rawBuf;
         if (!FileSystem::ReadBinaryFile(path.data(), rawBuf))
         {
@@ -77,8 +78,7 @@ namespace Lorr
             LOG_WARN("Attempted to load invalid resource file. File signature does not match.");
             return false;
         }
-        if (header.EngineVersion != ENGINE_VERSION_PACKED)
-            LOG_WARN("Engine version does not match. But we will let the parser handle this.");
+        if (header.EngineVersion != ENGINE_VERSION_PACKED) LOG_WARN("Engine version does not match. But we will let the parser handle this.");
         if (header.Version < kResourceMinVersion)
         {
             LOG_WARN("Attempted to load outdated resource. Min: {}, req: {}.", kResourceMinVersion, header.Version);
@@ -103,7 +103,7 @@ namespace Lorr
     bool ResourceManager::ParseTextureDataFromFile(TextureData &outData, BufferStream &resourceBuf)
     {
         ZoneScoped;
-        
+
         resourceBuf.StartOver();
         outData.Width = resourceBuf.Get<u32>();
         outData.Height = resourceBuf.Get<u32>();
@@ -117,7 +117,7 @@ namespace Lorr
     bool ResourceManager::ParseAudioDataFromFile(AudioData &outData, BufferStream &resourceBuf)
     {
         ZoneScoped;
-        
+
         resourceBuf.StartOver();
         outData.PCMFrequency = resourceBuf.Get<u32>();
         outData.PCMFormat = resourceBuf.Get<u32>();
@@ -130,7 +130,7 @@ namespace Lorr
     bool ResourceManager::ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf)
     {
         ZoneScoped;
-        
+
         resourceBuf.StartOver();
         outData.Renderer = resourceBuf.Get<RendererType>();
         outData.Type = resourceBuf.Get<ShaderType>();
@@ -143,8 +143,31 @@ namespace Lorr
     bool ResourceManager::ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf)
     {
         ZoneScoped;
-        
+
         outData.TTFData.Reset(resourceBuf);
+
+        return true;
+    }
+
+    bool ResourceManager::ParseModelDataFromFile(ModelData &outData, BufferStream &resourceBuf)
+    {
+        ZoneScoped;
+
+        resourceBuf.StartOver();
+        u32 meshSize = resourceBuf.Get<u32>();
+        outData.Meshes.resize(meshSize);
+        for (auto &mesh : outData.Meshes)
+        {
+            u32 verticesSize = resourceBuf.Get<u32>();
+            mesh.Vertices.resize(verticesSize);
+            FileMeshVertex *pVertex = resourceBuf.GetPtr<FileMeshVertex>(verticesSize);
+            memcpy(&mesh.Vertices[0], pVertex, sizeof(FileMeshVertex) * verticesSize);
+
+            u32 indicesSize = resourceBuf.Get<u32>();
+            mesh.Indices.resize(indicesSize);
+            u32 *pIndex = resourceBuf.GetPtr<u32>(indicesSize);
+            memcpy(&mesh.Indices[0], pIndex, sizeof(u32) * indicesSize);
+        }
 
         return true;
     }
@@ -156,7 +179,7 @@ namespace Lorr
     bool ResourceManager::ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         ZoneScoped;
-        
+
         TextureData data;
         ITexture::ParseToMemory(&data, inBuf);
 
@@ -173,7 +196,7 @@ namespace Lorr
     bool ResourceManager::ParseAudioToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         ZoneScoped;
-        
+
         AudioData data;
         Audio::ParseToMemory(&data, inBuf);
 
@@ -189,7 +212,7 @@ namespace Lorr
     bool ResourceManager::ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         ZoneScoped;
-        
+
         ShaderData data;
         IShader::ParseToMemory(&data, inBuf);
 
@@ -205,11 +228,32 @@ namespace Lorr
     bool ResourceManager::ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf)
     {
         ZoneScoped;
-        
+
         FontData data;
         Font::ParseToMemory(&data, inBuf);
 
         outBuf.Reset(inBuf.GetData(), inBuf.GetSize());
+
+        return true;
+    }
+
+    bool ResourceManager::ParseModelToBuffer(BufferStream &inBuf, BufferStream &outBuf)
+    {
+        ZoneScoped;
+
+        ModelData data;
+        Model::ParseToMemory(&data, inBuf);
+
+        outBuf.Reset();
+        outBuf.Insert<u32>(data.Meshes.size());
+        for (auto &mesh : data.Meshes)
+        {
+            outBuf.Insert<u32>(mesh.Vertices.size());
+            outBuf.InsertPtr(&mesh.Vertices[0], mesh.Vertices.size());
+
+            outBuf.Insert<u32>(mesh.Indices.size());
+            outBuf.InsertPtr(&mesh.Indices[0], mesh.Indices.size());
+        }
 
         return true;
     }

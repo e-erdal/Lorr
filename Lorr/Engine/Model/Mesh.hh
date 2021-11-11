@@ -8,12 +8,21 @@
 #include "Engine/Graphics/Common/InputLayout.hh"
 #include "Engine/Graphics/Common/IRenderBuffer.hh"
 
-#include <obj_loader.h>
-
 namespace Lorr
 {
-    typedef std::vector<float> OBJVertices;
-    typedef std::vector<u32> OBJIndices;
+    struct FileMeshVertex
+    {
+        glm::vec3 Pos = {};
+        glm::vec3 Norm = {};
+        glm::vec2 UV = {};
+    };
+
+    struct FileMesh
+    {
+        std::vector<FileMeshVertex> Vertices;
+        std::vector<u32> Indices;
+    };
+
     static InputLayout kMeshLayout = {
         { VertexAttribType::Vec3, "POSITION" },
         { VertexAttribType::Vec3, "NORMAL" },
@@ -23,9 +32,9 @@ namespace Lorr
 
     struct MeshVertex
     {
-        glm::vec3 Pos;
-        glm::vec3 Norm;
-        glm::vec2 UV;
+        glm::vec3 Pos = {};
+        glm::vec3 Norm = {};
+        glm::vec2 UV = {};
         glm::vec4 Color = { 1, 1, 1, 1 };
     };
 
@@ -34,7 +43,7 @@ namespace Lorr
     public:
         Mesh() = default;
 
-        void Init(OBJVertices &vertices, OBJIndices &indices, QuickOBJLoader::VertexFormat &format, QuickOBJLoader::Material &material);
+        void Init(std::vector<FileMeshVertex> &vertices, std::vector<u32> &indices);
         void Init(float radius, u32 tessellation, TextureHandle texture);
         void Render();
 

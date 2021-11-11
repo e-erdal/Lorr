@@ -14,7 +14,8 @@ namespace Lorr
         Texture,
         Audio,
         Shader,
-        Font
+        Font,
+        Model
     };
 
     struct IResourceDesc

@@ -246,7 +246,7 @@ namespace Lorr
         template<typename T>
         inline void InsertPtr(T *pData, size_t dataLen)
         {
-            size_t size = (dataLen == 0 ? sizeof(T) : dataLen);
+            size_t size = (dataLen == 0 ? sizeof(T) : dataLen * sizeof(T));
 
             Expand(size);
 
@@ -288,14 +288,14 @@ namespace Lorr
         inline T *GetPtr(size_t dataLen)
         {
             T *data = (T *)(m_Data + m_Offset);
-            m_Offset += (dataLen == 0 ? sizeof(T) : dataLen);
+            m_Offset += (dataLen == 0 ? sizeof(T) : dataLen * sizeof(T));
             return data;
         }
 
         template<typename T>
         inline T *GetPtrNew(size_t dataLen)
         {
-            size_t lenW = (dataLen == 0 ? sizeof(T) : dataLen);
+            size_t lenW = (dataLen == 0 ? sizeof(T) : dataLen * sizeof(T));
             T *data = (T *)malloc(lenW);
             memcpy(data, m_Data + m_Offset, lenW);
             m_Offset += lenW;

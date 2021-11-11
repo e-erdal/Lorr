@@ -10,16 +10,29 @@
 
 namespace Lorr
 {
-    class Model
+    struct ModelDesc
+    {
+        bool Dynamic = false;
+    };
+
+    struct ModelData
+    {
+        std::vector<FileMesh> Meshes;
+    };
+
+    class Model : public IResource<ModelDesc, ModelData>
     {
     public:
         Model() = default;
 
-        void Init(const std::string &path);
+        void Init(const Identifier &ident, ModelDesc *pDesc, ModelData *pData) override;
+        static void ParseToMemory(ModelData *outData, BufferStream &modelBuffer);
 
         void AddSphere(float radius, u32 tessellation, TextureHandle texture);
 
         void Render();
+
+        static constexpr ResourceType m_ResType = ResourceType::Model;
 
     private:
         std::vector<Mesh> m_Meshes;

@@ -16,6 +16,7 @@
 
 #include "Engine/Audio/AudioSystem.hh"
 #include "Engine/Graphics/Font.hh"
+#include "Engine/Model/Model.hh"
 
 namespace Lorr
 {
@@ -70,6 +71,7 @@ namespace Lorr
                 case ResourceType::Audio: return ParseAudioDataFromFile((AudioData &)outData, resourceBuf);
                 case ResourceType::Shader: return ParseShaderDataFromFile((ShaderData &)outData, resourceBuf);
                 case ResourceType::Font: return ParseFontDataFromFile((FontData &)outData, resourceBuf);
+                case ResourceType::Model: return ParseModelDataFromFile((ModelData &)outData, resourceBuf);
                 default: return false;
             }
 
@@ -95,12 +97,14 @@ namespace Lorr
         bool ParseAudioDataFromFile(AudioData &outData, BufferStream &resourceBuf);
         bool ParseShaderDataFromFile(ShaderData &outData, BufferStream &resourceBuf);
         bool ParseFontDataFromFile(FontData &outData, BufferStream &resourceBuf);
+        bool ParseModelDataFromFile(ModelData &outData, BufferStream &resourceBuf);
 
         // Out
         bool ParseTextureToBuffer(BufferStream &inBuf, BufferStream &outBuf);
         bool ParseAudioToBuffer(BufferStream &inBuf, BufferStream &outBuf);
         bool ParseShaderToBuffer(BufferStream &inBuf, BufferStream &outBuf);
         bool ParseFontToBuffer(BufferStream &inBuf, BufferStream &outBuf);
+        bool ParseModelToBuffer(BufferStream &inBuf, BufferStream &outBuf);
 
     private:
         std::unordered_map<Identifier, void *> m_Resources;
