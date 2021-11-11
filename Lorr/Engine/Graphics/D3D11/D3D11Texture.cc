@@ -270,6 +270,18 @@ namespace Lorr
         pContext->GenerateMips(m_pShaderResource);
     }
 
+    void D3D11Texture::Map()
+    {
+        ZoneScoped;
+
+        auto context = DX11Renderer->GetDeviceContext();
+
+        D3D11_MAPPED_SUBRESOURCE mapped = {};
+        context->Map(m_pHandle, 0, D3D11_MAP_READ, 0, &mapped);
+        context->UpdateSubresource(m_pHandle, 0, 0, mapped.pData, mapped.RowPitch * m_Width, 0);
+        context->Unmap(m_pHandle, 0);
+    }
+
 }  // namespace Lorr
 
 #endif

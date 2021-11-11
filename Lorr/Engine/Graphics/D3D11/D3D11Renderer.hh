@@ -48,6 +48,7 @@ namespace Lorr
         void UseShader(ShaderHandle shader) override;
 
         void TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer) override;
+        void TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture) override;
 
         void Frame(u32 interval) override;
         void HandlePreFrame() override;

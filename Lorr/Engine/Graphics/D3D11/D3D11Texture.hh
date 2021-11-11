@@ -21,6 +21,7 @@ namespace Lorr
         void Delete() override;
 
         void GenerateMips() override;
+        void Map();
 
     public:
         ID3D11ShaderResourceView *GetShaderResource()

@@ -70,8 +70,7 @@ void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
 TextureHandle texture;
 ShaderHandle compute;
 TextureHandle RWTexture;
-RenderBufferHandle computeOutputBuffer;
-RenderBufferHandle computeOutputResultBuffer;
+TextureHandle computeOutput;
 
 void GameApp::Init()
 {
@@ -139,6 +138,15 @@ void GameApp::Init()
     rwData.Height = height;
     RWTexture = Texture::Create("test", &rwDesc, &rwData);
 
+    TextureDesc outputDesc;
+    outputDesc.Type = TEXTURE_TYPE_REGULAR;
+    
+    TextureData outputData;
+    outputData.Format = TEXTURE_FORMAT_RGBAF32;
+    outputData.Width = width;
+    outputData.Height = height;
+    computeOutput = Texture::Create("test", &outputDesc, &outputData);
+
     // RenderBufferDesc computeResult;
     // // computeResult.DataLen = sizeof(glm::vec4) * texture->GetWidth() * texture->GetHeight();
     // // computeResult.ByteStride = sizeof(glm::vec4);
@@ -155,6 +163,8 @@ void GameApp::Tick(float fDelta)
 
 void GameApp::Draw()
 {
+    m_pCurrentScene->Draw();
+
     IRenderer *pRenderer = GetEngine()->GetRenderer();
 
     pRenderer->UseShader(compute);
@@ -163,9 +173,9 @@ void GameApp::Draw()
     pRenderer->UseUAV(RWTexture, RenderBufferTarget::Compute, 0);
     pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Compute, 0);
 
-    pRenderer->Dispatch(8, 8, 1);
+    pRenderer->Dispatch(64, 64, 1);
 
-    // // pRenderer->TransferResourceData(computeOutputBuffer, computeOutputResultBuffer);
+    pRenderer->TransferResourceData(RWTexture, computeOutput);
 
     // // TextureHandle outTexture = (TextureHandle)computeOutputResultBuffer->GetData();
     // // computeOutputResultBuffer->UnmapData();
@@ -173,13 +183,11 @@ void GameApp::Draw()
     pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
     pRenderer->UseUAV((TextureHandle)0, RenderBufferTarget::Compute, 0);
 
-    m_pCurrentScene->Draw();
-
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %2.f", ImGui::GetIO().Framerate);
 
     ImGui::SliderInt("Mip", (int *)&texture->m_UsingMip, 0, 6);
-    ImGui::Image((ImTextureID)texture, { 1280 / 2.f, 720 / 2.f });
+    ImGui::Image((ImTextureID)computeOutput, { 1280 / 2.f, 720 / 2.f });
 
     ImGui::End();
 }

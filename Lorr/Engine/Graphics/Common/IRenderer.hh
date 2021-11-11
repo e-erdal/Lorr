@@ -48,6 +48,7 @@ namespace Lorr
         virtual void UseShader(ShaderHandle shader) = 0;
 
         virtual void TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer) = 0;
+        virtual void TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture) = 0;
 
         virtual void Frame(u32 interval) = 0;
         virtual void HandlePreFrame() = 0;

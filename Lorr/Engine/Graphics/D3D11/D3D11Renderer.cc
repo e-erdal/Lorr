@@ -248,6 +248,16 @@ namespace Lorr
         m_pContext->CopyResource((ID3D11Resource *)outputBuffer->GetHandle(), (ID3D11Resource *)inputBuffer->GetHandle());
     }
 
+    void D3D11Renderer::TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture)
+    {
+        ZoneScoped;
+
+        D3D11Texture *pD11Input = (D3D11Texture *)inputTexture;
+        D3D11Texture *pD11Output = (D3D11Texture *)outputTexture;
+        m_pContext->CopyResource((ID3D11Resource *)pD11Output->GetHandle(), (ID3D11Resource *)pD11Input->GetHandle());
+        // pD11Output->Map();
+    }
+
     void D3D11Renderer::Frame(u32 uInterval)
     {
         ZoneScoped;

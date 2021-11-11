@@ -35,6 +35,7 @@ namespace Lorr
             TextureData data;
             data.Width = width;
             data.Height = height;
+            data.Format = TextureFormat::TEXTURE_FORMAT_RGBAF32;
 
             if (!pTargetTexture) pTargetTexture = Texture::Create(ident, &desc, &data);
             D3D11Texture *d11Texture = (D3D11Texture *)pTargetTexture;
