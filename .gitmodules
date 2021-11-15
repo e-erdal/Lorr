@@ -34,3 +34,6 @@
 [submodule "Vendor/optick"]
 	path = Vendor/optick
 	url = https://github.com/bombomby/optick.git
+[submodule "Vendor/meshoptimizer"]
+	path = Vendor/meshoptimizer
+	url = https://github.com/zeux/meshoptimizer.git
