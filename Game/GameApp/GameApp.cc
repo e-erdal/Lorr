@@ -9,6 +9,7 @@
 
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
 #include "Engine/Graphics/Font.hh"
+#include "Engine/Graphics/Renderer/Renderer2D.hh"
 
 #include "Engine/Model/Model.hh"
 
@@ -108,21 +109,20 @@ void GameApp::Init()
     modelCBuf.DataLen = sizeof(mat);
     GetEngine()->GetShaderMan()->CreateRenderBuffer("cbuffer://batcher", modelCBuf);
 
-    //* Init entities
+    //** Init entities **//
     // Create entities
-    Entity postProcess = m_pCurrentScene->CreateEntity("test");
-    postProcess.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(width, height, 1));
-    auto &rend = postProcess.AddComponent<Component::Renderable>(true);
-    texture = rend.texture = pRenderer->GetTargetTexture("renderer://postprocess");
-
     Entity modelEntity = m_pCurrentScene->CreateEntity("test");
     modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
     Model &model = modelEntity.AddComponent<Model>();
 
+    // Entity testEntity = m_pCurrentScene->CreateEntity("test");
+    // testEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(1280, 720, 1));
+    // testEntity.AddComponent<Component::Renderable>(pRenderer->GetPlaceholder());
+
     ModelDesc modelDesc;
     modelDesc.Dynamic = false;
     ModelData modelData;
-    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "sponza.lr", modelData);
+    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "teapot.lr", modelData);
     model.Init("resource://teapot", &modelDesc, &modelData);
 
     // model.Init("sponza.obj");
@@ -138,6 +138,8 @@ void GameApp::Tick(float fDelta)
 void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
+
+    Renderer2D::FullscreenQuad(GetEngine()->GetRenderer()->GetTargetTexture("renderer://postprocess"));
 
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %2.f", ImGui::GetIO().Framerate);

@@ -58,6 +58,10 @@ add_subdirectory(zlib)
 
 ###############################################################################################
 
+add_subdirectory(meshoptimizer)
+
+###############################################################################################
+
 add_subdirectory(freetype)
 add_subdirectory(msdf-atlas-gen)
 

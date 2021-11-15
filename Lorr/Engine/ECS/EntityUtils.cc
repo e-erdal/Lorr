@@ -76,7 +76,12 @@ namespace Lorr
     {
         if (!HasComponent<Component::Transform>()) AddComponent<Component::Transform>(pos);
         AddComponent<Component::Text>(GetEngine()->GetResourceMan()->GetResource<Font>(fontIdent), text, maxWidth);
-        
+
+        return *this;
+    }
+
+    Entity &Entity::AttachModel(const std::string &path)
+    {
         return *this;
     }
 

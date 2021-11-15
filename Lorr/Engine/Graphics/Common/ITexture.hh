@@ -15,6 +15,7 @@ namespace Lorr
     {
         TEXTURE_FORMAT_RGBA8,
         TEXTURE_FORMAT_RGBAF32,
+        TEXTURE_FORMAT_RGBF32,
         TEXTURE_FORMAT_DEPTH_32F,
         TEXTURE_FORMAT_DEPTH_D24UNS8U,
         TEXTURE_FORMAT_R24G8_TYPELESS,
@@ -28,6 +29,7 @@ namespace Lorr
         {
             case TEXTURE_FORMAT_RGBA8: return sizeof(float);
             case TEXTURE_FORMAT_RGBAF32: return sizeof(float) * 4;
+            case TEXTURE_FORMAT_RGBF32: return sizeof(float) * 3;
             case TEXTURE_FORMAT_DEPTH_32F: return sizeof(float);
             case TEXTURE_FORMAT_DEPTH_D24UNS8U: return sizeof(u32);
             case TEXTURE_FORMAT_R24G8_TYPELESS: return sizeof(u32);
@@ -42,7 +44,8 @@ namespace Lorr
         TEXTURE_TYPE_REGULAR,
         TEXTURE_TYPE_DEPTH,
         TEXTURE_TYPE_RENDER_TARGET,
-        TEXTURE_TYPE_RW
+        TEXTURE_TYPE_RW,
+        TEXTURE_TYPE_STAGING
     };
 
     struct TextureDesc
@@ -61,6 +64,11 @@ namespace Lorr
 
         u32 DataSize = 0;
         u8 *Data = 0;
+
+        ~TextureData()
+        {
+            SAFE_FREE(Data);
+        }
     };
 
     class ITexture : public IResource<TextureDesc, TextureData>
@@ -75,6 +83,8 @@ namespace Lorr
 
         static void ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer);
         static constexpr ResourceType m_ResType = ResourceType::Texture;
+
+        virtual ~ITexture(){};
 
     public:
         const auto &GetWidth() const

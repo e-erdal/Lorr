@@ -21,7 +21,9 @@ namespace Lorr
         void Delete() override;
 
         void GenerateMips() override;
-        void Map();
+        void Map(D3D11Texture *pTarget);
+
+        ~D3D11Texture();
 
     public:
         ID3D11ShaderResourceView *GetShaderResource()
@@ -39,11 +41,17 @@ namespace Lorr
             return m_pRenderTarget;
         }
 
+        ID3D11SamplerState *GetSampler()
+        {
+            return m_pSamplerState;
+        }
+
     private:
         void CreateTexture2D(TextureData *pData);
         void CreateDepthTexture();
         void CreateRenderTarget();
         void CreateRWTexture();
+        void CreateStagingTexture();
 
         void CreateShaderResource();
         void CreateSampler();

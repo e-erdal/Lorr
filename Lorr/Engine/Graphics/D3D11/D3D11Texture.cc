@@ -46,6 +46,10 @@ namespace Lorr
                 CreateRWTexture();
                 CreateShaderResource();
                 break;
+            case TEXTURE_TYPE_STAGING:
+                CreateStagingTexture();
+                CreateSampler();
+                break;
         }
 
         LOG_INFO("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
@@ -74,7 +78,7 @@ namespace Lorr
         SAFE_RELEASE(m_pSamplerState);
 
         SAFE_RELEASE(m_pUAV);
-        SAFE_RELEASE(m_pRenderTarget);
+        // SAFE_RELEASE(m_pRenderTarget);
     }
 
     void D3D11Texture::CreateTexture2D(TextureData *pData)
@@ -215,6 +219,30 @@ namespace Lorr
         }
     }
 
+    void D3D11Texture::CreateStagingTexture()
+    {
+        HRESULT hr;
+        auto device = DX11Renderer->GetDevice();
+
+        m_TextureDesc = {};
+        m_TextureDesc.ArraySize = 1;
+        m_TextureDesc.CPUAccessFlags = D3D11_CPU_ACCESS_READ;
+        m_TextureDesc.MipLevels = 1;
+        m_TextureDesc.MiscFlags = 0;
+        m_TextureDesc.SampleDesc.Quality = 0;
+        m_TextureDesc.SampleDesc.Count = 1;
+        m_TextureDesc.Usage = D3D11_USAGE_STAGING;
+        m_TextureDesc.Format = D3D::TextureFormatToDXFormat(m_Format);
+        m_TextureDesc.Width = m_Width;
+        m_TextureDesc.Height = m_Height;
+
+        if (FAILED(hr = device->CreateTexture2D(&m_TextureDesc, 0, &m_pHandle)))
+        {
+            LOG_ERROR("Failed to create D3D11 texture!");
+            return;
+        }
+    }
+
     void D3D11Texture::CreateShaderResource()
     {
         ZoneScoped;
@@ -246,7 +274,7 @@ namespace Lorr
         ID3D11Device *pDevice = D3D11Renderer::Get()->GetDevice();
 
         D3D11_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_LINEAR_MIP_POINT;
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_WRAP;
         samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_WRAP;
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
@@ -270,7 +298,7 @@ namespace Lorr
         pContext->GenerateMips(m_pShaderResource);
     }
 
-    void D3D11Texture::Map()
+    void D3D11Texture::Map(D3D11Texture *pTarget)
     {
         ZoneScoped;
 
@@ -278,8 +306,13 @@ namespace Lorr
 
         D3D11_MAPPED_SUBRESOURCE mapped = {};
         context->Map(m_pHandle, 0, D3D11_MAP_READ, 0, &mapped);
-        context->UpdateSubresource(m_pHandle, 0, 0, mapped.pData, mapped.RowPitch * m_Width, 0);
+        context->UpdateSubresource(pTarget->m_pHandle, 0, 0, mapped.pData, mapped.RowPitch, 0);
         context->Unmap(m_pHandle, 0);
+    }
+
+    D3D11Texture::~D3D11Texture()
+    {
+        Delete();
     }
 
 }  // namespace Lorr

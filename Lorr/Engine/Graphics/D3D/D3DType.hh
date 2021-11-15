@@ -41,6 +41,7 @@ namespace Lorr::D3D
             case TEXTURE_FORMAT_R32_TYPELESS: return DXGI_FORMAT_R32_TYPELESS;
             case TEXTURE_FORMAT_R32_FLOAT: return DXGI_FORMAT_R32_FLOAT;
             case TEXTURE_FORMAT_RGBAF32: return DXGI_FORMAT_R32G32B32A32_FLOAT;
+            case TEXTURE_FORMAT_RGBF32: return DXGI_FORMAT_R32G32B32_FLOAT;
             default: return DXGI_FORMAT_UNKNOWN;
         }
     }

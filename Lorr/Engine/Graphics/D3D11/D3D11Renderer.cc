@@ -10,6 +10,7 @@ static Lorr::D3D11Renderer *g_D3D11Renderer;
 constexpr ID3D11ShaderResourceView *kNullSRV[1] = { nullptr };
 constexpr ID3D11UnorderedAccessView *kNullUAV[1] = { nullptr };
 constexpr ID3D11Buffer *kNullBuffer[1] = { nullptr };
+constexpr ID3D11SamplerState *kNullSampler[1] = { nullptr };
 
 namespace Lorr
 {
@@ -51,7 +52,8 @@ namespace Lorr
         data.Width = 1;
         data.Height = 1;
         data.DataSize = sizeof(u32);
-        data.Data = (u8 *)&whiteColor;
+        data.Data = (u8 *)malloc(data.DataSize);
+        memcpy(data.Data, &whiteColor, data.DataSize);
 
         m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
 
@@ -224,6 +226,18 @@ namespace Lorr
         m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
     }
 
+    void D3D11Renderer::UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11SamplerState *pSampler = *kNullSampler;
+        if (texture) pSampler = ((D3D11Texture *)texture)->GetSampler();
+
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetSamplers(slot, 1, &pSampler);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetSamplers(slot, 1, &pSampler);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetSamplers(slot, 1, &pSampler);
+    }
+
     void D3D11Renderer::UseShader(ShaderHandle shader)
     {
         ZoneScoped;
@@ -255,7 +269,7 @@ namespace Lorr
         D3D11Texture *pD11Input = (D3D11Texture *)inputTexture;
         D3D11Texture *pD11Output = (D3D11Texture *)outputTexture;
         m_pContext->CopyResource((ID3D11Resource *)pD11Output->GetHandle(), (ID3D11Resource *)pD11Input->GetHandle());
-        // pD11Output->Map();
+        // pD11Output->Map(pD11Input);
     }
 
     void D3D11Renderer::Frame(u32 uInterval)
@@ -390,7 +404,7 @@ namespace Lorr
             return false;
         }
 
-        auto view = m_TargetManager.Create("renderer://backbuffer", pBackBuffer);
+        auto view = m_TargetManager.Create("renderer://backbuffer", pBackBuffer, true);
         m_pContext->OMSetRenderTargets(1, &view, m_pDepthStencilView);
 
         SAFE_RELEASE(pBackBuffer);
@@ -507,6 +521,8 @@ namespace Lorr
 
         CreateBackBuffer();
         CreateDepthTexture(width, height);
+        m_TargetManager.Resize(width, height);
+        m_TargetManager.ClearAll(m_pContext);
 
         SetViewport(width, height, 1.f, 0.f);
     }

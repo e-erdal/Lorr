@@ -1,6 +1,7 @@
 #include "Engine.hh"
 
 #include "Engine/Graphics/D3D11/D3D11Renderer.hh"
+#include "Engine/Graphics/Renderer/Renderer2D.hh"
 
 namespace Lorr
 {
@@ -50,6 +51,7 @@ namespace Lorr
         m_pCamera2D->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
         m_pCamera3D->Init({ 0, 0, -5 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, { 0, 0, 1 }, { 0, 1, 0 }, 60.f, 0.1f, 10000.f);
         m_pImGui->Init(this);
+        Renderer2D::Init();
 
         //* Audio system
         m_pAudioSystem->Init();

@@ -64,7 +64,7 @@ namespace Lorr
 
         SAFE_DELETE(m_VertexBuffer);
 
-        if (m_Vertices.size() > 0)
+        if (m_Vertices.size() > 0 && m_CurrentTexture)
         {
             pRenderer->UseShader(m_pShaderProgram->Vertex);
             pRenderer->UseShader(m_pShaderProgram->Pixel);

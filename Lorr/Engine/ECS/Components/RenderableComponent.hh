@@ -12,11 +12,10 @@ namespace Lorr::Component
 {
     struct Renderable
     {
-        bool IsBatch = false;
-        glm::ivec4 Color = { 255, 255, 255, 255 };
-
         TextureHandle texture = 0;
         glm::vec4 TextureCoords = { 1, 1, 1, 1 };
+        
+        glm::ivec4 Color = { 255, 255, 255, 255 };
     };
 
 }  // namespace Lorr::Component

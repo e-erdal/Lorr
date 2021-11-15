@@ -17,7 +17,43 @@ namespace Lorr
     {
         ZoneScoped;
 
-        for (const auto &target : m_Targets) pContext->ClearRenderTargetView(target.second.pView, &color[0]);
+        for (const auto &target : m_Targets)
+        {
+            pContext->ClearRenderTargetView(target.second->pView, &color[0]);
+        }
+    }
+
+    void D3D11RenderTargetManager::Resize(u32 width, u32 height)
+    {
+        ZoneScoped;
+
+        for (auto &pair : m_Targets)
+        {
+            RenderTarget *handle = pair.second;
+            if (handle->IsBackbuffer) continue;
+
+            // Delete stuff first
+            u32 mipLevels = handle->ViewTextureDesc.MipMapLevels;
+            delete handle;
+
+            // Recreate
+            TextureDesc desc;
+            desc.Type = TEXTURE_TYPE_RENDER_TARGET;
+            desc.MipMapLevels = mipLevels;
+
+            TextureData data;
+            data.Width = width;
+            data.Height = height;
+            data.Format = TextureFormat::TEXTURE_FORMAT_RGBAF32;
+
+            handle = new RenderTarget;
+            handle->ViewTextureDesc = desc;
+            handle->ViewTextureData = data;
+            handle->ViewTexture = Texture::Create(pair.first, &handle->ViewTextureDesc, &handle->ViewTextureData);
+
+            D3D11Texture *d11Texture = (D3D11Texture *)handle->ViewTexture;
+            handle->pView = d11Texture->GetRenderTarget();
+        }
     }
 
     ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, u32 width, u32 height, TextureHandle pTargetTexture, u32 mipLevels)
@@ -40,19 +76,20 @@ namespace Lorr
             if (!pTargetTexture) pTargetTexture = Texture::Create(ident, &desc, &data);
             D3D11Texture *d11Texture = (D3D11Texture *)pTargetTexture;
 
-            RenderTarget target;
-            target.pView = d11Texture->GetRenderTarget();
-            target.Texture = pTargetTexture;
-            target.textureData = data;
+            RenderTarget *target = new RenderTarget;
+            target->pView = d11Texture->GetRenderTarget();
+            target->ViewTexture = pTargetTexture;
+            target->ViewTextureDesc = desc;
+            target->ViewTextureData = data;
 
             m_Targets.emplace(ident, target);
-            return target.pView;
+            return target->pView;
         }
 
-        return it->second.pView;
+        return it->second->pView;
     }
 
-    ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, ID3D11Texture2D *pTexture)
+    ID3D11RenderTargetView *D3D11RenderTargetManager::Create(const Identifier &ident, ID3D11Texture2D *pTexture, bool isBackbuffer)
     {
         ZoneScoped;
 
@@ -67,14 +104,15 @@ namespace Lorr
                 return 0;
             }
 
-            RenderTarget target;
-            target.pView = newTarget;
+            RenderTarget *target = new RenderTarget;
+            target->pView = newTarget;
+            target->IsBackbuffer = isBackbuffer;
 
             m_Targets.emplace(ident, target);
             return newTarget;
         }
 
-        return it->second.pView;
+        return it->second->pView;
     }
 
     ID3D11RenderTargetView *D3D11RenderTargetManager::GetView(const Identifier &ident)
@@ -84,7 +122,7 @@ namespace Lorr
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end()) return 0;
 
-        return it->second.pView;
+        return it->second->pView;
     }
 
     TextureHandle D3D11RenderTargetManager::GetTexture(const Identifier &ident)
@@ -94,7 +132,7 @@ namespace Lorr
         auto it = m_Targets.find(ident);
         if (it == m_Targets.end()) return 0;
 
-        return it->second.Texture;
+        return it->second->ViewTexture;
     }
 
     void D3D11RenderTargetManager::Release(const Identifier &ident)
@@ -104,9 +142,7 @@ namespace Lorr
         auto it = m_Targets.find(ident);
         if (it != m_Targets.end())
         {
-            SAFE_RELEASE(it->second.pView);
-            if (it->second.Texture) it->second.Texture->Delete();
-
+            delete it->second;
             m_Targets.erase(it);
         }
     }

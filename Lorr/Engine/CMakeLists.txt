@@ -44,6 +44,7 @@ set(ENGINE_VENDOR
     vorbisfile
     zlib1
     box2d
+    meshoptimizer
     msdf-atlas-gen
 )
 

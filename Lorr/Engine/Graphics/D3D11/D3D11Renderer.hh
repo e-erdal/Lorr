@@ -44,6 +44,7 @@ namespace Lorr
         void UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
         void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
         void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+        void UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
 
         void UseShader(ShaderHandle shader) override;
 

@@ -1,6 +1,7 @@
 #include "OBJLoader.hh"
 
 #include <obj_loader.h>
+#include <meshoptimizer.h>
 
 namespace Lorr::ModelLoader
 {
