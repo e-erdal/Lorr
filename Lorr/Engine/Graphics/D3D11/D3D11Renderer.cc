@@ -57,6 +57,8 @@ namespace Lorr
 
         m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
 
+        InitParent();
+
         return true;
     }
 
@@ -521,7 +523,7 @@ namespace Lorr
 
         CreateBackBuffer();
         CreateDepthTexture(width, height);
-        m_TargetManager.Resize(width, height);
+        m_TargetManager.Resize("renderer://postprocess", width, height);
         m_TargetManager.ClearAll(m_pContext);
 
         SetViewport(width, height, 1.f, 0.f);

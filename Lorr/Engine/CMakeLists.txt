@@ -122,7 +122,7 @@ LorrComponent(
     NAME
         LorrGraphics
     INCLUDE
-        ../
+        ../ ../Engine/Graphics
     PCH
         App/pch.hh
     SOURCE

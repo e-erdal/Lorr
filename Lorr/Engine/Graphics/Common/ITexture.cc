@@ -23,7 +23,10 @@ namespace Lorr
         pOutData->Height = imageContainer->m_height;
         // pOutData->Format = imageContainer->m_format;
         pOutData->DataSize = imageContainer->m_size;
-        pOutData->Data = (u8 *)imageContainer->m_data;
+        pOutData->Data = (u8 *)malloc(imageContainer->m_size);
+        memcpy(pOutData->Data, imageContainer->m_data, imageContainer->m_size);
+
+        bimg::imageFree(imageContainer);
     }
 
     TextureHandle Texture::Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc)

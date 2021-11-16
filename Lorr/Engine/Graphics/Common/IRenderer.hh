@@ -4,13 +4,15 @@
 
 #pragma once
 
+#include "Engine/Core/Window/PlatformWindow.hh"
 #include "Engine/Graphics/Types.hh"
 #include "Engine/Graphics/D3D/D3DType.hh"
-#include "Engine/Core/Window/PlatformWindow.hh"
 
 #include "IRenderBuffer.hh"
 #include "IShader.hh"
 #include "ITexture.hh"
+
+#include "Engine/Graphics/PostProcess/IPostProcess.hh"
 
 namespace Lorr
 {
@@ -21,8 +23,10 @@ namespace Lorr
         IRenderer() = default;
 
         virtual bool Init(PlatformWindow *pWindow, u32 width, u32 height) = 0;
+        void InitParent();
 
         virtual void ChangeResolution(u32 width, u32 height) = 0;
+        void PollPostProcess();
 
         virtual void SetViewport(u32 width, u32 height, float farZ, float nearZ) = 0;
         virtual void SetClearColor() = 0;
@@ -71,6 +75,7 @@ namespace Lorr
     protected:
         static RendererType m_CurrentAPI;
         TextureHandle m_PlaceholderTexture = 0;
+        PostProcessManager m_PostProcessMan;
     };
 
 }  // namespace Lorr

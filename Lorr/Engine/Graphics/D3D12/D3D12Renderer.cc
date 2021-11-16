@@ -45,6 +45,9 @@ namespace Lorr
 
         m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
         */
+
+        InitParent();
+        
         return true;
     }
 

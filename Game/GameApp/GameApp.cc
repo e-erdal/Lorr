@@ -94,6 +94,7 @@ void GameApp::Init()
 
     // Post-process target
     pRenderer->CreateTarget("renderer://postprocess", width, height, 0, 6);
+    pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
 
     // Load shaders
     GetEngine()->GetShaderMan()->CreateProgram("shader://model", kMeshLayout, "shaders/modelv.lr", "shaders/modelp.lr");
@@ -115,16 +116,11 @@ void GameApp::Init()
     modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
     Model &model = modelEntity.AddComponent<Model>();
 
-    // Entity testEntity = m_pCurrentScene->CreateEntity("test");
-    // testEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(1280, 720, 1));
-    // testEntity.AddComponent<Component::Renderable>(pRenderer->GetPlaceholder());
-
     ModelDesc modelDesc;
     modelDesc.Dynamic = false;
     ModelData modelData;
-    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "teapot.lr", modelData);
+    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "models/island.lr", modelData);
     model.Init("resource://teapot", &modelDesc, &modelData);
-
     // model.Init("sponza.obj");
     // model.AddSphere(100, 128, pRenderer->GetPlaceholder());
 }
@@ -138,10 +134,15 @@ void GameApp::Tick(float fDelta)
 void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
+    IRenderer *pRenderer = GetEngine()->GetRenderer();
+    pRenderer->PollPostProcess();
 
-    Renderer2D::FullscreenQuad(GetEngine()->GetRenderer()->GetTargetTexture("renderer://postprocess"));
+    Renderer2D::FullscreenQuad(pRenderer->GetTargetTexture("renderer://postprocess"), 0);
 
     ImGui::Begin("GameApp", nullptr);
-    ImGui::Text("FPS: %2.f", ImGui::GetIO().Framerate);
+    ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+    TextureHandle shadowMap = pRenderer->GetTargetTexture("renderer://shadowmap");
+    ImGui::Image(shadowMap, { (float)shadowMap->GetWidth(), (float)shadowMap->GetHeight() });
+    // ImGui::SliderFloat("LOD", &lensDownsampleData.ScaleBias.z, 0, );
     ImGui::End();
 }

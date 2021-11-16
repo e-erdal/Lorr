@@ -23,14 +23,15 @@ namespace Lorr
         }
     }
 
-    void D3D11RenderTargetManager::Resize(u32 width, u32 height)
+    void D3D11RenderTargetManager::Resize(const Identifier &ident, u32 width, u32 height)
     {
         ZoneScoped;
 
-        for (auto &pair : m_Targets)
+        auto it = m_Targets.find(ident);
+        if (it != m_Targets.end())
         {
-            RenderTarget *handle = pair.second;
-            if (handle->IsBackbuffer) continue;
+            RenderTarget *handle = it->second;
+            if (handle->IsBackbuffer) return;
 
             // Delete stuff first
             u32 mipLevels = handle->ViewTextureDesc.MipMapLevels;
@@ -49,7 +50,7 @@ namespace Lorr
             handle = new RenderTarget;
             handle->ViewTextureDesc = desc;
             handle->ViewTextureData = data;
-            handle->ViewTexture = Texture::Create(pair.first, &handle->ViewTextureDesc, &handle->ViewTextureData);
+            handle->ViewTexture = Texture::Create(ident, &handle->ViewTextureDesc, &handle->ViewTextureData);
 
             D3D11Texture *d11Texture = (D3D11Texture *)handle->ViewTexture;
             handle->pView = d11Texture->GetRenderTarget();

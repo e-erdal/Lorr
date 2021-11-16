@@ -20,7 +20,7 @@ namespace Lorr
 
         void Init(ID3D11Device *pDevice);
         void ClearAll(ID3D11DeviceContext *pContext);
-        void Resize(u32 width, u32 height);
+        void Resize(const Identifier &ident, u32 width, u32 height);
 
         ID3D11RenderTargetView *Create(const Identifier &ident, u32 width, u32 height, TextureHandle pTargetTexture, u32 mipLevels = 1);
         ID3D11RenderTargetView *Create(const Identifier &ident, ID3D11Texture2D *pTexture, bool isBackbuffer);

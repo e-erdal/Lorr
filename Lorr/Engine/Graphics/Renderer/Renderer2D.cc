@@ -35,13 +35,16 @@ namespace Lorr
 
         RenderBufferHandle QuadVertexBuffer = 0;
         RenderBufferHandle QuadIndexBuffer = 0;
-        ShaderProgram *pQuadProgram = 0;
+        ShaderHandle VertexShader;
+        ShaderHandle PixelShader;
     };
 
     static Renderer2DData *pThis = 0;
 
     void Renderer2D::Init()
     {
+        ZoneScoped;
+
         pThis = new Renderer2DData;
 
         QuadVertex pQuadVertex[4] = {
@@ -63,21 +66,27 @@ namespace Lorr
         quadIndexDesc.Type = RenderBufferType::Index;
         pThis->QuadIndexBuffer = RenderBuffer::Create(quadIndexDesc);
 
-        pThis->pQuadProgram =
-            GetEngine()->GetShaderMan()->CreateProgram("renderer2d://fsq", pThis->QuadLayout, "shaders/fullscreenv.lr", "shaders/fullscreenp.lr");
+        pThis->VertexShader = GetEngine()->GetShaderMan()->CreateShader("renderer2d://fsqv", pThis->QuadLayout, "shaders/fullscreenv.lr");
+        pThis->PixelShader = GetEngine()->GetShaderMan()->CreateShader("renderer2d://fsqp", "shaders/fullscreenp.lr");
     }
 
-    void Renderer2D::FullscreenQuad(TextureHandle texture)
+    void Renderer2D::FullscreenQuad(TextureHandle texture, ShaderHandle pixelShader, u32 textureSlot)
     {
+        ZoneScoped;
+
         IRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(pThis->pQuadProgram->Vertex);
-        pRenderer->UseShader(pThis->pQuadProgram->Pixel);
+        pRenderer->UseShader(pThis->VertexShader);
+        if (pixelShader)
+            pRenderer->UseShader(pixelShader);
+        else
+            pRenderer->UseShader(pThis->PixelShader);
 
         pRenderer->UseVertexBuffer(pThis->QuadVertexBuffer, &pThis->QuadLayout);
         pRenderer->UseIndexBuffer(pThis->QuadIndexBuffer, false);
 
-        texture->Use();
+        pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
 
         pRenderer->DrawIndexed(6);
     }
