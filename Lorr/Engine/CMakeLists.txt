@@ -33,6 +33,7 @@ endif()
 set(ENGINE_VENDOR
     bx
     bimg
+    bvh
     glm
     imgui
     lw

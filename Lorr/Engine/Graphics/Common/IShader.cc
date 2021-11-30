@@ -9,9 +9,10 @@
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
 
-#define FIND_SHADER(type)                                                                                                                  \
-    std::find_if(pData->Shaders.begin(), pData->Shaders.end(),                                                                             \
-                 [](const ShaderInfo &x) { return x.Renderer == Lorr::RendererAPI::CurrentAPI() && x.Type == ShaderType::type; })
+#define FIND_SHADER(type)                                                                                                                                      \
+    std::find_if(pData->Shaders.begin(), pData->Shaders.end(), [](const ShaderInfo &x) {                                                                       \
+        return x.Renderer == Lorr::IRenderer::CurrentAPI() && x.Type == ShaderType::type;                                                                      \
+    })
 
 namespace Lorr
 {
@@ -40,7 +41,7 @@ namespace Lorr
 
         // clang-format off
         if ((hr = 
-            D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "main", 0, 0, "main", 
+            D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "main", nullptr, nullptr, "main", 
             D3D::GetLatestShaderFeature(currentType).data(), flags, 0, &pCode, &pError)) < 0)
         {
             LOG_ERROR("Failed to compile shader. -- {} -- {}", (char *)pError->GetBufferPointer(), D3D::GetLatestShaderFeature(currentType));

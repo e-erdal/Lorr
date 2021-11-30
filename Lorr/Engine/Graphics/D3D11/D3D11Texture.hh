@@ -46,6 +46,11 @@ namespace Lorr
             return m_pSamplerState;
         }
 
+        ID3D11DepthStencilView *GetDepthStencil()
+        {
+            return m_pDepthStencil;
+        }
+
     private:
         void CreateTexture2D(TextureData *pData);
         void CreateDepthTexture();
@@ -65,6 +70,8 @@ namespace Lorr
 
         ID3D11UnorderedAccessView *m_pUAV = 0;
         ID3D11RenderTargetView *m_pRenderTarget = 0;
+
+        ID3D11DepthStencilView *m_pDepthStencil = 0;
     };
 }  // namespace Lorr
 

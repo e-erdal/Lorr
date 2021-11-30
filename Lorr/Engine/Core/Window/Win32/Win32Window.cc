@@ -85,14 +85,48 @@ namespace Lorr
     {
     }
 
-    void Win32Window::Init(const std::string &title, u32 width, u32 height, WindowFlags flags)
+    void Win32Window::Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags)
     {
         ZoneScoped;
 
+        m_Flags = flags;
+        m_UsingMonitor = monitor;
+
+        //* Initialize System Metrics *//
+        /// Get info of display[n]
+        for (u32 currentDevice = 0; currentDevice < GetSystemMetrics(SM_CMONITORS); currentDevice++)
+        {
+            DEVMODE devMode = {};
+            DISPLAY_DEVICE displayDevice = {};
+            DISPLAY_DEVICE monitorName = {};
+            displayDevice.cb = sizeof(DISPLAY_DEVICE);
+            monitorName.cb = sizeof(DISPLAY_DEVICE);
+            EnumDisplayDevices(NULL, currentDevice, &displayDevice, 0);
+            EnumDisplaySettings(displayDevice.DeviceName, ENUM_CURRENT_SETTINGS, &devMode);
+            EnumDisplayDevices(displayDevice.DeviceName, 0, &monitorName, 0);
+
+            SystemMetrics::Display display;
+            display.Name = monitorName.DeviceString;
+            display.RefreshRate = devMode.dmDisplayFrequency;
+            display.ResW = devMode.dmPelsWidth;
+            display.ResH = devMode.dmPelsHeight;
+            display.PosX = devMode.dmPosition.x;
+            display.PosY = devMode.dmPosition.y;
+
+            m_SystemMetrics.Displays.push_back(display);
+        }
+
+        auto currentDisplay = GetDisplay(monitor);
+        if (!currentDisplay)
+        {
+            LOG_ERROR("DISPLAY{} is not available?", monitor + 1);
+            return;
+        }
+
         if (width == 0 && height == 0)
         {
-            width = GetMonitorWidth();
-            height = GetMonitorHeight();
+            width = currentDisplay->ResW;
+            height = currentDisplay->ResH;
         }
 
         LOG_TRACE("Creating new window \"{}\"<{}, {}>", title.c_str(), width, height);
@@ -122,12 +156,11 @@ namespace Lorr
             LOG_TRACE("Getting ready for fullscreen state.");
 
             // actual holy shit moment
-            if ((width != GetMonitorWidth()) && (height != GetMonitorHeight()))
+            if ((width != currentDisplay->ResW) && (height != currentDisplay->ResH))
             {
                 // window will be fullscreen, no need to calculate other position and stuff
                 // just directly pass it over
-                DEVMODE dm;
-                ZeroMemory(&dm, sizeof(DEVMODE));
+                DEVMODE dm = {};
 
                 dm.dmSize = sizeof(DEVMODE);
                 dm.dmPelsWidth = width;
@@ -142,8 +175,8 @@ namespace Lorr
                 }
             }
 
-            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, GetMonitorWidth(),
-                                      GetMonitorHeight(), 0, 0, 0, 0);
+            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, currentDisplay->ResW,
+                                      currentDisplay->ResH, 0, 0, 0, 0);
 
             m_IsFullscreen = true;
         }
@@ -152,20 +185,21 @@ namespace Lorr
         {
             if (flags & WindowFlags::Resizable) windowFlags |= WS_MAXIMIZEBOX | WS_THICKFRAME;
 
-            int windowPosX = 0;
-            int windowPosY = 0;
+            int windowPosX = currentDisplay->PosX;
+            int windowPosY = currentDisplay->PosY;
 
             if (flags & WindowFlags::Centered)
             {
-                windowPosX = (GetMonitorWidth() / 2) - (width / 2);
-                windowPosY = (GetMonitorHeight() / 2) - (height / 2);
+                windowPosX += (currentDisplay->ResW / 2) - (width / 2);
+                windowPosY += (currentDisplay->ResH / 2) - (height / 2);
             }
 
             RECT rc = { 0, 0, (long)width, (long)height };
 
             AdjustWindowRectEx(&rc, windowFlags, 0, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 
-            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top, 0, 0, 0, 0);
+            m_Handle =
+                CreateWindowEx(0, wc.lpszClassName, title.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top, 0, 0, 0, 0);
         }
 
         ShowWindow(m_Handle, SW_SHOW);
@@ -188,20 +222,6 @@ namespace Lorr
             TranslateMessage(&msg);
             DispatchMessage(&msg);
         }
-    }
-
-    int Win32Window::GetMonitorWidth()
-    {
-        ZoneScoped;
-
-        return GetSystemMetrics(SM_CXSCREEN);
-    }
-
-    int Win32Window::GetMonitorHeight()
-    {
-        ZoneScoped;
-
-        return GetSystemMetrics(SM_CYSCREEN);
     }
 
     void Win32Window::SetCursor(Cursor cursor)

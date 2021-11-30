@@ -34,7 +34,7 @@ namespace Lorr
         PlatformWindow *pWindow = m_pEngine->GetWindow();
 
         Timer timer;
-        
+
         while (!pWindow->ShouldClose())
         {
             auto elapsed = timer.elapsed();

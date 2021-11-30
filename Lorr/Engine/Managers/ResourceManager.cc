@@ -87,7 +87,7 @@ namespace Lorr
         // !NOTE: Encryption has to be first.
         if (header.Flags & RESOURCE_FILE_FLAGS_COMPRESSED)
         {
-            LOG_INFO("Decompressing file...");
+            LOG_TRACE("Decompressing file...");
             buf.Decompress(header.OriginalSize);
         }
 

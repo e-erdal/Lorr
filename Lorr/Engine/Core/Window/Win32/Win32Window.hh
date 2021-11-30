@@ -4,20 +4,17 @@
 
 #pragma once
 
-#include "Engine/Core/Window/IWindow.hh"
+#include "Engine/Core/Window/BaseWindow.hh"
 
 namespace Lorr
 {
-    class Win32Window : public IWindow
+    class Win32Window : public BaseWindow
     {
     public:
         ~Win32Window();
 
-        void Init(const std::string &title, u32 width, u32 height, WindowFlags flags) override;
+        void Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) override;
         void Poll() override;
-
-        int GetMonitorWidth() override;
-        int GetMonitorHeight() override;
 
         void SetCursor(Cursor eCursor) override;
 

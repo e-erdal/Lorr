@@ -45,7 +45,7 @@ namespace Lorr
             TextureData data;
             data.Width = width;
             data.Height = height;
-            data.Format = TextureFormat::TEXTURE_FORMAT_RGBAF32;
+            data.Format = TextureFormat::TEXTURE_FORMAT_RGBA32F;
 
             handle = new RenderTarget;
             handle->ViewTextureDesc = desc;
@@ -54,6 +54,7 @@ namespace Lorr
 
             D3D11Texture *d11Texture = (D3D11Texture *)handle->ViewTexture;
             handle->pView = d11Texture->GetRenderTarget();
+            it->second = handle;
         }
     }
 
@@ -72,7 +73,7 @@ namespace Lorr
             TextureData data;
             data.Width = width;
             data.Height = height;
-            data.Format = TextureFormat::TEXTURE_FORMAT_RGBAF32;
+            data.Format = TextureFormat::TEXTURE_FORMAT_RGBA32F;
 
             if (!pTargetTexture) pTargetTexture = Texture::Create(ident, &desc, &data);
             D3D11Texture *d11Texture = (D3D11Texture *)pTargetTexture;

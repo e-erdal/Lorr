@@ -8,7 +8,7 @@
 
 #include "Engine/Audio/AudioSystem.hh"
 
-#include "Engine/Core/Window/IWindow.hh"
+#include "Engine/Core/Window/BaseWindow.hh"
 
 #include "Engine/Debug/ImGuiHandler.hh"
 

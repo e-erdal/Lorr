@@ -20,12 +20,15 @@ namespace Lorr::System
         ZoneScoped;
 
         IRenderer *pRenderer = GetEngine()->GetRenderer();
+        ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 
         // Stuff that renderer requires
         Camera2D *pCamera = GetEngine()->GetCamera2D();
         auto cameraMatrix = pCamera->GetMatrix();
-        ShaderProgram *pBatcherProgram = GetEngine()->GetShaderMan()->GetProgram("shader://batcher");
-        RenderBufferHandle batcherCBuf = GetEngine()->GetShaderMan()->GetRenderBuffer("cbuffer://batcher");
+        ShaderProgram *pBatcherProgram = pShaderMan->GetProgram("shader://batcher");
+        RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher");
+        ShaderProgram *pFontProgram = pShaderMan->GetProgram("shader://font");
+        RenderBufferHandle fontCBuf = pShaderMan->GetRenderBuffer("cbuffer://font");
 
         // Renderer
         VertexBatcher *pBatcher = GetEngine()->GetBatcher();
@@ -42,6 +45,27 @@ namespace Lorr::System
                 auto &renderable = m_pRegistry->get<Component::Renderable>(entity);
                 pBatcher->SetCurrentTexture(renderable.texture);
                 pBatcher->PushRect(transform.Matrix, renderable.Color);
+            }
+        });
+
+        pBatcher->Reset();
+        pBatcher->SetCurrentProgram(pFontProgram);
+        pRenderer->UseConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
+        pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
+
+        m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
+            if (m_pRegistry->has<Component::Text>(entity))
+            {
+                Component::Text &text = m_pRegistry->get<Component::Text>(entity);
+                pBatcher->SetCurrentTexture(text.m_Texture);
+                glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
+
+                pBatcher->PushRect(matrix);
+
+                /*for (const auto &c : text.m_Chars)
+                {
+
+                }*/
             }
         });
 

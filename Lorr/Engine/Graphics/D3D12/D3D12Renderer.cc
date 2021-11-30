@@ -33,7 +33,7 @@ namespace Lorr
 
         m_IsContextReady = true;
 
-        LOG_INFO("Successfully initialized D3D12 device.");
+        LOG_TRACE("Successfully initialized D3D12 device.");
 
         /*TextureDesc desc;
         constexpr u32 whiteColor = 0xffffffff;
@@ -88,7 +88,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        LOG_INFO("Initializing D3D12 device...");
+        LOG_TRACE("Initializing D3D12 device...");
 
         HRESULT hr;
         u32 flags = 0;

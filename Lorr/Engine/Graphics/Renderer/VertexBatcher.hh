@@ -53,6 +53,11 @@ namespace Lorr
         glm::vec4 Color = {};
     };
 
+    struct BatcherRenderBuffer
+    {
+        glm::mat4 Matrix;
+    };
+    
     class VertexBatcher
     {
     public:
@@ -73,9 +78,12 @@ namespace Lorr
         void PushRect(const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 });
         void PushRect(const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 });
 
+        /// Bad naming, it's actually AllocRectangle()
+        BatcherVertex *AllocVertex();
+
     private:
         ShaderProgram *m_pShaderProgram = 0;
-        
+
         RenderBufferHandle m_VertexBuffer = 0;
         RenderBufferHandle m_IndexBuffer = 0;
 

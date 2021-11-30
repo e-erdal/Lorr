@@ -22,7 +22,7 @@ namespace Lorr
 
         HRESULT hr;
 
-        LOG_INFO("Creating Texture2D <{}>({}, {})...", m_Ident, m_Width, m_Height);
+        LOG_TRACE("Creating Texture2D <{}>({}, {})...", m_Ident, m_Width, m_Height);
 
         switch (pDesc->Type)
         {
@@ -38,7 +38,7 @@ namespace Lorr
                 break;
             case TEXTURE_TYPE_DEPTH:
                 CreateDepthTexture();
-                if (m_Format == TEXTURE_FORMAT_R32_TYPELESS) m_Format = TEXTURE_FORMAT_R32_FLOAT;
+                if (m_Format == TEXTURE_FORMAT_R32T) m_Format = TEXTURE_FORMAT_R32F;
                 CreateShaderResource();
                 CreateSampler();
                 break;
@@ -52,7 +52,7 @@ namespace Lorr
                 break;
         }
 
-        LOG_INFO("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
+        LOG_TRACE("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
     }
 
     void D3D11Texture::Use()
@@ -79,6 +79,8 @@ namespace Lorr
 
         SAFE_RELEASE(m_pUAV);
         // SAFE_RELEASE(m_pRenderTarget);
+
+        SAFE_RELEASE(m_pDepthStencil);
     }
 
     void D3D11Texture::CreateTexture2D(TextureData *pData)
@@ -136,6 +138,16 @@ namespace Lorr
         if (FAILED(hr = device->CreateTexture2D(&m_TextureDesc, 0, &m_pHandle)))
         {
             LOG_ERROR("Failed to create D3D11 texture!");
+            return;
+        }
+
+        D3D11_DEPTH_STENCIL_VIEW_DESC depthStencilDesc = {};
+        depthStencilDesc.Format = DXGI_FORMAT_D32_FLOAT;
+        depthStencilDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
+
+        if (FAILED(hr = device->CreateDepthStencilView((ID3D11Texture2D *)m_pHandle, &depthStencilDesc, &m_pDepthStencil)))
+        {
+            LOG_ERROR("Failed to create D3D11 Depth stencil view!");
             return;
         }
     }

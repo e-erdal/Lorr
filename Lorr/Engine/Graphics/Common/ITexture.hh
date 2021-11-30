@@ -13,28 +13,29 @@ namespace Lorr
 {
     enum TextureFormat : u16
     {
-        TEXTURE_FORMAT_RGBA8,
-        TEXTURE_FORMAT_RGBAF32,
-        TEXTURE_FORMAT_RGBF32,
-        TEXTURE_FORMAT_DEPTH_32F,
-        TEXTURE_FORMAT_DEPTH_D24UNS8U,
-        TEXTURE_FORMAT_R24G8_TYPELESS,
-        TEXTURE_FORMAT_R32_TYPELESS,
-        TEXTURE_FORMAT_R32_FLOAT
+        TEXTURE_FORMAT_RGBA8U,            /// Each channel is u8, packed into normalized u32
+        TEXTURE_FORMAT_RGBA32F,           /// Each channel is float
+        TEXTURE_FORMAT_RGB32F,            /// Each channel is float
+        TEXTURE_FORMAT_R24TG8T,           /// R channel is 24 bits, G channel is 8 bits
+        TEXTURE_FORMAT_R32T,              /// R channel is 32 bits typeless
+        TEXTURE_FORMAT_R32F,              /// R channel is 32 bits float
+        TEXTURE_FORMAT_DEPTH32F,          /// Depth format, A channel is float
+        TEXTURE_FORMAT_DEPTH24_STENCIL8,  /// Z-Buffer format, 24 bits for depth, 8 bits for stencil
+
     };
 
     constexpr u32 TextureFormatToSize(TextureFormat format)
     {
         switch (format)
         {
-            case TEXTURE_FORMAT_RGBA8: return sizeof(float);
-            case TEXTURE_FORMAT_RGBAF32: return sizeof(float) * 4;
-            case TEXTURE_FORMAT_RGBF32: return sizeof(float) * 3;
-            case TEXTURE_FORMAT_DEPTH_32F: return sizeof(float);
-            case TEXTURE_FORMAT_DEPTH_D24UNS8U: return sizeof(u32);
-            case TEXTURE_FORMAT_R24G8_TYPELESS: return sizeof(u32);
-            case TEXTURE_FORMAT_R32_TYPELESS: return sizeof(u32);
-            case TEXTURE_FORMAT_R32_FLOAT: return sizeof(float);
+            case TEXTURE_FORMAT_RGBA8U: return sizeof(float);
+            case TEXTURE_FORMAT_RGBA32F: return sizeof(float) * 4;
+            case TEXTURE_FORMAT_RGB32F: return sizeof(float) * 3;
+            case TEXTURE_FORMAT_R24TG8T: return sizeof(u32);
+            case TEXTURE_FORMAT_R32T: return sizeof(u32);
+            case TEXTURE_FORMAT_R32F: return sizeof(float);
+            case TEXTURE_FORMAT_DEPTH32F: return sizeof(float);
+            case TEXTURE_FORMAT_DEPTH24_STENCIL8: return sizeof(u32);
             default: return 0;
         }
     }
@@ -60,7 +61,7 @@ namespace Lorr
         u32 Width = 0;
         u32 Height = 0;
 
-        TextureFormat Format = TEXTURE_FORMAT_RGBA8;
+        TextureFormat Format = TEXTURE_FORMAT_RGBA8U;
 
         u32 DataSize = 0;
         u8 *Data = 0;
@@ -120,5 +121,6 @@ namespace Lorr
     {
         TextureHandle Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc);
         TextureHandle Create(const Identifier &ident, TextureDesc *pDesc, TextureData *pData);
+        TextureHandle Get(const Identifier &ident);
     }  // namespace Texture
 }  // namespace Lorr

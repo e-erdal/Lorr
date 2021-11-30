@@ -12,7 +12,7 @@ namespace Lorr
     void VertexBatcher::Init()
     {
         ZoneScoped;
-        
+
         m_Layout = {
             { VertexAttribType::Vec3, "POSITION" },
             { VertexAttribType::Vec2, "TEXCOORD" },
@@ -52,14 +52,14 @@ namespace Lorr
     void VertexBatcher::End()
     {
         ZoneScoped;
-        
+
         Reset();
     }
 
     void VertexBatcher::Flush()
     {
         ZoneScoped;
-        
+
         IRenderer *pRenderer = GetEngine()->GetRenderer();
 
         SAFE_DELETE(m_VertexBuffer);
@@ -89,7 +89,7 @@ namespace Lorr
     void VertexBatcher::Reset()
     {
         ZoneScoped;
-        
+
         Flush();
         m_Vertices.clear();
         m_Indexes = 0;
@@ -98,7 +98,7 @@ namespace Lorr
     void VertexBatcher::SetCurrentTexture(TextureHandle texture)
     {
         ZoneScoped;
-        
+
         if (texture != m_CurrentTexture)
         {
             Reset();
@@ -109,7 +109,7 @@ namespace Lorr
     void VertexBatcher::SetCurrentProgram(ShaderProgram *pProgram)
     {
         ZoneScoped;
-        
+
         if (pProgram != m_pShaderProgram)
         {
             Reset();
@@ -120,18 +120,16 @@ namespace Lorr
     void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color)
     {
         ZoneScoped;
-        
+
         const glm::mat4x2 uvMat = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
-        PushRect(glm::transpose(transform), uvMat, color);
+        PushRect(transform, uvMat, color);
     }
 
     void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::mat4x2 &uv, const glm::ivec4 &color)
     {
         ZoneScoped;
-        
-        m_Vertices.resize(m_Vertices.size() + 4);
 
-        BatcherVertex *info = &m_Vertices[m_Vertices.size() - 4];
+        BatcherVertex *info = AllocVertex();
 
         for (size_t i = 0; i < 4; i++)
         {
@@ -140,15 +138,20 @@ namespace Lorr
             info->Color = (glm::vec4)color / 255.f;
             info++;
         }
-
-        m_Indexes += 6;
     }
 
     void VertexBatcher::PushRect(const glm::mat4 &transform, const glm::ivec4 &color)
     {
         ZoneScoped;
-        
+
         PushRect(transform, kVertexUV, color);
+    }
+
+    BatcherVertex *VertexBatcher::AllocVertex()
+    {
+        m_Indexes += 6;
+        m_Vertices.resize(m_Vertices.size() + 4);
+        return &m_Vertices[m_Vertices.size() - 4];
     }
 
 }  // namespace Lorr

@@ -30,8 +30,8 @@ namespace Lorr
         if (alcIsExtensionPresent(m_alDevice, "ALC_ENUMERATE_ALL_EXT")) name = alcGetString(m_alDevice, ALC_ALL_DEVICES_SPECIFIER);
         if (!name || alcGetError(m_alDevice) != AL_NO_ERROR) name = alcGetString(m_alDevice, ALC_DEVICE_SPECIFIER);
 
-        LOG_INFO("Audio Device: {}", name);
-        LOG_INFO("Successfully Initialized Audio System!");
+        LOG_TRACE("Audio Device: {}", name);
+        LOG_TRACE("Successfully Initialized Audio System!");
     }
 
     void AudioSystem::CreateChannel(Identifier const &ident, AudioChannel *pChannel)

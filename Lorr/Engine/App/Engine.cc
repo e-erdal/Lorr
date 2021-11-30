@@ -23,7 +23,7 @@ namespace Lorr
         ZoneScoped;
 
         Console::Init();
-        LOG_INFO("Initializing Lorr...");
+        LOG_TRACE("Initializing Lorr...");
 
         g_pBSWatcher = new BufferStreamMemoyWatcher(false);
 
@@ -39,7 +39,7 @@ namespace Lorr
         }
 
         //* Core features
-        m_pWindow->Init(description.Title, description.Width, description.Height, description.Flags);
+        m_pWindow->Init(description.Title, 0, description.Width, description.Height, description.Flags);
 
         //* High priority stuff
         m_pResourceMan->Init();

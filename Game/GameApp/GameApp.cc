@@ -69,9 +69,13 @@ void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
 }
 
 TextureHandle texture;
+Font *pFont;
+ShaderProgram *fontShader;
 
 void GameApp::Init()
 {
+    LoadResources();
+
     //* Init signals
     GetEngine()->GetWindow()->OnSetMouseState.connect<MouseDown>();
     GetEngine()->GetWindow()->OnSetKeyState.connect<KeyDown>();
@@ -81,46 +85,29 @@ void GameApp::Init()
     IRenderer *pRenderer = GetEngine()->GetRenderer();
     u32 width = GetEngine()->GetWindow()->GetWidth();
     u32 height = GetEngine()->GetWindow()->GetHeight();
-    glm::mat4 mat = {};
 
     //* Scene initialization
     m_pCurrentScene = new Scene;
     m_pCurrentScene->Init("scene://default-scene");
-
-    //* Preload resources
-    FontDesc desc;
-    desc.SizePX = 32;
-    Font *pFont = GetEngine()->GetResourceMan()->LoadResource<Font>("font://font", "font.lr", &desc);
 
     // Post-process target
     pRenderer->CreateTarget("renderer://postprocess", width, height, 0, 6);
     pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
 
     // Load shaders
-    GetEngine()->GetShaderMan()->CreateProgram("shader://model", kMeshLayout, "shaders/modelv.lr", "shaders/modelp.lr");
-    GetEngine()->GetShaderMan()->CreateProgram("shader://batcher", VertexBatcher::m_Layout, "shaders/batchv.lr", "shaders/batchp.lr");
-
-    RenderBufferDesc modelCBuf;
-    modelCBuf.DataLen = sizeof(mat);
-    modelCBuf.Type = RenderBufferType::Constant;
-    modelCBuf.Usage = RenderBufferUsage::Dynamic;
-    modelCBuf.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
-    GetEngine()->GetShaderMan()->CreateRenderBuffer("cbuffer://model", modelCBuf);
-
-    modelCBuf.DataLen = sizeof(mat);
-    GetEngine()->GetShaderMan()->CreateRenderBuffer("cbuffer://batcher", modelCBuf);
 
     //** Init entities **//
     // Create entities
-    Entity modelEntity = m_pCurrentScene->CreateEntity("test");
-    modelEntity.AddComponent<Component::Transform>(glm::vec3(), glm::vec3());
-    Model &model = modelEntity.AddComponent<Model>();
 
-    ModelDesc modelDesc;
-    modelDesc.Dynamic = false;
-    ModelData modelData;
-    GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "models/island.lr", modelData);
-    model.Init("resource://teapot", &modelDesc, &modelData);
+    Entity textEntity = m_pCurrentScene->CreateEntity("test");
+    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(292 * 0.3, 292 * 0.3, 1));
+    textEntity.AddComponent<Component::Text>(pFont, "W");
+
+    // ModelDesc modelDesc;
+    // modelDesc.Dynamic = false;
+    // ModelData modelData;
+    // GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "models/island.lr", modelData);
+    // model.Init("resource://teapot", &modelDesc, &modelData);
     // model.Init("sponza.obj");
     // model.AddSphere(100, 128, pRenderer->GetPlaceholder());
 }
@@ -135,14 +122,48 @@ void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
     IRenderer *pRenderer = GetEngine()->GetRenderer();
-    pRenderer->PollPostProcess();
+    VertexBatcher *pBatcher = GetEngine()->GetBatcher();
+    ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 
-    Renderer2D::FullscreenQuad(pRenderer->GetTargetTexture("renderer://postprocess"), 0);
+    pRenderer->UseConstantBuffer(pShaderMan->GetRenderBuffer("cbuffer://font"), RenderBufferTarget::Pixel, 0);
+    Renderer2D::FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
 
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-    TextureHandle shadowMap = pRenderer->GetTargetTexture("renderer://shadowmap");
-    ImGui::Image(shadowMap, { (float)shadowMap->GetWidth(), (float)shadowMap->GetHeight() });
-    // ImGui::SliderFloat("LOD", &lensDownsampleData.ScaleBias.z, 0, );
     ImGui::End();
+}
+
+void GameApp::LoadResources()
+{
+    auto shaderMan = GetEngine()->GetShaderMan();
+    auto resourceMan = GetEngine()->GetResourceMan();
+
+    //* Shaders *//
+    RenderBufferDesc genericDynBufferDesc;
+    genericDynBufferDesc.Type = RenderBufferType::Constant;
+    genericDynBufferDesc.Usage = RenderBufferUsage::Dynamic;
+    genericDynBufferDesc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+    // Model constant buffer
+    genericDynBufferDesc.DataLen = sizeof(ModelRenderBuffer);
+    shaderMan->CreateRenderBuffer("cbuffer://model", genericDynBufferDesc);
+    shaderMan->CreateProgram("shader://model", Mesh::m_Layout, "shaders/modelv.lr", "shaders/modelp.lr");
+
+    // VertexBatcher constant buffer
+    genericDynBufferDesc.DataLen = sizeof(BatcherRenderBuffer);
+    shaderMan->CreateRenderBuffer("cbuffer://batcher", genericDynBufferDesc);
+    shaderMan->CreateProgram("shader://batcher", VertexBatcher::m_Layout, "shaders/batchv.lr", "shaders/batchp.lr");
+
+    // Font constant buffer
+    FontRenderBuffer fontRenderBufferData;
+    fontRenderBufferData.RangePx = { ((292 * 0.3) / 292.f) * 4.f, 0, 0, 0 };
+    genericDynBufferDesc.pData = &fontRenderBufferData;
+    genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
+    shaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
+    fontShader = shaderMan->CreateProgram("shader://font", VertexBatcher::m_Layout, "shaders/fontv.lr", "shaders/fontp.lr");
+
+    //* Fonts *//
+    FontDesc desc;
+    desc.SizePX = 32;
+    pFont = resourceMan->LoadResource<Font>("font://font", "font.lr", &desc);
 }

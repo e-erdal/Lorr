@@ -7,7 +7,7 @@ int main()
     ZoneScoped;
 
     Lorr::ApplicationDesc desc;
-    desc.Title = "Lorr: Game";
+    desc.Title = "GameApp";
     desc.Width = 1280;
     desc.Height = 720;
     desc.Flags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;

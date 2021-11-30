@@ -8,26 +8,21 @@
 #include "Engine/Graphics/Common/InputLayout.hh"
 #include "Engine/Graphics/Common/IRenderBuffer.hh"
 
+#include <bvh/bvh.hpp>
+
 namespace Lorr
 {
     struct FileMeshVertex
     {
         glm::vec3 Pos = {};
         glm::vec3 Norm = {};
-        glm::vec2 UV = {};
+        glm::vec2 UV = { FLT_MAX, FLT_MAX };
     };
 
     struct FileMesh
     {
         std::vector<FileMeshVertex> Vertices;
         std::vector<u32> Indices;
-    };
-
-    static InputLayout kMeshLayout = {
-        { VertexAttribType::Vec3, "POSITION" },
-        { VertexAttribType::Vec3, "NORMAL" },
-        { VertexAttribType::Vec2, "TEXCOORD" },
-        { VertexAttribType::Vec4, "COLOR" },
     };
 
     struct MeshVertex
@@ -53,6 +48,11 @@ namespace Lorr
             return m_Vertices;
         }
 
+        using Scalar = float;
+        using BVH = bvh::Bvh<Scalar>;
+
+        static InputLayout m_Layout;
+
     private:
         TextureHandle m_Texture = 0;
 
@@ -61,6 +61,8 @@ namespace Lorr
 
         std::vector<MeshVertex> m_Vertices;
         u32 m_IndexCount = 0;
+
+        BVH *m_pBVH;
     };
 
 }  // namespace Lorr

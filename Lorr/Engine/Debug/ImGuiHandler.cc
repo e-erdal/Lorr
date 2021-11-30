@@ -1,7 +1,7 @@
 #include "ImGuiHandler.hh"
 
 #include "Engine/App/Engine.hh"
-#include "Engine/Core/Window/IWindow.hh"
+#include "Engine/Core/Window/BaseWindow.hh"
 
 namespace Lorr
 {

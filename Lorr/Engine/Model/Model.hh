@@ -20,6 +20,11 @@ namespace Lorr
         std::vector<FileMesh> Meshes;
     };
 
+    struct ModelRenderBuffer
+    {
+        glm::mat4 Matrix;
+    };
+
     class Model : public IResource<ModelDesc, ModelData>
     {
     public:

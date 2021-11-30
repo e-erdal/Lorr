@@ -34,16 +34,32 @@ namespace Lorr
     };
     BitFlags(WindowFlags);
 
-    class IWindow
+    struct SystemMetrics
+    {
+        struct Display
+        {
+            std::string Name;
+
+            u32 ResW;
+            u32 ResH;
+            u32 PosX;
+            u32 PosY;
+
+            u32 RefreshRate;
+        };
+
+        std::vector<Display> Displays;
+    };
+
+    class BaseWindow
     {
     public:
-        virtual ~IWindow(){};
+        virtual ~BaseWindow(){};
 
-        virtual void Init(const std::string &title, u32 width, u32 height, WindowFlags flags) = 0;
+        virtual void Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) = 0;
         virtual void Poll() = 0;
 
-        virtual int GetMonitorWidth() = 0;
-        virtual int GetMonitorHeight() = 0;
+        const SystemMetrics::Display *GetDisplay(u32 monitor) const;
 
         virtual void SetCursor(Cursor cursor) = 0;
 
@@ -85,6 +101,11 @@ namespace Lorr
             return m_CursorPos;
         }
 
+        u32 GetUsingMonitor()
+        {
+            return m_UsingMonitor;
+        }
+
     protected:
         u32 m_Width = 0;
         u32 m_Height = 0;
@@ -95,6 +116,10 @@ namespace Lorr
 
         Cursor m_CurrentCursor = Cursor::Arrow;
         glm::ivec2 m_CursorPos{};
+
+        WindowFlags m_Flags;
+        SystemMetrics m_SystemMetrics;
+        u32 m_UsingMonitor = 0;
     };
 
 }  // namespace Lorr

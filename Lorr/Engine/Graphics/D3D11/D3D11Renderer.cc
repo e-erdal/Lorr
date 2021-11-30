@@ -1,5 +1,7 @@
 #if LR_BACKEND_D3D11
 
+#include "bx/string.h"
+
 #include "D3D11RenderBuffer.hh"
 #include "D3D11Renderer.hh"
 #include "D3D11Shader.hh"
@@ -7,7 +9,7 @@
 
 static Lorr::D3D11Renderer *g_D3D11Renderer;
 
-constexpr ID3D11ShaderResourceView *kNullSRV[1] = { nullptr };
+static ID3D11ShaderResourceView *kNullSRV[1] = { nullptr };
 constexpr ID3D11UnorderedAccessView *kNullUAV[1] = { nullptr };
 constexpr ID3D11Buffer *kNullBuffer[1] = { nullptr };
 constexpr ID3D11SamplerState *kNullSampler[1] = { nullptr };
@@ -33,8 +35,8 @@ namespace Lorr
         m_StateManager.SetDevice(m_pDevice);
         m_TargetManager.Init(m_pDevice);
         if (!CreateSwapChain(pWindow, width, height)) return false;
-        if (!CreateBackBuffer()) return false;
         if (!CreateDepthTexture(width, height)) return false;
+        if (!CreateBackBuffer()) return false;
         if (!CreateDepthStencil()) return false;
         if (!CreateBlendState()) return false;
         if (!CreateRasterizer()) return false;
@@ -43,7 +45,7 @@ namespace Lorr
 
         SetViewport(width, height, 1.f, 0.0f);
 
-        LOG_INFO("Successfully initialized D3D11 device.");
+        LOG_TRACE("Successfully initialized D3D11 device.");
 
         TextureDesc desc;
 
@@ -69,7 +71,7 @@ namespace Lorr
         if (!m_IsContextReady) return;
 
         m_TargetManager.ClearAll(m_pContext);
-        m_pContext->ClearDepthStencilView(m_pDepthStencilView, D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+        m_pContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
     }
 
     void D3D11Renderer::SetScissor(const glm::vec4 &lrtb)
@@ -146,7 +148,7 @@ namespace Lorr
         m_pContext->PSSetShaderResources(0, 1, kNullSRV);
 
         auto target = m_TargetManager.GetView(ident);
-        m_pContext->OMSetRenderTargets(1, &target, m_pDepthStencilView);
+        m_pContext->OMSetRenderTargets(1, &target, m_pDepthTexture->GetDepthStencil());
     }
 
     TextureHandle D3D11Renderer::GetTargetTexture(const Identifier &ident)
@@ -188,24 +190,24 @@ namespace Lorr
     {
         ZoneScoped;
 
-        ID3D11ShaderResourceView *pSRV = *kNullSRV;
-        if (buffer) pSRV = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
+        ID3D11ShaderResourceView **ppSRV = kNullSRV;
+        if (buffer) ppSRV[0] = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
 
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, &pSRV);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, &pSRV);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, &pSRV);
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
     }
 
     void D3D11Renderer::UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot)
     {
         ZoneScoped;
 
-        ID3D11ShaderResourceView *pSRV = *kNullSRV;
-        if (texture) pSRV = ((D3D11Texture *)texture)->GetShaderResource();
+        ID3D11ShaderResourceView **ppSRV = kNullSRV;
+        if (texture) ppSRV[0] = ((D3D11Texture *)texture)->GetShaderResource();
 
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, &pSRV);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, &pSRV);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, &pSRV);
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
     }
 
     void D3D11Renderer::UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
@@ -310,7 +312,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        LOG_INFO("Initializing D3D11 device...");
+        LOG_TRACE("Initializing D3D11 device...");
 
         HRESULT hr;
         u32 flags = D3D11_CREATE_DEVICE_SINGLETHREADED;
@@ -347,8 +349,8 @@ namespace Lorr
         m_SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
         m_SwapChainDesc.BufferDesc.Width = width;
         m_SwapChainDesc.BufferDesc.Height = height;
-        m_SwapChainDesc.BufferDesc.RefreshRate.Numerator = 60;   // FIXME: HARDCODED
-        m_SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;  // FIXME: HARDCODED
+        m_SwapChainDesc.BufferDesc.RefreshRate.Numerator = pWindow->GetDisplay(pWindow->GetUsingMonitor())->RefreshRate;
+        m_SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
         m_SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
         m_SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
 
@@ -365,6 +367,7 @@ namespace Lorr
         IDXGIDevice *pDXGIDevice = 0;
         IDXGIAdapter *pDXGIAdapter = 0;
         IDXGIFactory *pDXGIFactory = 0;
+        IDXGIOutput *pDXGIOutput = 0;
         m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
         pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);  // get interface factory from our device
         pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&pDXGIFactory);
@@ -377,6 +380,19 @@ namespace Lorr
             return false;
         }
 
+        DXGI_ADAPTER_DESC adapterDesc = {};
+        pDXGIAdapter->GetDesc(&adapterDesc);
+
+        char driverMame[BX_COUNTOF(adapterDesc.Description)];
+        wcstombs(driverMame, adapterDesc.Description, BX_COUNTOF(adapterDesc.Description));
+
+        char dedicatedVideo[16];
+        bx::prettify(dedicatedVideo, BX_COUNTOF(dedicatedVideo), adapterDesc.DedicatedVideoMemory);
+
+        LOG_INFO("DXGI Desc: {} ({}, {}).", driverMame, adapterDesc.VendorId, adapterDesc.DeviceId);
+        LOG_INFO("GPU Dedicated Memory: {}.", dedicatedVideo);
+
+        SAFE_RELEASE(pDXGIOutput);
         SAFE_RELEASE(pDXGIDevice);
         SAFE_RELEASE(pDXGIAdapter);
         SAFE_RELEASE(pDXGIFactory);
@@ -384,7 +400,7 @@ namespace Lorr
         // Check if we are in fullscreen
         if (pWindow->IsFullscreen())
         {
-            LOG_INFO("Going into fullscreen. (swapchain)");
+            LOG_TRACE("Going into fullscreen. (swapchain)");
             m_pSwapChain->SetFullscreenState(true, 0);
         }
 
@@ -407,7 +423,7 @@ namespace Lorr
         }
 
         auto view = m_TargetManager.Create("renderer://backbuffer", pBackBuffer, true);
-        m_pContext->OMSetRenderTargets(1, &view, m_pDepthStencilView);
+        m_pContext->OMSetRenderTargets(1, &view, m_pDepthTexture->GetDepthStencil());
 
         SAFE_RELEASE(pBackBuffer);
 
@@ -424,19 +440,9 @@ namespace Lorr
         desc.Type = TEXTURE_TYPE_DEPTH;
 
         TextureData depthData = {};
-        depthData.Format = TEXTURE_FORMAT_R32_TYPELESS, depthData.Width = width, depthData.Height = height;
+        depthData.Format = TEXTURE_FORMAT_R32T, depthData.Width = width, depthData.Height = height;
 
-        m_DepthTexture = Texture::Create("d3d11-renderer://depth", &desc, &depthData);
-
-        m_DepthStencilViewDesc = {};
-        m_DepthStencilViewDesc.Format = DXGI_FORMAT_D32_FLOAT;
-        m_DepthStencilViewDesc.ViewDimension = D3D11_DSV_DIMENSION_TEXTURE2D;
-
-        if (FAILED(hr = m_pDevice->CreateDepthStencilView((ID3D11Texture2D *)m_DepthTexture->GetHandle(), &m_DepthStencilViewDesc, &m_pDepthStencilView)))
-        {
-            LOG_ERROR("Failed to create D3D11 Depth stencil view!");
-            return false;
-        }
+        m_pDepthTexture = (D3D11Texture *)Texture::Create("renderer://depth-texture", &desc, &depthData);
 
         return true;
     }
@@ -512,8 +518,7 @@ namespace Lorr
         m_pContext->OMSetRenderTargets(0, 0, 0);
 
         m_TargetManager.Release("renderer://backbuffer");
-        SAFE_RELEASE(m_pDepthStencilView);
-        m_DepthTexture->Delete();
+        m_pDepthTexture->Delete();
 
         if (FAILED(m_pSwapChain->ResizeBuffers(0, 0, 0, m_SwapChainDesc.BufferDesc.Format, 0)))
         {

@@ -4,11 +4,26 @@
 
 #pragma once
 
-#include "Engine/Core/Window/IWindow.hh"
+#include "Engine/Core/Window/BaseWindow.hh"
 #include "Engine/ECS/Scene.hh"
+#include "Engine/Graphics/Types.hh"
 
 namespace Lorr
 {
+    constexpr std::string_view kSaveFileName = "state.lr";
+    struct BaseAppSave
+    {
+        u32 m_LastSaveDate = 0;  // Unix timestamp
+        
+        /// Graphics
+        u8 m_CurrentMonitor = 0;
+        u16 m_RefreshRate = 0;
+        u16 m_WindowPosX = 0;
+        u16 m_WindowPosY = 0;
+        WindowFlags m_WindowFlags;
+        RendererType m_SelectedRenderer;
+    };
+
     struct ApplicationDesc
     {
         std::string Title = "Lorr";
@@ -49,7 +64,7 @@ namespace Lorr
     protected:
         Engine *m_pEngine = 0;
         Scene *m_pCurrentScene = 0;
-        
+
         bool m_ConsoleApp = false;
     };
 

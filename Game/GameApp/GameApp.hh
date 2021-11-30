@@ -14,4 +14,7 @@ public:
     void Init() override;
     void Tick(float fDelta) override;
     void Draw() override;
+
+private:
+    void LoadResources();
 };

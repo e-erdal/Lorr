@@ -16,11 +16,11 @@
 
 namespace Lorr
 {
-    struct CharInfo
+    struct RenderableChar
     {
-        glm::vec2 Pos;
-        glm::vec2 Size;
-        glm::vec4 UV;
+        glm::vec4 Bounds = {};
+        glm::vec4 UV = {};
+        glm::vec2 Size = {};
     };
 
     struct FontDesc
@@ -30,8 +30,13 @@ namespace Lorr
 
     struct FontData
     {
-        BufferStream TTFData{};
+        BufferStream TTFData = {};
         tiny_utf8::string UsingChars = "";
+    };
+
+    struct FontRenderBuffer
+    {
+        glm::vec4 RangePx = {};
     };
 
     class Font : public IResource<FontDesc, FontData>
@@ -39,9 +44,6 @@ namespace Lorr
     public:
         void Init(const Identifier &ident, FontDesc *pDesc, FontData *pData) override;
         static void ParseToMemory(FontData *pOutData, BufferStream &outBuf);
-
-        // ftgl::texture_glyph_t *GetGlyph(char32_t target);
-        float GetKerning(char32_t before, char32_t current);
 
         static constexpr ResourceType m_ResType = ResourceType::Font;
 
@@ -52,16 +54,24 @@ namespace Lorr
         }
 
     private:
-        msdfgen::FontHandle *m_pHandle = 0;
-        std::vector<msdf_atlas::GlyphGeometry> m_Glyphs;
+        msdfgen::FontHandle *m_pHandle = nullptr;
+        msdf_atlas::FontGeometry *m_pGeometry = nullptr;
+
+        struct GlyphInfo
+        {
+            glm::ivec2 BoxSize = {};
+            glm::vec4 TextureCoord = {};
+            glm::vec4 BoundingBox = {};
+
+            float Advance = 0;
+            i32 Index = 0;
+        };
+        std::unordered_map<char32_t, GlyphInfo> m_Chars;
 
         TextureHandle m_Texture = 0;
-    };
 
-    namespace TextEngine
-    {
-        void CalculateSize(Font *pFont, glm::vec2 &outSize, const tiny_utf8::string &text, size_t maxWidth);
-        void AlignAll(Font *pFont, const tiny_utf8::string &text, std::vector<CharInfo> &outInfo, glm::vec2 &outSize, size_t maxWidth);
-    }  // namespace TextEngine
+    public:
+        void AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, glm::vec2 &outSize, size_t maxWidth);
+    };
 
 }  // namespace Lorr

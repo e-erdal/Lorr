@@ -91,17 +91,15 @@ namespace Lorr
         D3D11RenderTargetManager m_TargetManager;
 
         //* View handles *//
-        TextureHandle m_DepthTexture = 0;
+        D3D11Texture *m_pDepthTexture = 0;
 
         //* Current API states *//
         D3D11_BLEND_DESC m_BlendDesc = {};
         D3D11_RASTERIZER_DESC m_RasterizerDesc = {};
-        D3D11_DEPTH_STENCIL_VIEW_DESC m_DepthStencilViewDesc = {};
         D3D11_DEPTH_STENCIL_DESC m_DepthStencilDesc = {};
 
         ID3D11BlendState *m_pBlendState = 0;
         ID3D11RasterizerState *m_pRasterizerState = 0;
-        ID3D11DepthStencilView *m_pDepthStencilView = 0;
         ID3D11DepthStencilState *m_pDepthStencilState = 0;
 
         bool m_NeedToPresent = true;

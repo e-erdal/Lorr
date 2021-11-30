@@ -28,7 +28,7 @@ namespace Lorr::PostProcess
         textureDesc.Type = TEXTURE_TYPE_RW;
 
         TextureData textureData;
-        textureData.Format = TEXTURE_FORMAT_RGBAF32;
+        textureData.Format = TEXTURE_FORMAT_RGBA32F;
         textureData.Width = pWindow->GetWidth();
         textureData.Height = pWindow->GetHeight();
         m_UAVTexture = Texture::Create("postprocess://lensflare-downsample-rw", &textureDesc, &textureData);

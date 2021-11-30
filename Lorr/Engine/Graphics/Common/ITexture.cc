@@ -59,4 +59,9 @@ namespace Lorr
         return 0;
     }
 
+    TextureHandle Texture::Get(const Identifier &ident)
+    {
+        return GetEngine()->GetResourceMan()->GetResource<ITexture>(ident);
+    }
+
 }  // namespace Lorr

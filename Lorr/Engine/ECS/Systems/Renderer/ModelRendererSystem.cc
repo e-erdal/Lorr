@@ -26,7 +26,7 @@ namespace Lorr::System
         ShaderProgram *modelProgram = pEngine->GetShaderMan()->GetProgram("shader://model");
         RenderBufferHandle modelCBuf = pEngine->GetShaderMan()->GetRenderBuffer("cbuffer://model");
 
-        pRenderer->SetCurrentTarget("renderer://postprocess");
+        // pRenderer->SetCurrentTarget("renderer://postprocess");
 
         modelCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
 
@@ -38,8 +38,8 @@ namespace Lorr::System
             model.Render();
         });
 
-        postProcessTexture->GenerateMips();
-        pRenderer->SetCurrentTarget("renderer://backbuffer");
+        // postProcessTexture->GenerateMips();
+        // pRenderer->SetCurrentTarget("renderer://backbuffer");
     }
 
 }  // namespace Lorr::System
