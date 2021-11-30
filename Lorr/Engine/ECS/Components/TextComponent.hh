@@ -22,10 +22,13 @@ namespace Lorr::Component
             glm::vec2 a;
             pFont->AlignAll(text, m_Chars, m_PixelRange, a, maxWidth);
             m_Texture = pFont->GetTexture();
+            m_SizePx = pFont->GetSizePx();
         }
 
-        TextureHandle m_Texture;
         float m_PixelRange;
+        float m_SizePx;
+
+        TextureHandle m_Texture;
         std::vector<RenderableChar> m_Chars;
     };
 

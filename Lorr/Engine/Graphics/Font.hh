@@ -53,6 +53,11 @@ namespace Lorr
             return m_Texture;
         }
 
+        float GetSizePx()
+        {
+            return m_SizePx;
+        }
+
     private:
         msdfgen::FontHandle *m_pHandle = nullptr;
         msdf_atlas::FontGeometry *m_pGeometry = nullptr;
@@ -70,6 +75,7 @@ namespace Lorr
 
         TextureHandle m_Texture = 0;
         float m_PixelRangle = 0;
+        float m_SizePx = 0;
 
     public:
         void AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);

@@ -72,6 +72,8 @@ TextureHandle texture;
 Font *pFont;
 ShaderProgram *fontShader;
 
+Entity textEntity;
+
 void GameApp::Init()
 {
     LoadResources();
@@ -91,7 +93,7 @@ void GameApp::Init()
     m_pCurrentScene->Init("scene://default-scene");
 
     // Post-process target
-    pRenderer->CreateTarget("renderer://postprocess", width, height, 0, 6);
+    pRenderer->CreateTarget("renderer://postprocess", width, height, 0);
     pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
 
     // Load shaders
@@ -99,9 +101,9 @@ void GameApp::Init()
     //** Init entities **//
     // Create entities
 
-    Entity textEntity = m_pCurrentScene->CreateEntity("test");
-    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(292 * 5.3, 292 * 5.3, 1));
-    textEntity.AddComponent<Component::Text>(pFont, "W");
+    textEntity = m_pCurrentScene->CreateEntity("test");
+    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(30, 30, 1));
+    textEntity.AddComponent<Component::Text>(pFont, "B");
 
     // ModelDesc modelDesc;
     // modelDesc.Dynamic = false;
@@ -129,7 +131,9 @@ void GameApp::Draw()
     Renderer2D::FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
 
     ImGui::Begin("GameApp", nullptr);
+    ImGui::Text("B");
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
+    ImGui::SliderFloat("Scale", &textEntity.GetComponent<Component::Transform>().Size.x, 0, 2000);
     ImGui::End();
 }
 
@@ -161,6 +165,6 @@ void GameApp::LoadResources()
 
     //* Fonts *//
     FontDesc desc;
-    desc.SizePX = 32;
+    desc.SizePX = 40;
     pFont = resourceMan->LoadResource<Font>("font://font", "font.lr", &desc);
 }

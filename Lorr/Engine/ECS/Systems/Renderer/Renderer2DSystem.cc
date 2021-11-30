@@ -60,20 +60,40 @@ namespace Lorr::System
                 Component::Text &text = m_pRegistry->get<Component::Text>(entity);
 
                 /// Calculate distance factor
-                float distanceFactor = (transform.Size.x / text.m_Texture->GetWidth()) * text.m_PixelRange;
+                float distanceFactor = text.m_PixelRange * (text.m_Texture->GetWidth() / text.m_SizePx);
+
                 fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
                 fontCBuf->SetData(&fontRenderBufferData, sizeof(FontRenderBuffer));
                 pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
 
                 pBatcher->SetCurrentTexture(text.m_Texture);
 
-                glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
-                pBatcher->PushRect(matrix);
+                glm::mat4 matrix = Math::CalcTransform(transform.Position, glm::vec3(transform.Size.x));
 
-                /*for (const auto &c : text.m_Chars)
+                for (const auto &c : text.m_Chars)
                 {
+                    auto pVertex = pBatcher->AllocVertex();
 
-                }*/
+                    pVertex->Position = matrix * glm::vec4(c.Bounds.x, c.Bounds.y, 1, 1);
+                    pVertex->TexCoord = glm::vec2(c.UV.x, c.UV.y);
+                    pVertex->Color = glm::vec4(255);
+                    pVertex++;
+
+                    pVertex->Position = matrix * glm::vec4(c.Bounds.x, c.Bounds.w, 1, 1);
+                    pVertex->TexCoord = glm::vec2(c.UV.x, c.UV.w);
+                    pVertex->Color = glm::vec4(255);
+                    pVertex++;
+
+                    pVertex->Position = matrix * glm::vec4(c.Bounds.z, c.Bounds.w, 1, 1);
+                    pVertex->TexCoord = glm::vec2(c.UV.z, c.UV.w);
+                    pVertex->Color = glm::vec4(255);
+                    pVertex++;
+
+                    pVertex->Position = matrix * glm::vec4(c.Bounds.z, c.Bounds.y, 1, 1);
+                    pVertex->TexCoord = glm::vec2(c.UV.z, c.UV.y);
+                    pVertex->Color = glm::vec4(255);
+                    pVertex++;
+                }
             }
         });
 

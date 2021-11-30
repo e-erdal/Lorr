@@ -36,8 +36,8 @@ namespace Lorr
         /// Configure atlas
         TightAtlasPacker packer;
         packer.setDimensionsConstraint(msdf_atlas::TightAtlasPacker::DimensionsConstraint::MULTIPLE_OF_FOUR_SQUARE);
-        packer.setScale(40.f);
-        packer.setPixelRange(4.f);
+        packer.setScale(pDesc->SizePX);
+        packer.setPixelRange(8.f);
         packer.setPadding(0);
         packer.setMiterLimit(2.f);
 
@@ -54,7 +54,7 @@ namespace Lorr
         Workload(
             [&](int i, int threadNo) -> bool {
                 u64 glyphSeed = (kMCGMultiplier * (glyphSeed ^ i) + 1442695040888963407ull) * !!glyphSeed;
-                glyphs[i].edgeColoring(msdfgen::edgeColoringByDistance, 3, glyphSeed);
+                glyphs[i].edgeColoring(msdfgen::edgeColoringSimple, 3, glyphSeed);
                 return true;
             },
             glyphs.size())
@@ -116,6 +116,7 @@ namespace Lorr
         }
 
         m_PixelRangle = packer.getPixelRange();
+        m_SizePx = pDesc->SizePX;
     }
 
     void Font::ParseToMemory(FontData *pOutData, BufferStream &outBuf)
