@@ -100,7 +100,7 @@ void GameApp::Init()
     // Create entities
 
     Entity textEntity = m_pCurrentScene->CreateEntity("test");
-    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(292 * 0.3, 292 * 0.3, 1));
+    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(292 * 5.3, 292 * 5.3, 1));
     textEntity.AddComponent<Component::Text>(pFont, "W");
 
     // ModelDesc modelDesc;
@@ -155,9 +155,6 @@ void GameApp::LoadResources()
     shaderMan->CreateProgram("shader://batcher", VertexBatcher::m_Layout, "shaders/batchv.lr", "shaders/batchp.lr");
 
     // Font constant buffer
-    FontRenderBuffer fontRenderBufferData;
-    fontRenderBufferData.RangePx = { ((292 * 0.3) / 292.f) * 4.f, 0, 0, 0 };
-    genericDynBufferDesc.pData = &fontRenderBufferData;
     genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
     shaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
     fontShader = shaderMan->CreateProgram("shader://font", VertexBatcher::m_Layout, "shaders/fontv.lr", "shaders/fontp.lr");

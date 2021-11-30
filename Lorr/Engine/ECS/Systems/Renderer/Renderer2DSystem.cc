@@ -51,15 +51,23 @@ namespace Lorr::System
         pBatcher->Reset();
         pBatcher->SetCurrentProgram(pFontProgram);
         pRenderer->UseConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
-        pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
+
+        FontRenderBuffer fontRenderBufferData;
 
         m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
             if (m_pRegistry->has<Component::Text>(entity))
             {
                 Component::Text &text = m_pRegistry->get<Component::Text>(entity);
-                pBatcher->SetCurrentTexture(text.m_Texture);
-                glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
 
+                /// Calculate distance factor
+                float distanceFactor = (transform.Size.x / text.m_Texture->GetWidth()) * text.m_PixelRange;
+                fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
+                fontCBuf->SetData(&fontRenderBufferData, sizeof(FontRenderBuffer));
+                pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
+
+                pBatcher->SetCurrentTexture(text.m_Texture);
+
+                glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
                 pBatcher->PushRect(matrix);
 
                 /*for (const auto &c : text.m_Chars)

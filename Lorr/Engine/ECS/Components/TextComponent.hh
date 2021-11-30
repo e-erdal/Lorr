@@ -20,12 +20,12 @@ namespace Lorr::Component
         void SetText(Font *pFont, const tiny_utf8::string &text, size_t maxWidth = 0)
         {
             glm::vec2 a;
-            pFont->AlignAll(text, m_Chars, a, maxWidth);
+            pFont->AlignAll(text, m_Chars, m_PixelRange, a, maxWidth);
             m_Texture = pFont->GetTexture();
         }
 
         TextureHandle m_Texture;
-
+        float m_PixelRange;
         std::vector<RenderableChar> m_Chars;
     };
 

@@ -69,9 +69,10 @@ namespace Lorr
         std::unordered_map<char32_t, GlyphInfo> m_Chars;
 
         TextureHandle m_Texture = 0;
+        float m_PixelRangle = 0;
 
     public:
-        void AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, glm::vec2 &outSize, size_t maxWidth);
+        void AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
     };
 
 }  // namespace Lorr

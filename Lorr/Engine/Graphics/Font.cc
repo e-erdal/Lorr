@@ -114,14 +114,17 @@ namespace Lorr
 
             m_Chars[glyph.getCodepoint()] = info;
         }
+
+        m_PixelRangle = packer.getPixelRange();
     }
 
     void Font::ParseToMemory(FontData *pOutData, BufferStream &outBuf)
     {
     }
 
-    void Font::AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, glm::vec2 &outSize, size_t maxWidth)
+    void Font::AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
     {
+        outPixelRange = m_PixelRangle;
         const msdfgen::FontMetrics fontMetrics = m_pGeometry->getMetrics();
         double fsScale = 1.0 / (fontMetrics.ascenderY - fontMetrics.descenderY);
 
