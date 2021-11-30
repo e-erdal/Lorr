@@ -37,3 +37,6 @@
 [submodule "Vendor/meshoptimizer"]
 	path = Vendor/meshoptimizer
 	url = https://github.com/zeux/meshoptimizer.git
+[submodule "Vendor/bvh"]
+	path = Vendor/bvh
+	url = https://github.com/madmann91/bvh.git
