@@ -96,22 +96,12 @@ void GameApp::Init()
     pRenderer->CreateTarget("renderer://postprocess", width, height, 0);
     pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
 
-    // Load shaders
-
     //** Init entities **//
     // Create entities
 
     textEntity = m_pCurrentScene->CreateEntity("test");
     textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(30, 30, 1));
-    textEntity.AddComponent<Component::Text>(pFont, "B");
-
-    // ModelDesc modelDesc;
-    // modelDesc.Dynamic = false;
-    // ModelData modelData;
-    // GetEngine()->GetResourceMan()->ImportResource(ResourceType::Model, "models/island.lr", modelData);
-    // model.Init("resource://teapot", &modelDesc, &modelData);
-    // model.Init("sponza.obj");
-    // model.AddSphere(100, 128, pRenderer->GetPlaceholder());
+    textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "FPS: 500\nFrame(ms): 0...05jjj");
 }
 
 void GameApp::Tick(float fDelta)
@@ -131,9 +121,10 @@ void GameApp::Draw()
     Renderer2D::FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
 
     ImGui::Begin("GameApp", nullptr);
-    ImGui::Text("B");
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-    ImGui::SliderFloat("Scale", &textEntity.GetComponent<Component::Transform>().Size.x, 0, 2000);
+    glm::vec3 &size = textEntity.GetComponent<Component::Transform>().Size;
+    ImGui::SliderFloat("Scale", &size.x, 0, 2000);
+    size.y = size.x;
     ImGui::End();
 }
 

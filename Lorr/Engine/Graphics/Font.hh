@@ -18,7 +18,7 @@ namespace Lorr
 {
     struct RenderableChar
     {
-        glm::vec4 Bounds = {};
+        glm::vec2 Position = {};
         glm::vec4 UV = {};
         glm::vec2 Size = {};
     };
@@ -37,6 +37,19 @@ namespace Lorr
     struct FontRenderBuffer
     {
         glm::vec4 RangePx = {};
+    };
+
+    enum class TextAlignment
+    {
+        Left,
+        Right,
+        Middle
+    };
+
+    struct TextLine
+    {
+        std::vector<RenderableChar> Chars;
+        float Width;
     };
 
     class Font : public IResource<FontDesc, FontData>
@@ -64,7 +77,6 @@ namespace Lorr
 
         struct GlyphInfo
         {
-            glm::ivec2 BoxSize = {};
             glm::vec4 TextureCoord = {};
             glm::vec4 BoundingBox = {};
 
@@ -72,13 +84,14 @@ namespace Lorr
             i32 Index = 0;
         };
         std::unordered_map<char32_t, GlyphInfo> m_Chars;
+        std::map<std::pair<i32, i32>, float> m_Kerning;
 
         TextureHandle m_Texture = 0;
         float m_PixelRangle = 0;
         float m_SizePx = 0;
 
     public:
-        void AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
+        void AlignAll(const tiny_utf8::string &text, std::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
     };
 
 }  // namespace Lorr

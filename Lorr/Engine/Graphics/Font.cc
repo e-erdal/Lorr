@@ -30,7 +30,7 @@ namespace Lorr
 
         std::vector<msdf_atlas::GlyphGeometry> glyphs;
         m_pGeometry = new FontGeometry(&glyphs);
-        m_pGeometry->loadCharset(m_pHandle, 1, charset);
+        m_pGeometry->loadCharset(m_pHandle, 1, charset, true, true);
 
         //* Atlas generation *//
         /// Configure atlas
@@ -54,7 +54,7 @@ namespace Lorr
         Workload(
             [&](int i, int threadNo) -> bool {
                 u64 glyphSeed = (kMCGMultiplier * (glyphSeed ^ i) + 1442695040888963407ull) * !!glyphSeed;
-                glyphs[i].edgeColoring(msdfgen::edgeColoringSimple, 3, glyphSeed);
+                glyphs[i].edgeColoring(msdfgen::edgeColoringByDistance, 3, glyphSeed);
                 return true;
             },
             glyphs.size())
@@ -101,18 +101,23 @@ namespace Lorr
             r = 1.f / m_Texture->GetWidth() * r;
             t = 1.f / m_Texture->GetHeight() * invT;
 
-            info.TextureCoord = glm::vec4(l, t, r, b);
+            info.TextureCoord = glm::vec4(l, t, r, b);  // V coord flip
 
             //* Calculate bounding box metrics *//
             glyph.getQuadPlaneBounds(l, b, r, t);
             info.BoundingBox = glm::vec4(l, b, r, t);
 
-            glyph.getBoxSize(info.BoxSize.x, info.BoxSize.y);
-
             info.Index = glyph.getIndex();
             info.Advance = glyph.getAdvance();
 
             m_Chars[glyph.getCodepoint()] = info;
+        }
+
+        LOG_TRACE("Total kernings to process: {}", m_pGeometry->getKerning().size());
+        for (auto &kerning : m_pGeometry->getKerning())
+        {
+            m_Kerning[std::make_pair<i32, i32>((i32)kerning.first.first, (i32)kerning.first.second)] = (float)kerning.second;
+            LOG_TRACE("{} {}: {}", (char)kerning.first.first, (char)kerning.first.second, kerning.second);
         }
 
         m_PixelRangle = packer.getPixelRange();
@@ -123,14 +128,15 @@ namespace Lorr
     {
     }
 
-    void Font::AlignAll(const tiny_utf8::string &text, std::vector<RenderableChar> &outChars, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
+    void Font::AlignAll(const tiny_utf8::string &text, std::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
     {
         outPixelRange = m_PixelRangle;
         const msdfgen::FontMetrics fontMetrics = m_pGeometry->getMetrics();
-        double fsScale = 1.0 / (fontMetrics.ascenderY - fontMetrics.descenderY);
+        float fsScale = 1.0 / (fontMetrics.ascenderY - fontMetrics.descenderY);
 
+        TextLine line;
         glm::vec2 pen = {};
-
+        i32 beforeIndex = 0;  // Charset index of c[i - 1]
         for (int i = 0; i < text.length(); i++)
         {
             char32_t c = text[i];
@@ -141,31 +147,46 @@ namespace Lorr
                 pen.y += fsScale * fontMetrics.lineHeight;
                 outSize.y = pen.y;
 
+                outLines.push_back(line);
+                line.Chars.clear();
+                continue;
+            }
+            else if (c == '\t')
+            {
+                pen.x += 3.0 - fmod(pen.x, 3.0);
                 continue;
             }
             else if (pen.x == 0 && c == ' ')  // Ignore whitespace at the start of line
+            {
                 continue;
+            }
 
             auto glyphIt = m_Chars.find(c);
             if (glyphIt == m_Chars.end()) glyphIt = m_Chars.find('\n');
             const auto &glyph = glyphIt->second;
 
-            glm::vec4 planeBounds = glyph.BoundingBox;
-            planeBounds *= fsScale;
-            planeBounds.x += pen.x;
-            planeBounds.z += pen.x;
-            planeBounds.y += pen.y;
-            planeBounds.w += pen.y;
+            float kerning = 0;
+            if (i > 0)
+            {
+                auto kerningIt = m_Kerning.find(std::make_pair(beforeIndex, glyph.Index));
+                if (kerningIt != m_Kerning.end()) kerning = kerningIt->second;
+            }
+            beforeIndex = glyph.Index;
 
             RenderableChar info;
-            info.Bounds = planeBounds;
-            info.Size = glyph.BoxSize;
+            info.Position = glm::vec2(pen.x, -glyph.BoundingBox.w + fontMetrics.lineHeight * fsScale + pen.y);
+            info.Size = glm::vec2(glyph.BoundingBox.z - glyph.BoundingBox.x, glyph.BoundingBox.w - glyph.BoundingBox.y) * fsScale;
             info.UV = glyph.TextureCoord;
-            outChars.push_back(info);
+            line.Chars.push_back(info);
 
-            pen.x += fsScale * glyph.Advance;
+            pen.x += fsScale * glyph.Advance + kerning; //? There is something wrong with this, not sure what but looks close enough
+            line.Width = pen.x;
+
             outSize.x = fmax(outSize.x, pen.x);
         }
+
+        outLines.push_back(line);
+        line.Chars.clear();
     }
 
 }  // namespace Lorr

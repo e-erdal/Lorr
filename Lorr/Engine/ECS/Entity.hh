@@ -5,6 +5,8 @@
 
 #pragma once
 
+#include "Engine/Graphics/Font.hh"
+
 #include <entt.hpp>
 #include <tinyutf8/tinyutf8.h>
 
@@ -58,7 +60,7 @@ namespace Lorr
     public:
         Entity &AttachDynamicBox(float destiny, float friction);
         Entity &AttachStaticBox(float destiny = 0.f);
-        Entity &AttachText(const Identifier &fontIdent, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth = 0);
+        Entity &AttachText(const Identifier &fontIdent, TextAlignment alignment, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth = 0);
         Entity &AttachModel(const std::string &path);
 
     private:

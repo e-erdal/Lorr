@@ -60,7 +60,7 @@ namespace Lorr::System
                 Component::Text &text = m_pRegistry->get<Component::Text>(entity);
 
                 /// Calculate distance factor
-                float distanceFactor = text.m_PixelRange * (text.m_Texture->GetWidth() / text.m_SizePx);
+                float distanceFactor = text.m_PixelRange * (transform.Size.x / text.m_SizePx);
 
                 fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
                 fontCBuf->SetData(&fontRenderBufferData, sizeof(FontRenderBuffer));
@@ -68,31 +68,26 @@ namespace Lorr::System
 
                 pBatcher->SetCurrentTexture(text.m_Texture);
 
-                glm::mat4 matrix = Math::CalcTransform(transform.Position, glm::vec3(transform.Size.x));
+                glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
 
-                for (const auto &c : text.m_Chars)
+                for (const auto &line : text.m_Lines)
                 {
-                    auto pVertex = pBatcher->AllocVertex();
+                    float verticalPos = 0;
 
-                    pVertex->Position = matrix * glm::vec4(c.Bounds.x, c.Bounds.y, 1, 1);
-                    pVertex->TexCoord = glm::vec2(c.UV.x, c.UV.y);
-                    pVertex->Color = glm::vec4(255);
-                    pVertex++;
+                    switch (text.m_Alignment)
+                    {
+                        case TextAlignment::Left: break;
+                        case TextAlignment::Right: verticalPos = text.m_Size.x - line.Width; break;
+                        case TextAlignment::Middle: verticalPos = text.m_Size.x / 2 - line.Width / 2; break;
+                    }
 
-                    pVertex->Position = matrix * glm::vec4(c.Bounds.x, c.Bounds.w, 1, 1);
-                    pVertex->TexCoord = glm::vec2(c.UV.x, c.UV.w);
-                    pVertex->Color = glm::vec4(255);
-                    pVertex++;
-
-                    pVertex->Position = matrix * glm::vec4(c.Bounds.z, c.Bounds.w, 1, 1);
-                    pVertex->TexCoord = glm::vec2(c.UV.z, c.UV.w);
-                    pVertex->Color = glm::vec4(255);
-                    pVertex++;
-
-                    pVertex->Position = matrix * glm::vec4(c.Bounds.z, c.Bounds.y, 1, 1);
-                    pVertex->TexCoord = glm::vec2(c.UV.z, c.UV.y);
-                    pVertex->Color = glm::vec4(255);
-                    pVertex++;
+                    for (const auto &c : line.Chars)
+                    {
+                        // TODO: Might be extremely expensive but who asked?
+                        glm::mat4 charMat = glm::translate(matrix, glm::vec3(c.Position, 1) + glm::vec3(verticalPos, 0, 0));
+                        charMat = glm::scale(charMat, glm::vec3(c.Size, 1));
+                        pBatcher->PushRect(charMat, c.UV);
+                    }
                 }
             }
         });
