@@ -8,19 +8,19 @@
 #include "Engine/Graphics/Types.hh"
 #include "Engine/Graphics/D3D/D3DType.hh"
 
-#include "IRenderBuffer.hh"
-#include "IShader.hh"
-#include "ITexture.hh"
+#include "BaseRenderBuffer.hh"
+#include "BaseShader.hh"
+#include "BaseTexture.hh"
 
 #include "Engine/Graphics/PostProcess/IPostProcess.hh"
 
 namespace Lorr
 {
     class Engine;
-    class IRenderer
+    class BaseRenderer
     {
     public:
-        IRenderer() = default;
+        BaseRenderer() = default;
 
         virtual bool Init(PlatformWindow *pWindow, u32 width, u32 height) = 0;
         void InitParent();

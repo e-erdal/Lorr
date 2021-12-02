@@ -7,7 +7,7 @@
 
 #if LR_BACKEND_D3D11
 
-#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
 
 #include <d3d11.h>
 
@@ -44,7 +44,7 @@ namespace Lorr
             {
                 pView->Release();
                 pView = 0;
-                
+
                 if (!IsBackbuffer)
                 {
                     delete ViewTexture;

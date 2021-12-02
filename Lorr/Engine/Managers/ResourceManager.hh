@@ -11,8 +11,8 @@
 #include "Engine/Stream/BufferStream.hh"
 #include "Engine/Stream/FileStream.hh"
 
-#include "Engine/Graphics/Common/ITexture.hh"
-#include "Engine/Graphics/Common/IShader.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
+#include "Engine/Graphics/Common/BaseShader.hh"
 
 #include "Engine/Audio/AudioSystem.hh"
 #include "Engine/Graphics/Font.hh"

@@ -313,7 +313,7 @@ namespace Lorr
         ZoneScopedN("ImGuiHandler::Render");
 
         ImDrawData *pDrawData = ImGui::GetDrawData();
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         Camera2D *pCamera = GetEngine()->GetCamera2D();
 
         pRenderer->SetCurrentTarget("renderer://backbuffer");

@@ -73,7 +73,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         pRenderer->UseShader(pThis->VertexShader);
         pRenderer->UseShader(pThis->PixelShader);
@@ -91,7 +91,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         pRenderer->UseShader(pThis->VertexShader);
         pRenderer->UseShader(pixelShader);
@@ -109,7 +109,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         pRenderer->UseShader(pProgram->Vertex);
         pRenderer->UseShader(pProgram->Pixel);

@@ -11,7 +11,7 @@
 
 #include <tinyutf8/tinyutf8.h>
 
-#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
 #include "Engine/Resource/IResource.hh"
 
 namespace Lorr

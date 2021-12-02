@@ -60,7 +60,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         SAFE_DELETE(m_VertexBuffer);
 

@@ -164,7 +164,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         m_Texture->Use();
         pRenderer->UseVertexBuffer(m_VertexBuffer, &m_Layout);

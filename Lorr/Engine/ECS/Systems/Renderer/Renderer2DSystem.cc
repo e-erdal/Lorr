@@ -19,7 +19,7 @@ namespace Lorr::System
     {
         ZoneScoped;
 
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 
         // Stuff that renderer requires

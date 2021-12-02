@@ -181,7 +181,7 @@ namespace Lorr
         ZoneScoped;
 
         TextureData data;
-        ITexture::ParseToMemory(&data, inBuf);
+        BaseTexture::ParseToMemory(&data, inBuf);
 
         outBuf.Reset();
         outBuf.Insert(data.Width);
@@ -214,7 +214,7 @@ namespace Lorr
         ZoneScoped;
 
         ShaderData data;
-        IShader::ParseToMemory(&data, inBuf);
+        BaseShader::ParseToMemory(&data, inBuf);
 
         outBuf.Reset();
         outBuf.Insert(data.Renderer);

@@ -6,13 +6,13 @@
 
 #if LR_BACKEND_D3D11
 
-#include "Engine/Graphics/Common/IShader.hh"
+#include "Engine/Graphics/Common/BaseShader.hh"
 
 #include "D3D11Renderer.hh"
 
 namespace Lorr
 {
-    class D3D11Shader : public IShader
+    class D3D11Shader : public BaseShader
     {
     public:
         void Init(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData) override;

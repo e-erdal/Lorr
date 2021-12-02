@@ -135,7 +135,7 @@ namespace Lorr
     {
         D3D_FEATURE_LEVEL level;
 
-        switch (IRenderer::CurrentAPI())
+        switch (BaseRenderer::CurrentAPI())
         {
             case RendererType::D3D11: level = D3D11Renderer::Get()->GetDevice()->GetFeatureLevel(); break;
             case RendererType::D3D12: break;

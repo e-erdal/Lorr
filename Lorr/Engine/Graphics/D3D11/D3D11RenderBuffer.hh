@@ -6,12 +6,13 @@
 
 #if LR_BACKEND_D3D11
 
-#include "Engine/Graphics/D3D11/D3D11Renderer.hh"
-#include "Engine/Graphics/Common/IRenderBuffer.hh"
+#include "D3D11Renderer.hh"
+
+#include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
 namespace Lorr
 {
-    class D3D11RenderBuffer : public IRenderBuffer
+    class D3D11RenderBuffer : public BaseRenderBuffer
     {
     public:
         void Init(const RenderBufferDesc &desc) override;

@@ -9,7 +9,7 @@
 
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
 #include "Engine/Graphics/Font.hh"
-#include "Engine/Graphics/Renderer/Renderer2D.hh"
+#include "Engine/Graphics/Renderer2D.hh"
 
 #include "Engine/Model/Model.hh"
 
@@ -84,7 +84,7 @@ void GameApp::Init()
     GetEngine()->GetWindow()->OnSetMousePosition.connect<MouseMove>();
 
     //* Required vars
-    IRenderer *pRenderer = GetEngine()->GetRenderer();
+    BaseRenderer *pRenderer = GetEngine()->GetRenderer();
     u32 width = GetEngine()->GetWindow()->GetWidth();
     u32 height = GetEngine()->GetWindow()->GetHeight();
 
@@ -99,9 +99,30 @@ void GameApp::Init()
     //** Init entities **//
     // Create entities
 
-    textEntity = m_pCurrentScene->CreateEntity("test");
-    textEntity.AddComponent<Component::Transform>(glm::vec3(0, 0, 1), glm::vec3(30, 30, 1));
-    textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "FPS: 500\nFrame(ms): 0...05jjj");
+    {
+        textEntity = m_pCurrentScene->CreateEntity("test");
+        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 0, 1), glm::vec3(50, 50, 1));
+        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "Left\nAligned\nText");
+        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
+    }
+    {
+        textEntity = m_pCurrentScene->CreateEntity("test2");
+        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 200, 1), glm::vec3(50, 50, 1));
+        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Middle, "Center\nAligned\nText");
+        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
+    }
+    {
+        textEntity = m_pCurrentScene->CreateEntity("test3");
+        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 400, 1), glm::vec3(50, 50, 1));
+        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Right, "Right\nAligned\nText");
+        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
+    }
+    {
+        textEntity = m_pCurrentScene->CreateEntity("test3");
+        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 600, 1), glm::vec3(50, 50, 1));
+        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "Tabs \tålşö wıth\nütf8\tğ Ğ");
+        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
+    }
 }
 
 void GameApp::Tick(float fDelta)
@@ -113,7 +134,7 @@ void GameApp::Tick(float fDelta)
 void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
-    IRenderer *pRenderer = GetEngine()->GetRenderer();
+    BaseRenderer *pRenderer = GetEngine()->GetRenderer();
     VertexBatcher *pBatcher = GetEngine()->GetBatcher();
     ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 

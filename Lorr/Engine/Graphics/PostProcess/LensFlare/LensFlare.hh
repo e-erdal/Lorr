@@ -9,9 +9,9 @@
 
 #include "PostProcess/IPostProcess.hh"
 
-#include "Common/IShader.hh"
-#include "Common/IRenderBuffer.hh"
-#include "Common/ITexture.hh"
+#include "Common/BaseShader.hh"
+#include "Common/BaseRenderBuffer.hh"
+#include "Common/BaseTexture.hh"
 
 namespace Lorr::PostProcess
 {

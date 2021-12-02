@@ -4,9 +4,9 @@
 
 #pragma once
 
-#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
+#include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 #include "Engine/Graphics/Common/InputLayout.hh"
-#include "Engine/Graphics/Common/IRenderBuffer.hh"
 
 #include <bvh/bvh.hpp>
 

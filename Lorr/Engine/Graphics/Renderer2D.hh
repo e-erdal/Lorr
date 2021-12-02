@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Engine/Graphics/Common/ITexture.hh"
-#include "Engine/Graphics/Common/IShader.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
+#include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Managers/ShaderManager.hh"
 
 namespace Lorr::Renderer2D

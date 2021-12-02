@@ -6,7 +6,7 @@
 
 #include "Mesh.hh"
 
-#include "Engine/Graphics/Common/IRenderBuffer.hh"
+#include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
 namespace Lorr
 {

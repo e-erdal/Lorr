@@ -1,7 +1,9 @@
-#include "ITexture.hh"
+#include "BaseTexture.hh"
 
 #include "Engine/App/Engine.hh"
-#include "Engine/Graphics/Common/IRenderer.hh"
+
+#include "BaseRenderer.hh"
+
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
 
 #include <bx/allocator.h>
@@ -15,7 +17,7 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 namespace Lorr
 {
-    void ITexture::ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer)
+    void BaseTexture::ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer)
     {
         auto *imageContainer = bimg::imageParse(&s_allocator, imageBuffer.GetData(), imageBuffer.GetSize());
 
@@ -31,7 +33,7 @@ namespace Lorr
 
     TextureHandle Texture::Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc)
     {
-        switch (IRenderer::CurrentAPI())
+        switch (BaseRenderer::CurrentAPI())
         {
             case RendererType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Texture>(ident, path, pDesc);
             default: break;
@@ -42,7 +44,7 @@ namespace Lorr
 
     TextureHandle Texture::Create(const Identifier &ident, TextureDesc *pDesc, TextureData *pData)
     {
-        switch (IRenderer::CurrentAPI())
+        switch (BaseRenderer::CurrentAPI())
         {
             case RendererType::D3D11:
             {
@@ -51,7 +53,7 @@ namespace Lorr
                 texture->Init(ident, pDesc, pData);
                 GetEngine()->GetResourceMan()->Append(texture);
 
-                return (ITexture *)texture;
+                return (BaseTexture *)texture;
             }
             default: break;
         }
@@ -61,7 +63,7 @@ namespace Lorr
 
     TextureHandle Texture::Get(const Identifier &ident)
     {
-        return GetEngine()->GetResourceMan()->GetResource<ITexture>(ident);
+        return GetEngine()->GetResourceMan()->GetResource<BaseTexture>(ident);
     }
 
 }  // namespace Lorr

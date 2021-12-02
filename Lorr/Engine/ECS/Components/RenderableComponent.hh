@@ -6,7 +6,7 @@
 
 #include "Engine/ECS/Entity.hh"
 
-#include "Engine/Graphics/Common/ITexture.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
 
 namespace Lorr::Component
 {

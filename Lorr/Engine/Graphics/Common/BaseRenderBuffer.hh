@@ -65,7 +65,7 @@ namespace Lorr
         u32 UAVElements = 0;  // The number of elements in the resource. For structured buffers, this is the number of structures in the buffer.
     };
 
-    class IRenderBuffer
+    class BaseRenderBuffer
     {
     public:
         virtual void Init(const RenderBufferDesc &desc) = 0;
@@ -78,10 +78,10 @@ namespace Lorr
 
         virtual void *GetHandle() = 0;
 
-        virtual ~IRenderBuffer() = default;
+        virtual ~BaseRenderBuffer() = default;
     };
 
-    typedef IRenderBuffer *RenderBufferHandle;
+    typedef BaseRenderBuffer *RenderBufferHandle;
 
     namespace RenderBuffer
     {

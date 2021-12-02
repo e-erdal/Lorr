@@ -8,7 +8,7 @@ namespace Lorr
                                        "0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ["
                                        "\\]^_`abcdefghijklmnopqrstuvwxyz{|}~"
                                        "ĞÜŞÖÇİ"
-                                       "ğüşiöçı"
+                                       "ğüşiöçıå"
                                        "©•";
 
     static FreetypeHandle *pFTHandle = 0;
@@ -113,11 +113,9 @@ namespace Lorr
             m_Chars[glyph.getCodepoint()] = info;
         }
 
-        LOG_TRACE("Total kernings to process: {}", m_pGeometry->getKerning().size());
         for (auto &kerning : m_pGeometry->getKerning())
         {
             m_Kerning[std::make_pair<i32, i32>((i32)kerning.first.first, (i32)kerning.first.second)] = (float)kerning.second;
-            LOG_TRACE("{} {}: {}", (char)kerning.first.first, (char)kerning.first.second, kerning.second);
         }
 
         m_PixelRangle = packer.getPixelRange();
@@ -153,7 +151,7 @@ namespace Lorr
             }
             else if (c == '\t')
             {
-                pen.x += 3.0 - fmod(pen.x, 3.0);
+                pen.x += 5.0 - fmod(pen.x, 5.0);
                 continue;
             }
             else if (pen.x == 0 && c == ' ')  // Ignore whitespace at the start of line
@@ -174,12 +172,12 @@ namespace Lorr
             beforeIndex = glyph.Index;
 
             RenderableChar info;
-            info.Position = glm::vec2(pen.x, -glyph.BoundingBox.w + fontMetrics.lineHeight * fsScale + pen.y);
+            info.Position = glm::vec2(pen.x + glyph.BoundingBox.x, (-glyph.BoundingBox.w + fontMetrics.lineHeight) * fsScale + pen.y);
             info.Size = glm::vec2(glyph.BoundingBox.z - glyph.BoundingBox.x, glyph.BoundingBox.w - glyph.BoundingBox.y) * fsScale;
             info.UV = glyph.TextureCoord;
             line.Chars.push_back(info);
 
-            pen.x += fsScale * glyph.Advance + kerning; //? There is something wrong with this, not sure what but looks close enough
+            pen.x += (glyph.Advance + kerning) * fsScale;
             line.Width = pen.x;
 
             outSize.x = fmax(outSize.x, pen.x);

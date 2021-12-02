@@ -40,7 +40,7 @@ namespace Lorr::PostProcess
 
     void LensFlare::Draw()
     {
-        IRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         TextureHandle postProcView = pRenderer->GetTargetTexture("renderer://postprocess");
 
         //* Downsample Pass ----------------------------------------------------------------------------------------------- *

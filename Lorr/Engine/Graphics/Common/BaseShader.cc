@@ -1,9 +1,9 @@
-#include "IShader.hh"
+#include "BaseShader.hh"
 
 #include "Engine/App/Engine.hh"
 
+#include "BaseRenderer.hh"
 #include "Engine/Graphics/D3D/D3DProfile.hh"
-#include "Engine/Graphics/Common/IRenderer.hh"
 #include "Engine/Graphics/D3D11/D3D11Shader.hh"
 
 #include <d3dcompiler.h>
@@ -16,7 +16,7 @@
 
 namespace Lorr
 {
-    void IShader::ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer)
+    void BaseShader::ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer)
     {
         HRESULT hr;
 
@@ -59,7 +59,7 @@ namespace Lorr
 
     ShaderHandle Shader::Create(const Identifier &ident, const std::string &path, ShaderDesc *pDesc)
     {
-        switch (IRenderer::CurrentAPI())
+        switch (BaseRenderer::CurrentAPI())
         {
             case RendererType::D3D11: return GetEngine()->GetResourceMan()->LoadResource<D3D11Shader>(ident, path, pDesc);
             default: break;
@@ -70,7 +70,7 @@ namespace Lorr
 
     ShaderHandle Shader::Create(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData)
     {
-        switch (IRenderer::CurrentAPI())
+        switch (BaseRenderer::CurrentAPI())
         {
             case RendererType::D3D11:
             {

@@ -72,7 +72,7 @@ namespace Lorr
         }
     };
 
-    class ITexture : public IResource<TextureDesc, TextureData>
+    class BaseTexture : public IResource<TextureDesc, TextureData>
     {
     public:
         virtual void Init(const Identifier &ident, TextureDesc *pDesc, TextureData *pData) = 0;
@@ -85,7 +85,7 @@ namespace Lorr
         static void ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer);
         static constexpr ResourceType m_ResType = ResourceType::Texture;
 
-        virtual ~ITexture(){};
+        virtual ~BaseTexture(){};
 
     public:
         const auto &GetWidth() const
@@ -115,7 +115,7 @@ namespace Lorr
         TextureFormat m_Format;
     };
 
-    typedef ITexture *TextureHandle;
+    typedef BaseTexture *TextureHandle;
 
     namespace Texture
     {

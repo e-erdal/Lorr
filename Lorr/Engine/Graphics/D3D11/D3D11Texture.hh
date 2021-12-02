@@ -6,13 +6,14 @@
 
 #if LR_BACKEND_D3D11
 
-#include "Engine/Graphics/Common/ITexture.hh"
-#include "Engine/Graphics/Common/IRenderer.hh"
+#include "Engine/Graphics/Common/BaseTexture.hh"
+#include "Engine/Graphics/Common/BaseRenderer.hh"
+
 #include "Engine/Graphics/D3D11/D3D11Renderer.hh"
 
 namespace Lorr
 {
-    class D3D11Texture : public ITexture
+    class D3D11Texture : public BaseTexture
     {
     public:
         void Init(const Identifier &ident, TextureDesc *pDesc, TextureData *pData) override;

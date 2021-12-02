@@ -16,7 +16,7 @@ namespace Lorr::System
         
         // Engine components
         Engine *pEngine = GetEngine();
-        IRenderer *pRenderer = pEngine->GetRenderer();
+        BaseRenderer *pRenderer = pEngine->GetRenderer();
         Camera3D *pCamera = pEngine->GetCamera3D();
         TextureHandle postProcessTexture = pRenderer->GetTargetTexture("renderer://postprocess");
 

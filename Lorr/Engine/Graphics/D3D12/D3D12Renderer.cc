@@ -1,5 +1,5 @@
 #if LR_BACKEND_D3D12
-    #include "D3D12Renderer.hh"
+#include "D3D12Renderer.hh"
 
 // #include "Engine/Graphics/D3D12/D3D12Texture.hh"
 
@@ -47,7 +47,7 @@ namespace Lorr
         */
 
         InitParent();
-        
+
         return true;
     }
 
@@ -93,7 +93,7 @@ namespace Lorr
         HRESULT hr;
         u32 flags = 0;
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
         flags |= DXGI_CREATE_FACTORY_DEBUG;
 
         ID3D12Debug *pDebug = 0;
@@ -104,7 +104,7 @@ namespace Lorr
         m_pDebug->SetEnableGPUBasedValidation(true);
 
         SAFE_RELEASE(pDebug);
-    #endif
+#endif
 
         if (FAILED(hr = CreateDXGIFactory2(flags, IID_PPV_ARGS(&m_pFactory))))
         {
@@ -134,9 +134,9 @@ namespace Lorr
             return false;
         }
 
-    #ifdef _DEBUG
+#ifdef _DEBUG
         m_pDebug->QueryInterface(&m_pDebugDevice);
-    #endif
+#endif
 
         D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
         commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;

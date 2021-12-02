@@ -9,13 +9,13 @@
     #include <d3d12.h>
     #include <dxgi1_4.h>
 
-    #include "Engine/Graphics/Common/IRenderer.hh"
-    #include "Engine/Graphics/Common/IShader.hh"
-    #include "Engine/Graphics/Common/ITexture.hh"
+    #include "Engine/Graphics/Common/BaseRenderer.hh"
+    #include "Engine/Graphics/Common/BaseShader.hh"
+    #include "Engine/Graphics/Common/BaseTexture.hh"
 
 namespace Lorr
 {
-    class D3D12Renderer : public IRenderer
+    class D3D12Renderer : public BaseRenderer
     {
     public:
         bool Init(PlatformWindow *pWindow, u32 width, u32 height) override;

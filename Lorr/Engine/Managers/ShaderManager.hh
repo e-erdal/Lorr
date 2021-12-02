@@ -4,8 +4,8 @@
 
 #pragma once
 
-#include "Engine/Graphics/Common/IShader.hh"
-#include "Engine/Graphics/Common/IRenderBuffer.hh"
+#include "Engine/Graphics/Common/BaseShader.hh"
+#include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
 namespace Lorr
 {

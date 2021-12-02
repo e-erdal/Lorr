@@ -30,7 +30,7 @@ namespace Lorr
         BufferStream Buffer;
     };
 
-    class IShader : public IResource<ShaderDesc, ShaderData>
+    class BaseShader : public IResource<ShaderDesc, ShaderData>
     {
     public:
         virtual void Init(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData) = 0;
@@ -54,7 +54,7 @@ namespace Lorr
         ShaderType m_Type = ShaderType::Vertex;
     };
 
-    typedef IShader *ShaderHandle;
+    typedef BaseShader *ShaderHandle;
 
     namespace Shader
     {

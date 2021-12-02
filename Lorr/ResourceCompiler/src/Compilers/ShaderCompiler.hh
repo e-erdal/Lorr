@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Engine/App/Engine.hh"
-#include "Engine/Graphics/Common/IShader.hh"
+
 #include "Engine/Stream/FileStream.hh"
 #include "Engine/Stream/BufferStream.hh"
 
