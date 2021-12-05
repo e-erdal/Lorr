@@ -7,8 +7,6 @@
 
 #if LR_BACKEND_D3D11
 
-#include <d3d11.h>
-
 #include "Engine/Graphics/Common/BaseRenderer.hh"
 #include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Graphics/Common/BaseTexture.hh"

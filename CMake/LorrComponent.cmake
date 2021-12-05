@@ -3,8 +3,8 @@ function(LorrComponent)
 cmake_parse_arguments(
     COMPONENT
         "" # options
-        "NAME;PCH" # one value
-        "INCLUDE;SOURCE;VENDOR" # multi value
+        "NAME" # one value
+        "INCLUDE;SOURCE;VENDOR;PCH" # multi value
         ${ARGN}
     )
 

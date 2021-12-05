@@ -34,6 +34,7 @@ set(ENGINE_VENDOR
     bx
     bimg
     bvh
+    DirectX-Headers
     glm
     imgui
     lw
@@ -125,7 +126,7 @@ LorrComponent(
     INCLUDE
         ../ ../Engine/Graphics
     PCH
-        App/pch.hh
+        App/pch.hh ../Engine/Graphics/pch.hh
     SOURCE
         Graphics/*.cc
     VENDOR

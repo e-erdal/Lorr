@@ -81,6 +81,11 @@ namespace Lorr
             return Raw();
         }
 
+        constexpr operator std::size_t() const
+        {
+            return std::hash<std::string_view>{}(Raw());
+        }
+
         // Dumb piece of shit
         operator std::span<u8>() const
         {

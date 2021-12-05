@@ -357,7 +357,7 @@ namespace Lorr
         m_SwapChainDesc.SampleDesc.Count = 1;
         m_SwapChainDesc.SampleDesc.Quality = 0;
 
-        m_SwapChainDesc.BufferCount = 1;
+        m_SwapChainDesc.BufferCount = 2; // Buf 1: back buffer (render), buf 2: front buffer (window)
         m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
