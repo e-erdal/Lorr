@@ -57,4 +57,5 @@ namespace Lorr
     {
         m_pCurrentScene = pScene;
     }
+
 }  // namespace Lorr

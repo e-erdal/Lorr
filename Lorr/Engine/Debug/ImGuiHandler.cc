@@ -14,7 +14,7 @@ namespace Lorr
     static u32 g_VertexBufferSize = 5000;
     static u32 g_IndexBufferSize = 10000;
 
-    void ImGui_ImplSurface_KeyPress(Key eKey, ButtonState eState, KeyMod eMod)
+    void ImGuiHandler::KeyPress(ButtonState state, Key key, KeyMod mods)
     {
         ZoneScoped;
 
@@ -22,26 +22,18 @@ namespace Lorr
 
         ImGuiIO &io = ImGui::GetIO();
 
-        io.KeyCtrl = eMod & KeyMod::CONTROL;
-        io.KeyShift = eMod & KeyMod::SHIFT;
-        io.KeyAlt = eMod & KeyMod::ALT;
-        io.KeySuper = eMod & KeyMod::SUPER;
+        io.KeyCtrl = mods & KeyMod::CONTROL;
+        io.KeyShift = mods & KeyMod::SHIFT;
+        io.KeyAlt = mods & KeyMod::ALT;
+        io.KeySuper = mods & KeyMod::SUPER;
 
-        if ((int)eKey < IM_ARRAYSIZE(io.KeysDown))
+        if ((int)key < IM_ARRAYSIZE(io.KeysDown))
         {
-            if (eState == ButtonState::Pressed)
-            {
-                io.KeysDown[(int)eKey] = true;
-            }
-
-            if (eState == ButtonState::Released)
-            {
-                io.KeysDown[(int)eKey] = false;
-            }
+            io.KeysDown[(int)key] = state == ButtonState::Pressed;
         }
     }
 
-    void ImGui_ImplSurface_OnChar(u32 Char, KeyMod eMod)
+    void ImGuiHandler::InputChar(u32 character, KeyMod mods)
     {
         ZoneScoped;
 
@@ -49,10 +41,10 @@ namespace Lorr
 
         ImGuiIO &io = ImGui::GetIO();
 
-        io.AddInputCharacter(Char);
+        io.AddInputCharacter(character);
     }
 
-    void ImGui_ImplSurface_MouseStateChange(KeyMod eMod, MouseButton eButton, ButtonState eState, const glm::ivec2 &ivPos)
+    void ImGuiHandler::MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos)
     {
         ZoneScoped;
 
@@ -62,7 +54,7 @@ namespace Lorr
 
         int mouse = 0;
 
-        switch (eButton)
+        switch (button)
         {
             case MouseButton::BTN_1: mouse = 0; break;
             case MouseButton::BTN_2: mouse = 1; break;
@@ -72,28 +64,15 @@ namespace Lorr
             default: break;
         }
 
-        if (eState == ButtonState::Pressed)
-        {
-            io.MouseDown[mouse] = true;
-        }
+        io.MouseDown[mouse] = state == ButtonState::Pressed;
 
-        else if (eState == ButtonState::Released)
-        {
-            io.MouseDown[mouse] = false;
-        }
-
-        if (eButton == MouseButton::BTN_4)
-        {
+        if (button == MouseButton::BTN_4)
             io.MouseWheel += 1;
-        }
-
-        else if (eButton == MouseButton::BTN_5)
-        {
+        else if (button == MouseButton::BTN_5)
             io.MouseWheel -= 1;
-        }
     }
 
-    void ImGui_ImplSurface_UpdateMouseCursor()
+    void ImGuiHandler::UpdateMouse()
     {
         ZoneScoped;
 
@@ -141,15 +120,16 @@ namespace Lorr
         ImGuiIO &io = ImGui::GetIO();
 
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        PlatformWindow *pSurface = (PlatformWindow *)io.BackendPlatformUserData;
+        PlatformWindow *pWindow = (PlatformWindow *)io.BackendPlatformUserData;
+        InputManager *pInputMan = GetEngine()->GetInputMan();
 
-        IM_ASSERT(pSurface != 0);
+        IM_ASSERT(pWindow != 0);
 
-        auto pos = pSurface->GetCursorPos();
+        auto pos = pInputMan->GetMousePos();
 
         if (io.WantSetMousePos)
         {
-            pSurface->OnSetMousePosition(glm::vec2{ io.MousePos.x, io.MousePos.y }, glm::vec2{ io.MouseDelta.x, io.MouseDelta.y });
+            pInputMan->SetMousePos(glm::vec2(io.MousePos.x, io.MousePos.y));
         }
 
         io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
@@ -237,10 +217,6 @@ namespace Lorr
         ImGuiViewport *main_viewport = ImGui::GetMainViewport();
         main_viewport->PlatformHandle = (void *)pWindow->GetHandle();
 
-        pWindow->OnSetKeyState.connect<&ImGui_ImplSurface_KeyPress>();
-        pWindow->OnSetMouseState.connect<&ImGui_ImplSurface_MouseStateChange>();
-        pWindow->OnChar.connect<&ImGui_ImplSurface_OnChar>();
-
         //* IRenderer backend initialization *//
         ShaderDesc vsDesc{ .Layout = kImGuiInputLayout };
         m_VertexShader = Shader::Create("imgui://vertex-shader", "shaders/imguiv.lr", &vsDesc);
@@ -302,7 +278,7 @@ namespace Lorr
         if (lastCursor != (Cursor)mouse_cursor)
         {
             lastCursor = (Cursor)mouse_cursor;
-            ImGui_ImplSurface_UpdateMouseCursor();
+            UpdateMouse();
         }
 
         timer.reset();
@@ -314,7 +290,6 @@ namespace Lorr
 
         ImDrawData *pDrawData = ImGui::GetDrawData();
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
-        Camera2D *pCamera = GetEngine()->GetCamera2D();
 
         pRenderer->SetCurrentTarget("renderer://backbuffer");
 
@@ -368,8 +343,8 @@ namespace Lorr
         m_VertexBuffer->UnmapData();
         m_IndexBuffer->UnmapData();
 
-        glm::mat4 mvp = pCamera->GetMatrix();
-        m_VertexConstantBuffer->SetData(&mvp[0][0], sizeof(glm::mat4));
+        glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
+        m_VertexConstantBuffer->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
         glm::vec2 clipOff = { pDrawData->DisplayPos.x, pDrawData->DisplayPos.y };
 
         pRenderer->UseShader(m_VertexShader);

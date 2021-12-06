@@ -4,8 +4,6 @@
 
 #pragma once
 
-#include "Engine/Systems/Helpers/InputVars.hh"
-
 namespace Lorr
 {
     typedef intptr_t PlatformHandle;
@@ -64,14 +62,9 @@ namespace Lorr
         virtual void SetCursor(Cursor cursor) = 0;
 
     public:
-        sig::signal<void(Key, ButtonState, KeyMod)> OnSetKeyState;
-        sig::signal<void(KeyMod, MouseButton, ButtonState, const glm::ivec2 &)> OnSetMouseState;
-        sig::signal<void(glm::ivec2, glm::ivec2)> OnSetMousePosition;
         sig::signal<void()> OnLoseFocus;
         sig::signal<void()> OnGainFocus;
         sig::signal<void(u32, u32)> OnResolutionChanged;
-
-        sig::signal<void(u32, KeyMod)> OnChar;  // Text input
 
     public:
         virtual void *GetHandle() = 0;
@@ -96,9 +89,15 @@ namespace Lorr
             return m_IsFullscreen;
         }
 
-        glm::ivec2 GetCursorPos() const
+        /// This should not be confused with InputManager::GetMousePos
+        /// This function gets coordinates of monitor space mouse
+        /// Meanwhile InputManager gets window space mouse coordinates
+        glm::ivec2 GetCursorPos()
         {
-            return m_CursorPos;
+            LPPOINT point;
+            ::GetCursorPos(point);
+
+            return glm::ivec2(point->x, point->y);
         }
 
         u32 GetUsingMonitor()
@@ -115,7 +114,6 @@ namespace Lorr
         bool m_SizeEnded = true;
 
         Cursor m_CurrentCursor = Cursor::Arrow;
-        glm::ivec2 m_CursorPos{};
 
         WindowFlags m_Flags;
         SystemMetrics m_SystemMetrics;

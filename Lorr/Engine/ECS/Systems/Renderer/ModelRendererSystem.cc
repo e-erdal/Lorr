@@ -13,14 +13,11 @@ namespace Lorr::System
     void ModelRendererSystem::Draw()
     {
         ZoneScoped;
-        
+
         // Engine components
         Engine *pEngine = GetEngine();
         BaseRenderer *pRenderer = pEngine->GetRenderer();
-        Camera3D *pCamera = pEngine->GetCamera3D();
         TextureHandle postProcessTexture = pRenderer->GetTargetTexture("renderer://postprocess");
-
-        glm::mat4 cameraMatrix = glm::transpose(pCamera->GetProjection() * pCamera->GetView());
 
         // Renderer resources
         ShaderProgram *modelProgram = pEngine->GetShaderMan()->GetProgram("shader://model");
@@ -28,6 +25,7 @@ namespace Lorr::System
 
         // pRenderer->SetCurrentTarget("renderer://postprocess");
 
+        glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera3d").GetCameraMatrix();
         modelCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
 
         m_pRegistry->view<Model>().each([&](auto entity, Model &model) {

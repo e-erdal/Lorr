@@ -2,6 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
+#include "Engine/ECS/Components/CameraComponent.hh"
 #include "Engine/ECS/Components/RenderableComponent.hh"
 #include "Engine/ECS/Components/TransformComponent.hh"
 #include "Engine/ECS/Components/PhysicsComponent.hh"
@@ -17,57 +18,6 @@
 
 using namespace Lorr;
 
-void KeyDown(Lorr::Key eKey, Lorr::ButtonState eState, Lorr::KeyMod eMod)
-{
-    Camera3D *pCam = GetEngine()->GetCamera3D();
-
-    if (eState == ButtonState::Pressed)
-    {
-        switch (eKey)
-        {
-            case Key::Key_W: pCam->StartMoving(Direction::FORWARD); break;
-            case Key::Key_S: pCam->StartMoving(Direction::BACKWARD); break;
-            case Key::Key_A: pCam->StartMoving(Direction::LEFT); break;
-            case Key::Key_D: pCam->StartMoving(Direction::RIGHT); break;
-            case Key::Key_Q: pCam->StartMoving(Direction::UP); break;
-            case Key::Key_E: pCam->StartMoving(Direction::DOWN); break;
-            default: break;
-        }
-    }
-    else if (eState == ButtonState::Released)
-    {
-        switch (eKey)
-        {
-            case Key::Key_W: pCam->StopMoving(Direction::FORWARD); break;
-            case Key::Key_S: pCam->StopMoving(Direction::BACKWARD); break;
-            case Key::Key_A: pCam->StopMoving(Direction::LEFT); break;
-            case Key::Key_D: pCam->StopMoving(Direction::RIGHT); break;
-            case Key::Key_Q: pCam->StopMoving(Direction::UP); break;
-            case Key::Key_E: pCam->StopMoving(Direction::DOWN); break;
-            default: break;
-        }
-    }
-}
-
-bool down = false;
-void MouseMove(glm::ivec2, glm::ivec2 offset)
-{
-    if (!down) return;
-
-    Camera3D *pCam = GetEngine()->GetCamera3D();
-    pCam->SetDirection(offset.x, offset.y);
-}
-
-void MouseDown(KeyMod, MouseButton, ButtonState state, const glm::ivec2 &)
-{
-    switch (state)
-    {
-        case ButtonState::Pressed: down = true; break;
-        case ButtonState::Released: down = false; break;
-        default: break;
-    }
-}
-
 TextureHandle texture;
 Font *pFont;
 ShaderProgram *fontShader;
@@ -78,15 +28,14 @@ void GameApp::Init()
 {
     LoadResources();
 
-    //* Init signals
-    GetEngine()->GetWindow()->OnSetMouseState.connect<MouseDown>();
-    GetEngine()->GetWindow()->OnSetKeyState.connect<KeyDown>();
-    GetEngine()->GetWindow()->OnSetMousePosition.connect<MouseMove>();
-
     //* Required vars
     BaseRenderer *pRenderer = GetEngine()->GetRenderer();
-    u32 width = GetEngine()->GetWindow()->GetWidth();
-    u32 height = GetEngine()->GetWindow()->GetHeight();
+    BaseWindow *pWindow = GetEngine()->GetWindow();
+
+    pWindow->OnResolutionChanged.connect<&GameApp::OnResolutionChanged>(this);
+
+    u32 width = pWindow->GetWidth();
+    u32 height = pWindow->GetHeight();
 
     //* Scene initialization
     m_pCurrentScene = new Scene;
@@ -97,8 +46,11 @@ void GameApp::Init()
     pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
 
     //** Init entities **//
-    // Create entities
+    Entity camera3D = m_pCurrentScene->CreateEntity("entity://camera3d");
+    camera3D.AttachCamera3D(glm::vec3(0, 0, -5), glm::vec2(width, height), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 60.f, 0.1f, 10000.f);
 
+    Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
+    camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
     {
         textEntity = m_pCurrentScene->CreateEntity("test");
         auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 0, 1), glm::vec3(50, 50, 1));
@@ -128,7 +80,6 @@ void GameApp::Init()
 void GameApp::Tick(float fDelta)
 {
     m_pCurrentScene->Tick(fDelta);
-    GetEngine()->GetCamera3D()->Update(fDelta);
 }
 
 void GameApp::Draw()
@@ -179,4 +130,15 @@ void GameApp::LoadResources()
     FontDesc desc;
     desc.SizePX = 40;
     pFont = resourceMan->LoadResource<Font>("font://font", "font.lr", &desc);
+}
+
+void GameApp::OnResolutionChanged(u32 width, u32 height)
+{
+    Entity camera2D = m_pCurrentScene->GetEntity("entity://camera2d");
+    Entity camera3D = m_pCurrentScene->GetEntity("entity://camera3d");
+    auto &camera2DComp = camera2D.GetComponent<Component::Camera2DController>();
+    auto &camera3DComp = camera3D.GetComponent<Component::Camera3DController>();
+
+    camera2DComp.m_Handle.SetSize(glm::vec2(width, height));
+    camera3DComp.m_Handle.SetSize(glm::vec2(width, height));
 }

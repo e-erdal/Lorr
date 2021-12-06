@@ -14,7 +14,7 @@ namespace Lorr
     struct BaseAppSave
     {
         u32 m_LastSaveDate = 0;  // Unix timestamp
-        
+
         /// Graphics
         u8 m_CurrentMonitor = 0;
         u16 m_RefreshRate = 0;
@@ -59,7 +59,12 @@ namespace Lorr
         virtual void Tick(float deltaTime) = 0;
         virtual void Draw() = 0;
 
+    public:
         void SetCurrentScene(Scene *pScene);
+        Scene *GetActiveScene() const
+        {
+            return m_pCurrentScene;
+        }
 
     protected:
         Engine *m_pEngine = 0;

@@ -16,8 +16,6 @@ namespace Lorr
         delete m_pWindow;
         // delete m_pRenderer;
         delete m_pImGui;
-        delete m_pCamera2D;
-        delete m_pCamera3D;
     }
 
     bool Engine::Init(ApplicationDesc const &description)
@@ -50,8 +48,6 @@ namespace Lorr
         m_pShaderMan->Init();
         m_pRenderer->Init(m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight());
         m_pBatcher->Init();
-        m_pCamera2D->Init({ 0, 0 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() });
-        m_pCamera3D->Init({ 0, 0, -5 }, { m_pWindow->GetWidth(), m_pWindow->GetHeight() }, { 0, 0, 1 }, { 0, 1, 0 }, 60.f, 0.1f, 10000.f);
         m_pImGui->Init(this);
         Renderer2D::Init();
 

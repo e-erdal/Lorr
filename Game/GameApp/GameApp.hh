@@ -17,4 +17,5 @@ public:
 
 private:
     void LoadResources();
+    void OnResolutionChanged(u32 width, u32 height);
 };

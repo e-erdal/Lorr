@@ -59,7 +59,6 @@ set(ENGINE_COMPONENTS
     LorrJob
     LorrManagers
     LorrModel
-    LorrSystems
 )
 
 ######### Engine components ########
@@ -171,20 +170,6 @@ LorrComponent(
         App/pch.hh
     SOURCE
         Model/*.cc
-    VENDOR
-        ${ENGINE_VENDOR}
-)
-
-# Systems
-LorrComponent(
-    NAME
-        LorrSystems
-    INCLUDE
-        ../
-    PCH
-        App/pch.hh
-    SOURCE
-        Systems/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

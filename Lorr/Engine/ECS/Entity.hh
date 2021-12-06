@@ -21,7 +21,7 @@ namespace Lorr
     public:
         Entity() = default;
         Entity(const Identifier &ident, EntityRegistry *pRegistry);
-        Entity(const Identifier &ident, EntityRegistry *pRegistry, const EntityHandle &other);
+        Entity(EntityRegistry *pRegistry, const EntityHandle &other);
 
         template<typename T>
         bool HasComponent()
@@ -58,14 +58,18 @@ namespace Lorr
         }
 
     public:
+        /// Chain methods to attach components to handle
         Entity &AttachDynamicBox(float destiny, float friction);
         Entity &AttachStaticBox(float destiny = 0.f);
         Entity &AttachText(const Identifier &fontIdent, TextAlignment alignment, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth = 0);
         Entity &AttachModel(const std::string &path);
+        Entity &AttachCamera3D(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar);
+        Entity &AttachCamera2D(const glm::vec2 &pos, const glm::vec2 &size);
+
+        /// Chain methods to get component data from handle
+        glm::mat4 GetCameraMatrix();
 
     private:
-        Identifier m_Identifier = kEmptyIdentifier;
-
         EntityRegistry *m_Registry = 0;
         EntityHandle m_Handle = kInvalidEntity;
     };

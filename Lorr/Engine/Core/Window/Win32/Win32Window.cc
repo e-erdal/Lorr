@@ -266,6 +266,7 @@ namespace Lorr
         if (!pEngine) return DefWindowProc(hHwnd, uMSG, wParam, lParam);
 
         Win32Window *pWindow = (Win32Window *)pEngine->GetWindow();
+        InputManager *pInputMan = pEngine->GetInputMan();
 
         switch (uMSG)
         {
@@ -318,7 +319,8 @@ namespace Lorr
                 else
                     state = ButtonState::DoubleClicked;
 
-                pWindow->OnSetMouseState(mods, keys, state, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
+                pInputMan->OnMouseState(state, keys, mods);
+                pInputMan->OnMousePosUpdate(glm::ivec2(LOWORD(lParam), HIWORD(lParam)), {});
 
                 break;
             }
@@ -337,7 +339,8 @@ namespace Lorr
                 if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
                 if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
 
-                pWindow->OnSetMouseState(mods, keys, ButtonState::Released, glm::ivec2(LOWORD(lParam), HIWORD(lParam)));
+                pInputMan->OnMouseState(ButtonState::Released, keys, mods);
+                pInputMan->OnMousePosUpdate(glm::ivec2(LOWORD(lParam), HIWORD(lParam)), {});
 
                 break;
             }
@@ -367,8 +370,7 @@ namespace Lorr
                     lastY = y;
                 }
 
-                pWindow->m_CursorPos = glm::ivec2(x, y);
-                pWindow->OnSetMousePosition(pWindow->m_CursorPos, glm::ivec2(offsetX, offsetY));
+                pInputMan->OnMousePosUpdate(glm::ivec2(x, y), glm::ivec2(offsetX, offsetY));
 
                 break;
             }
@@ -385,7 +387,7 @@ namespace Lorr
                 if (GetKeyState(VK_LWIN) & 0x8000) mods |= KeyMod::SUPER;
                 if (GetKeyState(VK_CAPITAL) & 0x8000) mods |= KeyMod::CAPS_LOCK;
 
-                pWindow->OnSetKeyState(key, uMSG == WM_KEYDOWN ? ButtonState::Pressed : ButtonState::Released, mods);
+                pInputMan->OnKeyboardState(uMSG == WM_KEYDOWN ? ButtonState::Pressed : ButtonState::Released, key, mods);
 
                 break;
             }

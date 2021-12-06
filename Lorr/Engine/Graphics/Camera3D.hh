@@ -29,8 +29,7 @@ namespace Lorr
         void SetPosition(const glm::vec3 &pos);
         void SetSize(const glm::vec2 &size);
 
-        void StartMoving(Direction direction);
-        void StopMoving(Direction direction);
+        void Move(Direction direction, bool stop);
         void SetDirection(float offX, float offY);
 
         void Update(float deltaTime);
@@ -57,8 +56,6 @@ namespace Lorr
         }
 
     private:
-        void OnResolutionChanged(u32 width, u32 height);
-
         glm::mat4 m_Projection{};
         glm::mat4 m_View{};
 

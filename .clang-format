@@ -6,7 +6,7 @@ Language: Cpp
 DerivePointerAlignment: false
 PointerAlignment: Right
 
-ColumnLimit: '160'
+ColumnLimit: '165'
 
 #
 # someLongFunction(argument1,

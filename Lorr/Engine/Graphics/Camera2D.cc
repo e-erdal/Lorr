@@ -4,16 +4,9 @@
 
 namespace Lorr
 {
-    void Camera2D::OnResolutionChanged(u32 width, u32 height)
-    {
-        SetSize({ width, height });
-    }
-
     void Camera2D::Init(const glm::vec2 &pos, const glm::vec2 &size)
     {
         ZoneScoped;
-
-        GetEngine()->GetWindow()->OnResolutionChanged.connect<&Camera2D::OnResolutionChanged>(this);
 
         m_Pos = pos;
         m_Size = size;

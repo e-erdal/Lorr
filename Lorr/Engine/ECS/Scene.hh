@@ -20,6 +20,8 @@ namespace Lorr
         void Draw();
 
         Entity CreateEntity(const Identifier &ident);
+        Entity GetEntity(const Identifier &ident);
+
         void SortAllByDepth();
 
         template<typename T = ISystem>

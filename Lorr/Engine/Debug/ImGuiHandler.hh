@@ -10,6 +10,8 @@
 #include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Graphics/Common/BaseTexture.hh"
 
+#include "Engine/Managers/InputVars.hh"
+
 #include <imgui.h>
 
 namespace Lorr
@@ -24,6 +26,11 @@ namespace Lorr
 
         void BeginFrame();
         void EndFrame();
+
+        static void KeyPress(ButtonState state, Key key, KeyMod mods);
+        static void InputChar(u32 character, KeyMod mods);
+        static void MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos);
+        static void UpdateMouse();
 
     private:
         void InitImGui(PlatformWindow *pWindow);

@@ -4,16 +4,9 @@
 
 namespace Lorr
 {
-    void Camera3D::OnResolutionChanged(u32 width, u32 height)
-    {
-        SetSize({ width, height });
-    }
-
     void Camera3D::Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar)
     {
         ZoneScoped;
-
-        GetEngine()->GetWindow()->OnResolutionChanged.connect<&Camera3D::OnResolutionChanged>(this);
 
         m_Pos = pos;
         m_Size = size;
@@ -60,14 +53,12 @@ namespace Lorr
         CalculateProjection();
     }
 
-    void Camera3D::StartMoving(Direction direction)
+    void Camera3D::Move(Direction direction, bool stop)
     {
-        m_MovingDirection |= direction;
-    }
-
-    void Camera3D::StopMoving(Direction direction)
-    {
-        m_MovingDirection &= ~direction;
+        if (!stop)
+            m_MovingDirection |= direction;
+        else
+            m_MovingDirection &= ~direction;
     }
 
     void Camera3D::SetDirection(float offX, float offY)

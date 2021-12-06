@@ -21,17 +21,15 @@ namespace Lorr::System
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
+        VertexBatcher *pBatcher = GetEngine()->GetBatcher();
 
         // Stuff that renderer requires
-        Camera2D *pCamera = GetEngine()->GetCamera2D();
-        auto cameraMatrix = pCamera->GetMatrix();
         ShaderProgram *pBatcherProgram = pShaderMan->GetProgram("shader://batcher");
         RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher");
         ShaderProgram *pFontProgram = pShaderMan->GetProgram("shader://font");
         RenderBufferHandle fontCBuf = pShaderMan->GetRenderBuffer("cbuffer://font");
 
-        // Renderer
-        VertexBatcher *pBatcher = GetEngine()->GetBatcher();
+        glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
         batcherCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
 
         pBatcher->SetCurrentProgram(pBatcherProgram);

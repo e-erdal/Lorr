@@ -17,6 +17,7 @@
 #include "Engine/Graphics/Common/BaseRenderer.hh"
 #include "Engine/Graphics/VertexBatcher.hh"
 
+#include "Engine/Managers/InputManager.hh"
 #include "Engine/Managers/ShaderManager.hh"
 #include "Engine/Managers/ResourceManager.hh"
 
@@ -40,61 +41,29 @@ namespace Lorr
         void Tick(float fDelta);
 
     public:
-        PlatformWindow *GetWindow() const
-        {
-            return m_pWindow;
-        }
-
-        BaseRenderer *GetRenderer() const
-        {
-            return m_pRenderer;
-        }
-
-        Camera3D *GetCamera3D() const
-        {
-            return m_pCamera3D;
-        }
-
-        Camera2D *GetCamera2D() const
-        {
-            return m_pCamera2D;
-        }
-
-        ResourceManager *GetResourceMan() const
-        {
-            return m_pResourceMan;
-        }
-
-        ShaderManager *GetShaderMan() const
-        {
-            return m_pShaderMan;
-        }
-
-        AudioSystem *GetAudioSys() const
-        {
-            return m_pAudioSystem;
-        }
-
-        VertexBatcher *GetBatcher() const
-        {
-            return m_pBatcher;
-        }
-
-        b2World *GetPhyWorld()
-        {
-            return m_World;
-        }
+        // clang-format off
+        PlatformWindow *GetWindow()         const { return m_pWindow; }
+        BaseRenderer *GetRenderer()         const { return m_pRenderer; }
+        InputManager *GetInputMan()         const { return m_pInputMan; }
+        ResourceManager *GetResourceMan()   const { return m_pResourceMan; }
+        ShaderManager *GetShaderMan()       const { return m_pShaderMan; }
+        AudioSystem *GetAudioSys()          const { return m_pAudioSystem; }
+        VertexBatcher *GetBatcher()         const { return m_pBatcher; }
+        b2World *GetPhyWorld()              const { return m_World; }
+        // clang-format on
 
     private:
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
-        BaseRenderer *m_pRenderer = 0;
+        BaseRenderer *m_pRenderer = nullptr;
         VertexBatcher *m_pBatcher = new VertexBatcher;
-        Camera3D *m_pCamera3D = new Camera3D;
-        Camera2D *m_pCamera2D = new Camera2D;
+
         ImGuiHandler *m_pImGui = new ImGuiHandler;
+
+        InputManager *m_pInputMan = new InputManager;
         ResourceManager *m_pResourceMan = new ResourceManager;
         ShaderManager *m_pShaderMan = new ShaderManager;
+
         AudioSystem *m_pAudioSystem = new AudioSystem;
 
         b2World *m_World = 0;

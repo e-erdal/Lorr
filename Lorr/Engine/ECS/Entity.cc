@@ -1,15 +1,16 @@
 #include "Entity.hh"
 
-#include "Components/RenderableComponent.hh"
+#include "Components/BaseComponent.hh"
 
 namespace Lorr
 {
-    Entity::Entity(const Identifier &ident, EntityRegistry *pRegistry) : m_Identifier(ident), m_Registry(pRegistry)
+    Entity::Entity(const Identifier &ident, EntityRegistry *pRegistry) : m_Registry(pRegistry)
     {
         m_Handle = pRegistry->create();
+        AddComponent<Component::Base>(ident);
     }
 
-    Entity::Entity(const Identifier &ident, EntityRegistry *pRegistry, const EntityHandle &other) : m_Identifier(ident), m_Registry(pRegistry), m_Handle(other)
+    Entity::Entity(EntityRegistry *pRegistry, const EntityHandle &other) : m_Registry(pRegistry), m_Handle(other)
     {
     }
 

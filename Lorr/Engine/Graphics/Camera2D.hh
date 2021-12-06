@@ -23,8 +23,6 @@ namespace Lorr
         }
 
     private:
-        void OnResolutionChanged(u32 width, u32 height);
-
         glm::mat4 m_Matrix{};
 
         glm::vec2 m_Pos{};
