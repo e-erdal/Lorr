@@ -94,6 +94,8 @@ namespace Lorr
         /// Meanwhile InputManager gets window space mouse coordinates
         glm::ivec2 GetCursorPos()
         {
+            ZoneScoped;
+
             LPPOINT point;
             ::GetCursorPos(point);
 

@@ -6,6 +6,8 @@ namespace Lorr::System
 {
     void TransformSystem::Tick(float deltaTime)
     {
+        ZoneScoped;
+        
         auto view = m_pRegistry->view<Component::Transform>();
 
         for (auto entity : view)

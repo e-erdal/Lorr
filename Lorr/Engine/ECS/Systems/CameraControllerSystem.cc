@@ -6,6 +6,8 @@ namespace Lorr::System
 {
     void CameraControllerSystem::Tick(float deltaTime)
     {
+        ZoneScoped;
+        
         auto view = m_pRegistry->view<Component::Camera3DController>();
 
         for (auto entity : view)

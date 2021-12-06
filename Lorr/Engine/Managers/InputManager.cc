@@ -10,6 +10,8 @@ namespace Lorr
 {
     void InputManager::OnKeyboardState(ButtonState state, Key key, KeyMod mods)
     {
+        ZoneScoped;
+
         Engine *pEngine = GetEngine();
         BaseApp *pApp = GetApp();
         Scene *pActiveScene = pApp->GetActiveScene();
@@ -40,6 +42,8 @@ namespace Lorr
 
     void InputManager::OnMouseState(ButtonState state, MouseButton button, KeyMod mods)
     {
+        ZoneScoped;
+
         m_MouseButtonState[button] = state;
 
         ImGuiHandler::MouseState(state, button, mods, m_MousePos);
@@ -47,6 +51,8 @@ namespace Lorr
 
     void InputManager::OnMousePosUpdate(const glm::ivec2 &pos, const glm::ivec2 &offset)
     {
+        ZoneScoped;
+
         m_MousePos = pos;
 
         Engine *pEngine = GetEngine();
@@ -78,6 +84,8 @@ namespace Lorr
 
     void InputManager::OnKeyInput()
     {
+        ZoneScoped;
+
     }
 
     void InputManager::SetMousePos(const glm::ivec2 &pos)

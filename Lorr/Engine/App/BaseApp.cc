@@ -27,10 +27,10 @@ namespace Lorr
 
     void BaseApp::Run()
     {
-        if (m_ConsoleApp) return;
-
         ZoneScoped;
 
+        if (m_ConsoleApp) return;
+        
         PlatformWindow *pWindow = m_pEngine->GetWindow();
 
         Timer timer;

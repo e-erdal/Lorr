@@ -14,6 +14,8 @@ namespace Lorr::Component
     {
         Text(Font *pFont, TextAlignment alignment, const tiny_utf8::string &text, size_t maxWidth = 0)
         {
+            ZoneScoped;
+
             m_Alignment = alignment;
 
             SetText(pFont, text, maxWidth);
@@ -21,6 +23,8 @@ namespace Lorr::Component
 
         void SetText(Font *pFont, const tiny_utf8::string &text, size_t maxWidth = 0)
         {
+            ZoneScoped;
+
             pFont->AlignAll(text, m_Lines, m_PixelRange, m_Size, maxWidth);
             m_Texture = pFont->GetTexture();
             m_SizePx = pFont->GetSizePx();

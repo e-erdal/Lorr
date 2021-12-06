@@ -7,6 +7,8 @@ namespace Lorr::System
 {
     void PhysicsSystem::Tick(float deltaTime)
     {
+        ZoneScoped;
+        
         auto world = GetEngine()->GetPhyWorld();
         world->Step(deltaTime, 6, 2);
 

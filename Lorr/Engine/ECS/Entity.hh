@@ -26,12 +26,16 @@ namespace Lorr
         template<typename T>
         bool HasComponent()
         {
+            ZoneScoped;
+
             return m_Registry->has<T>(m_Handle);
         }
 
         template<typename T>
         T &GetComponent()
         {
+            ZoneScoped;
+
             if (!this->HasComponent<T>())
             {
                 assert("Component not found in registry. Stop using it!");
@@ -43,6 +47,8 @@ namespace Lorr
         template<typename T, typename... Args>
         T &AddComponent(Args &&...tArgs)
         {
+            ZoneScoped;
+
             if (!this->HasComponent<T>())
             {
                 assert("Entity already has that component.");
@@ -54,6 +60,8 @@ namespace Lorr
         template<typename T>
         void RemoveComponent()
         {
+            ZoneScoped;
+
             m_Registry->remove_if_exists<T>(m_Handle);
         }
 

@@ -13,6 +13,8 @@ namespace Lorr
 {
     Entity &Entity::AttachDynamicBox(float destiny, float friction)
     {
+        ZoneScoped;
+
         if (!HasComponent<Component::Transform>())
         {
             LOG_ERROR("Dynamic box component requires Transform component! Attach it first.");
@@ -48,6 +50,8 @@ namespace Lorr
 
     Entity &Entity::AttachStaticBox(float destiny)
     {
+        ZoneScoped;
+        
         if (!HasComponent<Component::Transform>())
         {
             LOG_ERROR("Static box component requires Transform component! Attach it first.");
@@ -76,6 +80,8 @@ namespace Lorr
 
     Entity &Entity::AttachText(const Identifier &fontIdent, TextAlignment alignment, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth)
     {
+        ZoneScoped;
+        
         if (!HasComponent<Component::Transform>()) AddComponent<Component::Transform>(pos);
         AddComponent<Component::Text>(GetEngine()->GetResourceMan()->GetResource<Font>(fontIdent), alignment, text, maxWidth);
 
@@ -84,23 +90,31 @@ namespace Lorr
 
     Entity &Entity::AttachModel(const std::string &path)
     {
+        ZoneScoped;
+        
         return *this;
     }
 
     Entity &Entity::AttachCamera3D(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar)
     {
+        ZoneScoped;
+        
         AddComponent<Component::Camera3DController>(pos, size, direction, up, fov, zNear, zFar);
         return *this;
     }
 
     Entity &Entity::AttachCamera2D(const glm::vec2 &pos, const glm::vec2 &size)
     {
+        ZoneScoped;
+        
         AddComponent<Component::Camera2DController>(pos, size);
         return *this;
     }
 
     glm::mat4 Entity::GetCameraMatrix()
     {
+        ZoneScoped;
+        
         if (HasComponent<Component::Camera3DController>())
         {
             auto &component = GetComponent<Component::Camera3DController>();
