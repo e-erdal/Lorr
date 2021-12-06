@@ -2,6 +2,8 @@
 
 #include "Engine/App/Engine.hh"
 
+#include "Components/BaseComponent.hh"
+#include "Components/CameraComponent.hh"
 #include "Components/RenderableComponent.hh"
 #include "Components/TransformComponent.hh"
 #include "Components/PhysicsComponent.hh"
@@ -83,6 +85,35 @@ namespace Lorr
     Entity &Entity::AttachModel(const std::string &path)
     {
         return *this;
+    }
+
+    Entity &Entity::AttachCamera3D(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar)
+    {
+        AddComponent<Component::Camera3DController>(pos, size, direction, up, fov, zNear, zFar);
+        return *this;
+    }
+
+    Entity &Entity::AttachCamera2D(const glm::vec2 &pos, const glm::vec2 &size)
+    {
+        AddComponent<Component::Camera2DController>(pos, size);
+        return *this;
+    }
+
+    glm::mat4 Entity::GetCameraMatrix()
+    {
+        if (HasComponent<Component::Camera3DController>())
+        {
+            auto &component = GetComponent<Component::Camera3DController>();
+            return glm::transpose(component.m_Handle.GetProjection() * component.m_Handle.GetView());
+        }
+        else if (HasComponent<Component::Camera2DController>())
+        {
+            auto &component = GetComponent<Component::Camera2DController>();
+            return component.m_Handle.GetMatrix();
+        }
+
+        /// Should we assert?
+        return {};
     }
 
 }  // namespace Lorr
