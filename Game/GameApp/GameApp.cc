@@ -51,30 +51,6 @@ void GameApp::Init()
 
     Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
-    {
-        textEntity = m_pCurrentScene->CreateEntity("test");
-        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 0, 1), glm::vec3(50, 50, 1));
-        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "Left\nAligned\nText");
-        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
-    }
-    {
-        textEntity = m_pCurrentScene->CreateEntity("test2");
-        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 200, 1), glm::vec3(50, 50, 1));
-        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Middle, "Center\nAligned\nText");
-        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
-    }
-    {
-        textEntity = m_pCurrentScene->CreateEntity("test3");
-        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 400, 1), glm::vec3(50, 50, 1));
-        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Right, "Right\nAligned\nText");
-        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
-    }
-    {
-        textEntity = m_pCurrentScene->CreateEntity("test3");
-        auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(width / 2, 600, 1), glm::vec3(50, 50, 1));
-        auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Left, "Tabs \tålşö wıth\nütf8\tğ Ğ");
-        transformComp.Position.x -= (textComp.m_Size.x / 2) * transformComp.Size.x;
-    }
 }
 
 void GameApp::Tick(float fDelta)

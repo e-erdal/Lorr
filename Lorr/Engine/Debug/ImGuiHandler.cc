@@ -290,6 +290,7 @@ namespace Lorr
 
         ImDrawData *pDrawData = ImGui::GetDrawData();
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
+        BaseWindow *pWindow = GetEngine()->GetWindow();
 
         pRenderer->SetCurrentTarget("renderer://backbuffer");
 
@@ -378,9 +379,9 @@ namespace Lorr
                 {
                     glm::vec2 clipMin(cmd.ClipRect.x - clipOff.x, cmd.ClipRect.y - clipOff.y);
                     glm::vec2 clipMax(cmd.ClipRect.z - clipOff.x, cmd.ClipRect.w - clipOff.y);
-                    if (clipMax.x < clipMin.x || clipMax.y < clipMin.y) continue;
+                    if (clipMax.x <= clipMin.x || clipMax.y <= clipMin.y) continue;
 
-                    // pRenderer->SetScissor({ clipMin.x, clipMin.y, clipMax.x, clipMax.y });
+                    pRenderer->SetScissor({ clipMin.x, clipMin.y, clipMax.x, clipMax.y });
 
                     TextureHandle texture = (TextureHandle)cmd.TextureId;
                     glm::vec4 mips = { texture->m_UsingMip, 0.f, 0.f, 0.f };
@@ -396,6 +397,9 @@ namespace Lorr
             vertexOff += pDrawList->VtxBuffer.Size;
             indexOff += pDrawList->IdxBuffer.Size;
         }
+
+        /// Reset scissor
+        pRenderer->SetScissor({ 0, 0, pWindow->GetWidth(), pWindow->GetHeight() });
     }
 
 }  // namespace Lorr

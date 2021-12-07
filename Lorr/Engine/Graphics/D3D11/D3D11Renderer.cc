@@ -78,11 +78,7 @@ namespace Lorr
     {
         ZoneScoped;
 
-        D3D11_RECT rect;
-        rect.left = lrtb.x;
-        rect.right = lrtb.y;
-        rect.top = lrtb.z;
-        rect.bottom = lrtb.w;
+        const D3D11_RECT rect = { (LONG)lrtb.x, (LONG)lrtb.y, (LONG)lrtb.z, (LONG)lrtb.w };
 
         m_pContext->RSSetScissorRects(1, &rect);
     }
@@ -285,7 +281,7 @@ namespace Lorr
         if (m_NeedToPresent)
         {
             m_pSwapChain->Present(uInterval, 0);
-            m_pContext->Flush();  // no idea what to do with this
+            m_pContext->Flush();
         }
     }
 
@@ -357,7 +353,7 @@ namespace Lorr
         m_SwapChainDesc.SampleDesc.Count = 1;
         m_SwapChainDesc.SampleDesc.Quality = 0;
 
-        m_SwapChainDesc.BufferCount = 2; // Buf 1: back buffer (render), buf 2: front buffer (window)
+        m_SwapChainDesc.BufferCount = 2;  // Buf 1: back buffer (render), buf 2: front buffer (window)
         m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
@@ -504,7 +500,7 @@ namespace Lorr
         m_RasterizerDesc.AntialiasedLineEnable = false;
         m_RasterizerDesc.FrontCounterClockwise = false;
         m_RasterizerDesc.MultisampleEnable = false;
-        m_RasterizerDesc.ScissorEnable = false;
+        m_RasterizerDesc.ScissorEnable = true;
 
         return m_pRasterizerState = m_StateManager.Get(m_RasterizerDesc);
     }

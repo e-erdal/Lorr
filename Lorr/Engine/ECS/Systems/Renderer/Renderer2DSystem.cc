@@ -2,7 +2,6 @@
 
 #include "Engine/App/Engine.hh"
 
-#include "Engine/Graphics/D3D11/D3D11Texture.hh"
 #include "Engine/Managers/ShaderManager.hh"
 
 #include "Engine/ECS/Components/TransformComponent.hh"
@@ -25,8 +24,9 @@ namespace Lorr::System
 
         // Stuff that renderer requires
         ShaderProgram *pBatcherProgram = pShaderMan->GetProgram("shader://batcher");
-        RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher");
         ShaderProgram *pFontProgram = pShaderMan->GetProgram("shader://font");
+
+        RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher");
         RenderBufferHandle fontCBuf = pShaderMan->GetRenderBuffer("cbuffer://font");
 
         glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
@@ -38,36 +38,37 @@ namespace Lorr::System
         pRenderer->UseConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
 
         m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
+            /// Render a rectangle
             if (m_pRegistry->has<Component::Renderable>(entity))
             {
                 auto &renderable = m_pRegistry->get<Component::Renderable>(entity);
                 pBatcher->SetCurrentTexture(renderable.texture);
                 pBatcher->PushRect(transform.Matrix, renderable.Color);
             }
-        });
 
-        pBatcher->Reset();
-        pBatcher->SetCurrentProgram(pFontProgram);
-        pRenderer->UseConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
-
-        FontRenderBuffer fontRenderBufferData;
-
-        m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
+            /// Render a text
             if (m_pRegistry->has<Component::Text>(entity))
             {
-                Component::Text &text = m_pRegistry->get<Component::Text>(entity);
+                /// We don't want to mix other draw events with this. Quite expensive but required
+                pBatcher->Reset();
 
-                /// Calculate distance factor
+                auto &text = m_pRegistry->get<Component::Text>(entity);
+
+                /// Calculate distance factor and set it to pixel buffer
+                FontRenderBuffer fontRenderBufferData;
                 float distanceFactor = text.m_PixelRange * (transform.Size.x / text.m_SizePx);
-
                 fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
                 fontCBuf->SetData(&fontRenderBufferData, sizeof(FontRenderBuffer));
                 pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
 
+                /// Set shader resources
                 pBatcher->SetCurrentTexture(text.m_Texture);
+                pBatcher->SetCurrentProgram(pFontProgram);
 
+                /// Calculate screen coordinates matrix, this is not the actual matrix of each char
                 glm::mat4 matrix = Math::CalcTransform(transform.Position, transform.Size);
 
+                /// Process all lines depending on their alignment
                 for (const auto &line : text.m_Lines)
                 {
                     float verticalPos = 0;
@@ -81,12 +82,16 @@ namespace Lorr::System
 
                     for (const auto &c : line.Chars)
                     {
-                        // TODO: Might be extremely expensive but who asked?
+                        // TODO: This is extremely expensive but penalty of using high quality fonts. So find a better way of doing this.
                         glm::mat4 charMat = glm::translate(matrix, glm::vec3(c.Position, 1) + glm::vec3(verticalPos, 0, 0));
                         charMat = glm::scale(charMat, glm::vec3(c.Size, 1));
                         pBatcher->PushRect(charMat, c.UV);
                     }
                 }
+
+                /// Processing is now done, draw everything in batch.
+                /// We want "a draw call for a component" so constant buffer will be different for all text components
+                pBatcher->Reset();
             }
         });
 
