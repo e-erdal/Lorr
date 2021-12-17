@@ -6,6 +6,7 @@ set(GAME_VENDOR
 set(GAME_COMPONENTS
     GameApp
     Scenes
+    Terrain
 )
 
 ######### Game components ########
@@ -29,6 +30,18 @@ LorrComponent(
         ./
     SOURCE
         ./Scenes/*.cc
+    VENDOR
+        ${GAME_VENDOR}
+)
+
+# Terrain
+LorrComponent(
+    NAME
+        Terrain
+    INCLUDE
+        ./
+    SOURCE
+        ./Terrain/*.cc
     VENDOR
         ${GAME_VENDOR}
 )

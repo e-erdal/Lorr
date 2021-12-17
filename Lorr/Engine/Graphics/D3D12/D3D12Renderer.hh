@@ -11,6 +11,7 @@
 #include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Graphics/Common/BaseTexture.hh"
 
+#include "D3D12SwapChain.hh"
 #include "D3D12RenderTargetManager.hh"
 
 namespace Lorr
@@ -56,10 +57,10 @@ namespace Lorr
         static D3D12Renderer *&Get();
 
     private:
+        /// Device creation section ///
+        bool SelectAdapter(bool highPerformance);
+        D3D_FEATURE_LEVEL SelectMaxFeatureLevel();
         bool CreateDevice();
-        bool CreateCommandQueue();
-        bool CreateSwapChain(PlatformWindow *pWindow, u32 width, u32 height);
-        bool CreateCommandAllocator();
 
     public:
         ID3D12Device *GetDevice() const
@@ -67,34 +68,20 @@ namespace Lorr
             return m_pDevice;
         }
 
-        IDXGISwapChain3 *GetSwapChain() const
+        D3D12SwapChain *GetSwapChain() const
         {
             return m_pSwapChain;
         }
 
     private:
-        //* Main API *//
+        /// D3D12 DEVICE ///
         ID3D12Device *m_pDevice = nullptr;
-#ifdef _DEBUG
-        ID3D12Debug1 *m_pDebug = nullptr;
-        ID3D12DebugDevice *m_pDebugDevice = nullptr;
-#endif
+        D3D_FEATURE_LEVEL m_MaxFeatureLevel;
         IDXGIFactory4 *m_pFactory = nullptr;
         IDXGIAdapter1 *m_pAdapter = nullptr;
 
-        IDXGISwapChain3 *m_pSwapChain = nullptr;
-        DXGI_SWAP_CHAIN_DESC1 m_SwapChainDesc;
-        DXGI_SWAP_CHAIN_FULLSCREEN_DESC m_SwapChainFSD = {};
-        u32 m_BackBufferIndex = 0;
-
-        ID3D12CommandQueue *m_pCommandQueue = nullptr;
-        ID3D12CommandAllocator *m_pCommandAllocator = nullptr;
-
-        ID3D12Fence *m_pFence = nullptr;
-        ID3D12GraphicsCommandList *m_pCommandList = nullptr;
-
-        //* View handles *//
-        TextureHandle m_DepthTexture = nullptr;
+        /// D3D12 SWAP CHAIN ///
+        D3D12SwapChain *m_pSwapChain = nullptr;
 
         //* Current API states *//
         D3D12_BLEND_DESC m_BlendDesc = {};

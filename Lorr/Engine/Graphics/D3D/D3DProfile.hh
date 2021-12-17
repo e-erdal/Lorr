@@ -8,8 +8,9 @@
 
 namespace Lorr::D3D
 {
-    std::string_view GetLatestShaderFeature(ShaderType type);
-    std::string_view GetLatestVSProfile(D3D_FEATURE_LEVEL level);
-    std::string_view GetLatestPSProfile(D3D_FEATURE_LEVEL level);
-    std::string_view GetLatestCSProfile(D3D_FEATURE_LEVEL level);
+    std::string_view GetLatestFeatureLevelString(ShaderType type);
+
+    std::string_view VSFeatureLevelToString(D3D_FEATURE_LEVEL level);
+    std::string_view PSFeatureLevelToString(D3D_FEATURE_LEVEL level);
+    std::string_view CSFeatureLevelToString(D3D_FEATURE_LEVEL level);
 }  // namespace Lorr::D3D

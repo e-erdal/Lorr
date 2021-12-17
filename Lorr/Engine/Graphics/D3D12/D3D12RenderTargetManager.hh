@@ -20,10 +20,8 @@ namespace Lorr
         void Init();
 
     private:
-        std::array<size_t, Renderer::Config::kMaxRenderTargets> m_Identifiers;
-        std::array<ID3D12Resource *, Renderer::Config::kMaxRenderTargets> m_RenderTargets;
+        std::unordered_map<Identifier, ID3D12Resource *> m_RenderTargets;
 
-        ID3D12DescriptorHeap *m_pRTVHeap = nullptr;
     };
 
 }  // namespace Lorr

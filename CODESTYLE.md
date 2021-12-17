@@ -52,7 +52,7 @@ private: // or protected
 };
 ```
 
-- Structs without any functions (i.e, memory block, game save file):
+- POD structs:
 ```cpp
 struct MyStruct
 {

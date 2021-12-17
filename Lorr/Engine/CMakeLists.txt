@@ -56,6 +56,7 @@ set(ENGINE_COMPONENTS
     LorrDebug
     LorrECS
     LorrGraphics
+    LorrGUI
     LorrJob
     LorrManagers
     LorrModel
@@ -128,6 +129,20 @@ LorrComponent(
         App/pch.hh ../Engine/Graphics/pch.hh
     SOURCE
         Graphics/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# GUI
+LorrComponent(
+    NAME
+        LorrGUI
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        GUI/*.cc
     VENDOR
         ${ENGINE_VENDOR}
 )

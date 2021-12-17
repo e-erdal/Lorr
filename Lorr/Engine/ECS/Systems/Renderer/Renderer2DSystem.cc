@@ -20,17 +20,17 @@ namespace Lorr::System
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
-        VertexBatcher *pBatcher = GetEngine()->GetBatcher();
+        auto pBatcher = GetEngine()->GetRenderer2D()->GetBatcher();
 
         // Stuff that renderer requires
         ShaderProgram *pBatcherProgram = pShaderMan->GetProgram("shader://batcher");
         ShaderProgram *pFontProgram = pShaderMan->GetProgram("shader://font");
 
-        RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher");
+        RenderBufferHandle batcherCBuf = pShaderMan->GetRenderBuffer("cbuffer://batcher2d");
         RenderBufferHandle fontCBuf = pShaderMan->GetRenderBuffer("cbuffer://font");
 
-        glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
-        batcherCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
+        Batcher2DBufferData batcherCBufData = { .Matrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix() };
+        batcherCBuf->SetData(&batcherCBufData, sizeof(Batcher2DBufferData));
 
         pBatcher->SetCurrentProgram(pBatcherProgram);
         pBatcher->Begin();
@@ -50,7 +50,7 @@ namespace Lorr::System
             if (m_pRegistry->has<Component::Text>(entity))
             {
                 /// We don't want to mix other draw events with this. Quite expensive but required
-                pBatcher->Reset();
+                pBatcher->End();
 
                 auto &text = m_pRegistry->get<Component::Text>(entity);
 
@@ -91,11 +91,11 @@ namespace Lorr::System
 
                 /// Processing is now done, draw everything in batch.
                 /// We want "a draw call for a component" so constant buffer will be different for all text components
-                pBatcher->Reset();
+                pBatcher->End();
             }
         });
 
         pBatcher->End();
-    }
+    }  // namespace Lorr::System
 
 }  // namespace Lorr::System

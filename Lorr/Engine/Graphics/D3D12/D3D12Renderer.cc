@@ -5,6 +5,8 @@
 
 static Lorr::D3D12Renderer *g_D3D12Renderer;
 
+constexpr D3D_FEATURE_LEVEL kMinimumFeatureLevel = { D3D_FEATURE_LEVEL_11_0 };
+
 namespace Lorr
 {
     bool D3D12Renderer::Init(PlatformWindow *pWindow, u32 width, u32 height)
@@ -22,10 +24,8 @@ namespace Lorr
             return true;
         }
 
-        if (!CreateCommandQueue()) return false;
-        if (!CreateSwapChain(pWindow, width, height)) return false;
-        m_TargetManager.Init();
-        if (!CreateCommandAllocator()) return false;  // This function also creates command list
+        m_pSwapChain->Init(m_pDevice, m_pFactory, pWindow);
+        m_pFactory->MakeWindowAssociation((HWND)pWindow->GetHandle(), DXGI_MWA_NO_ALT_ENTER);
 
         SetViewport(width, height, 1.f, 0.0f);
 
@@ -44,45 +44,19 @@ namespace Lorr
         m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
         */
 
-        InitParent();
-
         return true;
     }
 
-    bool D3D12Renderer::CreateDevice()
+    bool D3D12Renderer::SelectAdapter(bool highPerformance)
     {
-        ZoneScoped;
-
-        LOG_TRACE("Initializing D3D12 device...");
-
         HRESULT hr;
-        u32 flags = 0;
 
-        /// Create debug layer
-#ifdef _DEBUG
-        flags |= DXGI_CREATE_FACTORY_DEBUG;
-
-        D3D12GetDebugInterface(IID_PPV_ARGS(&m_pDebug));
-
-        m_pDebug->EnableDebugLayer();
-        m_pDebug->SetEnableGPUBasedValidation(true);
-        m_pDebug->QueryInterface(&m_pDebugDevice);
-
-        // SAFE_RELEASE(pDebug);
-#endif
-
-        /// Find the adapter we wanted
-        if (FAILED(hr = CreateDXGIFactory2(flags, IID_PPV_ARGS(&m_pFactory))))
-        {
-            LOG_ERROR("Failed to create D3D12 factory.");
-            return false;
-        }
+        DXGI_GPU_PREFERENCE preference = (highPerformance) ? DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE : DXGI_GPU_PREFERENCE_MINIMUM_POWER;
 
         IDXGIFactory6 *pFactory6 = nullptr;
         if (SUCCEEDED(m_pFactory->QueryInterface(IID_PPV_ARGS(&pFactory6))))
         {
-            for (u32 adapter = 0; SUCCEEDED(pFactory6->EnumAdapterByGpuPreference(adapter, DXGI_GPU_PREFERENCE_HIGH_PERFORMANCE, IID_PPV_ARGS(&m_pAdapter)));
-                 adapter++)
+            for (u32 adapterIdx = 0; SUCCEEDED(pFactory6->EnumAdapterByGpuPreference(adapterIdx, preference, IID_PPV_ARGS(&m_pAdapter))); adapterIdx++)
             {
                 DXGI_ADAPTER_DESC1 adapterDesc = {};
                 m_pAdapter->GetDesc1(&adapterDesc);
@@ -90,10 +64,12 @@ namespace Lorr
                 if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;  // We don't want software adapter
 
                 /// Check if the adapter supports D3D12
-                if (SUCCEEDED(D3D12CreateDevice(m_pAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
+                if (SUCCEEDED(D3D12CreateDevice(m_pAdapter, kMinimumFeatureLevel, _uuidof(ID3D12Device), nullptr)))
                 {
                     break;
                 }
+
+                SAFE_RELEASE(m_pAdapter);
             }
         }
 
@@ -108,10 +84,12 @@ namespace Lorr
                 if (adapterDesc.Flags & DXGI_ADAPTER_FLAG_SOFTWARE) continue;  // We don't want software adapter
 
                 /// Check if the adapter supports D3D12
-                if (SUCCEEDED(D3D12CreateDevice(m_pAdapter, D3D_FEATURE_LEVEL_11_0, _uuidof(ID3D12Device), nullptr)))
+                if (SUCCEEDED(D3D12CreateDevice(m_pAdapter, kMinimumFeatureLevel, _uuidof(ID3D12Device), nullptr)))
                 {
                     break;
                 }
+
+                SAFE_RELEASE(m_pAdapter);
             }
         }
 
@@ -121,89 +99,85 @@ namespace Lorr
             return false;
         }
 
+        return true;
+    }
+
+    D3D_FEATURE_LEVEL D3D12Renderer::SelectMaxFeatureLevel()
+    {
+        HRESULT hr;
+
+        constexpr D3D_FEATURE_LEVEL featureLevels[] = {
+            D3D_FEATURE_LEVEL_12_2, D3D_FEATURE_LEVEL_12_1, D3D_FEATURE_LEVEL_12_0, D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0,
+        };
+
+        D3D12_FEATURE_DATA_FEATURE_LEVELS featureLevelData = {};
+        featureLevelData.NumFeatureLevels = BX_COUNTOF(featureLevels);
+        featureLevelData.pFeatureLevelsRequested = featureLevels;
+
+        ID3D12Device *pDevice = nullptr;
+        if (FAILED(hr = D3D12CreateDevice(m_pAdapter, kMinimumFeatureLevel, IID_PPV_ARGS(&pDevice))))
+        {
+            LOG_ERROR("Failed to create D3D12 device.");
+            return kMinimumFeatureLevel;
+        }
+
+        /// Determine maximum feature level
+        pDevice->CheckFeatureSupport(D3D12_FEATURE_FEATURE_LEVELS, &featureLevelData, sizeof(featureLevelData));
+        SAFE_RELEASE(pDevice);
+
+        return featureLevelData.MaxSupportedFeatureLevel;
+    }
+
+    bool D3D12Renderer::CreateDevice()
+    {
+        ZoneScoped;
+
+        LOG_TRACE("Initializing D3D12 device...");
+
+        HRESULT hr;
+        u32 flags = 0;
+
+#ifdef _DEBUG
+        /// Create debug layer
+        flags |= DXGI_CREATE_FACTORY_DEBUG;
+
+        ID3D12Debug1 *pDebug = nullptr;
+        D3D12GetDebugInterface(IID_PPV_ARGS(&pDebug));
+
+        pDebug->EnableDebugLayer();
+        pDebug->SetEnableGPUBasedValidation(true);
+
+        SAFE_RELEASE(pDebug);
+#endif
+
+        /// Find the adapter we wanted
+        if (FAILED(hr = CreateDXGIFactory2(flags, IID_PPV_ARGS(&m_pFactory))))
+        {
+            LOG_ERROR("Failed to create D3D12 factory.");
+            return false;
+        }
+
+        if (!SelectAdapter(true)) return false;
+
+        m_MaxFeatureLevel = SelectMaxFeatureLevel();
+
         /// Create actual device
-        if (FAILED(hr = D3D12CreateDevice(m_pAdapter, D3D_FEATURE_LEVEL_11_0, IID_PPV_ARGS(&m_pDevice))))
+        if (FAILED(hr = D3D12CreateDevice(m_pAdapter, m_MaxFeatureLevel, IID_PPV_ARGS(&m_pDevice))))
         {
             LOG_ERROR("Failed to create D3D12 device.");
             return false;
         }
 
-        return true;
-    }
+#ifdef _DEBUG
+        ID3D12InfoQueue *pInfoQueue = nullptr;
+        m_pDevice->QueryInterface(IID_PPV_ARGS(&pInfoQueue));
 
-    bool D3D12Renderer::CreateCommandQueue()
-    {
-        HRESULT hr;
+        pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_CORRUPTION, true);
+        pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_ERROR, true);
+        pInfoQueue->SetBreakOnSeverity(D3D12_MESSAGE_SEVERITY_WARNING, true);
 
-        /// Create command queue
-        D3D12_COMMAND_QUEUE_DESC commandQueueDesc = {};
-        commandQueueDesc.Type = D3D12_COMMAND_LIST_TYPE_DIRECT;
-
-        if (FAILED(hr = m_pDevice->CreateCommandQueue(&commandQueueDesc, IID_PPV_ARGS(&m_pCommandQueue))))
-        {
-            LOG_ERROR("Failed to create D3D12 command queue!");
-            return false;
-        }
-
-        // if (FAILED(hr = m_pDevice->CreateFence(0, D3D12_FENCE_FLAG_NONE, IID_PPV_ARGS(&m_pFence))))
-        // {
-        //     LOG_ERROR("Failed to create D3D12 fence!");
-        //     return false;
-        // }
-
-        return true;
-    }
-
-    bool D3D12Renderer::CreateSwapChain(PlatformWindow *pWindow, u32 width, u32 height)
-    {
-        HRESULT hr;
-        m_SwapChainDesc = {};
-
-        pWindow->OnResolutionChanged.connect<&D3D12Renderer::ChangeResolution>(this);
-
-        m_SwapChainDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        m_SwapChainDesc.Width = width;
-        m_SwapChainDesc.Height = height;
-
-        m_SwapChainDesc.SampleDesc.Count = 1;
-        m_SwapChainDesc.SampleDesc.Quality = 0;
-
-        m_SwapChainDesc.BufferCount = 2; // Buf 1: back buffer (render), buf 2: front buffer (window)
-        m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-        m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD;
-
-        m_SwapChainFSD = {};
-        m_SwapChainFSD.RefreshRate.Numerator = pWindow->GetDisplay(pWindow->GetUsingMonitor())->RefreshRate;
-        m_SwapChainFSD.RefreshRate.Denominator = 1;
-        m_SwapChainFSD.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-        m_SwapChainFSD.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-        m_SwapChainFSD.Windowed = !pWindow->IsFullscreen();
-
-        if (FAILED(hr = m_pFactory->CreateSwapChainForHwnd(m_pCommandQueue, (HWND)pWindow->GetHandle(), &m_SwapChainDesc, &m_SwapChainFSD, nullptr,
-                                                           (IDXGISwapChain1 **)&m_pSwapChain)))
-        {
-            LOG_ERROR("Failed to create D3D12 swap chain!");
-            return false;
-        }
-
-        // TODO: Fullscreen
-        m_pFactory->MakeWindowAssociation((HWND)pWindow->GetHandle(), DXGI_MWA_NO_ALT_ENTER);
-
-        m_BackBufferIndex = m_pSwapChain->GetCurrentBackBufferIndex();
-
-        return true;
-    }
-
-    bool D3D12Renderer::CreateCommandAllocator()
-    {
-        HRESULT hr;
-
-        if (FAILED(hr = m_pDevice->CreateCommandAllocator(D3D12_COMMAND_LIST_TYPE_DIRECT, IID_PPV_ARGS(&m_pCommandAllocator))))
-        {
-            LOG_ERROR("Failed to create D3D12 command allocator!");
-            return false;
-        }
+        SAFE_RELEASE(pInfoQueue);
+#endif
 
         return true;
     }
@@ -216,18 +190,18 @@ namespace Lorr
     {
         ZoneScoped;
 
-        if (!m_IsContextReady) return;
+        // if (!m_IsContextReady) return;
 
-        D3D12_VIEWPORT vp = {};
+        // D3D12_VIEWPORT vp = {};
 
-        vp.Width = (float)width;
-        vp.Height = (float)height;
-        vp.MaxDepth = fFar;
-        vp.MinDepth = fNear;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
+        // vp.Width = (float)width;
+        // vp.Height = (float)height;
+        // vp.MaxDepth = fFar;
+        // vp.MinDepth = fNear;
+        // vp.TopLeftX = 0;
+        // vp.TopLeftY = 0;
 
-        m_pCommandList->RSSetViewports(1, &vp);
+        // m_pCommandList->RSSetViewports(1, &vp);
     }
 
     void D3D12Renderer::SetClearColor()

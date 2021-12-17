@@ -4,48 +4,18 @@
 
 namespace Lorr
 {
-    constexpr u16 kQuadIndices[] = { 0, 1, 2, 2, 3, 0 };
-
-    struct QuadVertex
-    {
-        glm::vec3 Pos = {};
-        glm::vec2 UV = {};
+    InputLayout Renderer2D::m_Batcher2DLayout = {
+        { VertexAttribType::Vec3, "POSITION" },
+        { VertexAttribType::Vec2, "TEXCOORD" },
+        { VertexAttribType::Vec4, "COLOR" },
     };
-
-    constexpr glm::mat4 kQuadVertices = {
-        1,  -1, 0.5, 1,  // V0
-        1,  1,  0.5, 1,  // V1
-        -1, 1,  0.5, 1,  // V2
-        -1, -1, 0.5, 1   // V3
-    };
-
-    constexpr glm::mat4x2 kQuadUV = {
-        1, 1,  // V1
-        1, 0,  // V2
-        0, 0,  // V3
-        0, 1,  // V4
-    };
-
-    struct Renderer2DData
-    {
-        InputLayout QuadLayout = {
-            { VertexAttribType::Vec3, "POSITION" },
-            { VertexAttribType::Vec2, "TEXCOORD" },
-        };
-
-        RenderBufferHandle QuadVertexBuffer = 0;
-        RenderBufferHandle QuadIndexBuffer = 0;
-        ShaderHandle VertexShader;
-        ShaderHandle PixelShader;
-    };
-
-    static Renderer2DData *pThis = 0;
 
     void Renderer2D::Init()
     {
         ZoneScoped;
 
-        pThis = new Renderer2DData;
+        ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
+
         QuadVertex pQuadVertex[4] = {
             { kQuadVertices[0], kQuadUV[0] },
             { kQuadVertices[1], kQuadUV[1] },
@@ -57,16 +27,18 @@ namespace Lorr
         quadVertexDesc.pData = pQuadVertex;
         quadVertexDesc.DataLen = sizeof(pQuadVertex);
         quadVertexDesc.Type = RenderBufferType::Vertex;
-        pThis->QuadVertexBuffer = RenderBuffer::Create(quadVertexDesc);
+        m_FullscreenQuadVB = RenderBuffer::Create(quadVertexDesc);
 
         RenderBufferDesc quadIndexDesc;
         quadIndexDesc.pData = (u16 *)kQuadIndices;
         quadIndexDesc.DataLen = sizeof(kQuadIndices);
         quadIndexDesc.Type = RenderBufferType::Index;
-        pThis->QuadIndexBuffer = RenderBuffer::Create(quadIndexDesc);
+        m_FullscreenQuadIB = RenderBuffer::Create(quadIndexDesc);
 
-        pThis->VertexShader = GetEngine()->GetShaderMan()->CreateShader("renderer2d://fscv", pThis->QuadLayout, "shaders/fullscreenv.lr");
-        pThis->PixelShader = GetEngine()->GetShaderMan()->CreateShader("renderer2d://fscp", "shaders/fullscreenp.lr");
+        m_FullscreenVS = pShaderMan->CreateShader("renderer2d://fscv", m_FullscreenQuadLayout, "shaders/fullscreenv.lr");
+        m_FullscreenPS = pShaderMan->CreateShader("renderer2d://fscp", "shaders/fullscreenp.lr");
+
+        m_Batcher.Init(m_Batcher2DLayout);
     }
 
     void Renderer2D::FullscreenQuad(TextureHandle texture, u32 textureSlot)
@@ -75,11 +47,11 @@ namespace Lorr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(pThis->VertexShader);
-        pRenderer->UseShader(pThis->PixelShader);
+        pRenderer->UseShader(m_FullscreenVS);
+        pRenderer->UseShader(m_FullscreenPS);
 
-        pRenderer->UseVertexBuffer(pThis->QuadVertexBuffer, &pThis->QuadLayout);
-        pRenderer->UseIndexBuffer(pThis->QuadIndexBuffer, false);
+        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
 
         pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
         pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
@@ -93,11 +65,11 @@ namespace Lorr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(pThis->VertexShader);
+        pRenderer->UseShader(m_FullscreenVS);
         pRenderer->UseShader(pixelShader);
 
-        pRenderer->UseVertexBuffer(pThis->QuadVertexBuffer, &pThis->QuadLayout);
-        pRenderer->UseIndexBuffer(pThis->QuadIndexBuffer, false);
+        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
 
         pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
         pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
@@ -114,8 +86,8 @@ namespace Lorr
         pRenderer->UseShader(pProgram->Vertex);
         pRenderer->UseShader(pProgram->Pixel);
 
-        pRenderer->UseVertexBuffer(pThis->QuadVertexBuffer, &pThis->QuadLayout);
-        pRenderer->UseIndexBuffer(pThis->QuadIndexBuffer, false);
+        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
 
         pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
         pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);

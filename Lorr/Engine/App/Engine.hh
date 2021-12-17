@@ -15,7 +15,7 @@
 #include "Engine/Graphics/Camera2D.hh"
 #include "Engine/Graphics/Camera3D.hh"
 #include "Engine/Graphics/Common/BaseRenderer.hh"
-#include "Engine/Graphics/VertexBatcher.hh"
+#include "Engine/Graphics/Renderer2D.hh"
 
 #include "Engine/Managers/InputManager.hh"
 #include "Engine/Managers/ShaderManager.hh"
@@ -44,11 +44,11 @@ namespace Lorr
         // clang-format off
         PlatformWindow *GetWindow()         const { return m_pWindow; }
         BaseRenderer *GetRenderer()         const { return m_pRenderer; }
+        Renderer2D *GetRenderer2D()         const { return m_pRenderer2D; }
         InputManager *GetInputMan()         const { return m_pInputMan; }
         ResourceManager *GetResourceMan()   const { return m_pResourceMan; }
         ShaderManager *GetShaderMan()       const { return m_pShaderMan; }
         AudioSystem *GetAudioSys()          const { return m_pAudioSystem; }
-        VertexBatcher *GetBatcher()         const { return m_pBatcher; }
         b2World *GetPhyWorld()              const { return m_World; }
         // clang-format on
 
@@ -56,7 +56,7 @@ namespace Lorr
         // Graphics
         PlatformWindow *m_pWindow = new PlatformWindow;
         BaseRenderer *m_pRenderer = nullptr;
-        VertexBatcher *m_pBatcher = new VertexBatcher;
+        Renderer2D *m_pRenderer2D = new Renderer2D;
 
         ImGuiHandler *m_pImGui = new ImGuiHandler;
 

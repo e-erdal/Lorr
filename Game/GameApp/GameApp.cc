@@ -51,6 +51,10 @@ void GameApp::Init()
 
     Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
+
+    textEntity = m_pCurrentScene->CreateEntity("test");
+    auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(100, 100, 1), glm::vec3(50, 50, 1));
+    auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Middle, "Middle\nAligned\nText");
 }
 
 void GameApp::Tick(float fDelta)
@@ -62,11 +66,10 @@ void GameApp::Draw()
 {
     m_pCurrentScene->Draw();
     BaseRenderer *pRenderer = GetEngine()->GetRenderer();
-    VertexBatcher *pBatcher = GetEngine()->GetBatcher();
     ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 
     pRenderer->UseConstantBuffer(pShaderMan->GetRenderBuffer("cbuffer://font"), RenderBufferTarget::Pixel, 0);
-    Renderer2D::FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
+    GetEngine()->GetRenderer2D()->FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
 
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
@@ -93,14 +96,14 @@ void GameApp::LoadResources()
     shaderMan->CreateProgram("shader://model", Mesh::m_Layout, "shaders/modelv.lr", "shaders/modelp.lr");
 
     // VertexBatcher constant buffer
-    genericDynBufferDesc.DataLen = sizeof(BatcherRenderBuffer);
-    shaderMan->CreateRenderBuffer("cbuffer://batcher", genericDynBufferDesc);
-    shaderMan->CreateProgram("shader://batcher", VertexBatcher::m_Layout, "shaders/batchv.lr", "shaders/batchp.lr");
+    genericDynBufferDesc.DataLen = sizeof(Batcher2DBufferData);
+    shaderMan->CreateRenderBuffer("cbuffer://batcher2d", genericDynBufferDesc);
+    shaderMan->CreateProgram("shader://batcher", Renderer2D::m_Batcher2DLayout, "shaders/batchv.lr", "shaders/batchp.lr");
 
     // Font constant buffer
     genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
     shaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
-    fontShader = shaderMan->CreateProgram("shader://font", VertexBatcher::m_Layout, "shaders/fontv.lr", "shaders/fontp.lr");
+    fontShader = shaderMan->CreateProgram("shader://font", Renderer2D::m_Batcher2DLayout, "shaders/fontv.lr", "shaders/fontp.lr");
 
     //* Fonts *//
     FontDesc desc;

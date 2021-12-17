@@ -2,7 +2,7 @@
 
 namespace Lorr
 {
-    std::string_view D3D::GetLatestVSProfile(D3D_FEATURE_LEVEL level)
+    std::string_view D3D::VSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -45,7 +45,7 @@ namespace Lorr
         return "";
     }
 
-    std::string_view D3D::GetLatestPSProfile(D3D_FEATURE_LEVEL level)
+    std::string_view D3D::PSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -88,7 +88,7 @@ namespace Lorr
         return "";
     }
 
-    std::string_view D3D::GetLatestCSProfile(D3D_FEATURE_LEVEL level)
+    std::string_view D3D::CSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -131,7 +131,7 @@ namespace Lorr
         return "";
     }
 
-    std::string_view D3D::GetLatestShaderFeature(ShaderType type)
+    std::string_view D3D::GetLatestFeatureLevelString(ShaderType type)
     {
         D3D_FEATURE_LEVEL level;
 
@@ -144,9 +144,9 @@ namespace Lorr
 
         switch (type)
         {
-            case ShaderType::Vertex: return GetLatestVSProfile(level);
-            case ShaderType::Pixel: return GetLatestPSProfile(level);
-            case ShaderType::Compute: return GetLatestCSProfile(level);
+            case ShaderType::Vertex: return VSFeatureLevelToString(level);
+            case ShaderType::Pixel: return PSFeatureLevelToString(level);
+            case ShaderType::Compute: return CSFeatureLevelToString(level);
         }
         return "";
     }

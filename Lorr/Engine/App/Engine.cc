@@ -47,9 +47,8 @@ namespace Lorr
         //* Graphics
         m_pShaderMan->Init();
         m_pRenderer->Init(m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight());
-        m_pBatcher->Init();
         m_pImGui->Init(this);
-        Renderer2D::Init();
+        m_pRenderer2D->Init();
 
         //* Audio system
         m_pAudioSystem->Init();

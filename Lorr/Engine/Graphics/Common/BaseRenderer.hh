@@ -19,7 +19,7 @@ namespace Lorr
     /// Renderer configurations:
     namespace Renderer::Config
     {
-        constexpr u32 kMaxRenderTargets = 16;  // (currently: DXGI_MAX_SWAP_CHAIN_BUFFERS) Maximum amount of render targets that swap chain will handle
+        constexpr u32 kMaxFrameBuffers = 3;
     }
 
     class Engine;

@@ -317,7 +317,7 @@ namespace Lorr
         flags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
-        static const D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
+        constexpr D3D_FEATURE_LEVEL featureLevels[] = { D3D_FEATURE_LEVEL_11_1, D3D_FEATURE_LEVEL_11_0 };
 
         // feature level that device will select
         D3D_FEATURE_LEVEL currentFeatureLevel;
@@ -353,7 +353,7 @@ namespace Lorr
         m_SwapChainDesc.SampleDesc.Count = 1;
         m_SwapChainDesc.SampleDesc.Quality = 0;
 
-        m_SwapChainDesc.BufferCount = 2;  // Buf 1: back buffer (render), buf 2: front buffer (window)
+        m_SwapChainDesc.BufferCount = 1;
         m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
