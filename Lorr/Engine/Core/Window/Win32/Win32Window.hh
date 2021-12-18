@@ -6,7 +6,7 @@
 
 #include "Engine/Core/Window/BaseWindow.hh"
 
-namespace Lorr
+namespace lr
 {
     class Win32Window : public BaseWindow
     {
@@ -28,4 +28,4 @@ namespace Lorr
         HWND m_Handle = 0;
         HINSTANCE m_Instance = 0;
     };
-}  // namespace Lorr
+}  // namespace lr

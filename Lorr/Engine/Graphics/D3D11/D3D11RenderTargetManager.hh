@@ -11,7 +11,7 @@
 
 #include <d3d11.h>
 
-namespace Lorr
+namespace lr
 {
     class D3D11RenderTargetManager
     {
@@ -58,6 +58,6 @@ namespace Lorr
         ID3D11Device *m_pDevice = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

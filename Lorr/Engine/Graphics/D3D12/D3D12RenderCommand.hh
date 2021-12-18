@@ -8,7 +8,7 @@
 
 #include "Engine/Graphics/Common/BaseRenderer.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D12RenderCommand
     {
@@ -36,6 +36,6 @@ namespace Lorr
         ID3D12CommandQueue *m_pQueue = nullptr;
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

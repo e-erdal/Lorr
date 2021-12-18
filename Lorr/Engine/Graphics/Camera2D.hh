@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     class Camera2D
     {
@@ -31,4 +31,4 @@ namespace Lorr
         float m_Rotation{};
         float m_Zoom{};
     };
-}  // namespace Lorr
+}  // namespace lr

@@ -1,6 +1,6 @@
 #include "VertexBatcher.hh"
 
-namespace Lorr
+namespace lr
 {
 
-}  // namespace Lorr
+}  // namespace lr

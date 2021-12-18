@@ -10,7 +10,7 @@
 
 #include "Audio.hh"
 
-namespace Lorr
+namespace lr
 {
     class AudioSystem;
     class AudioChannel
@@ -33,4 +33,4 @@ namespace Lorr
         std::vector<Audio *> m_LinkedAudio;
     };
 
-}  // namespace Lorr
+}  // namespace lr

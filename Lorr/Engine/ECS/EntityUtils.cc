@@ -9,7 +9,7 @@
 #include "Components/PhysicsComponent.hh"
 #include "Components/TextComponent.hh"
 
-namespace Lorr
+namespace lr
 {
     Entity &Entity::AttachDynamicBox(float destiny, float friction)
     {
@@ -130,4 +130,4 @@ namespace Lorr
         return {};
     }
 
-}  // namespace Lorr
+}  // namespace lr

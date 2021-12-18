@@ -1,7 +1,7 @@
 #ifdef LR_BACKEND_D3D12
 #include "D3D12SwapChain.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D12SwapChain::Init(ID3D12Device *pDevice, IDXGIFactory4 *pFactory, BaseWindow *pWindow, DXGI_FORMAT bufferingFormat, bool tripleBuffering)
     {
@@ -76,5 +76,5 @@ namespace Lorr
         }
     }
 
-}  // namespace Lorr
+}  // namespace lr
 #endif

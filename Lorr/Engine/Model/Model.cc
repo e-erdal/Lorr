@@ -2,7 +2,7 @@
 
 #include "Loader/ModelLoader.hh"
 
-namespace Lorr
+namespace lr
 {
     void Model::Init(const Identifier &ident, ModelDesc *pDesc, ModelData *pData)
     {
@@ -38,4 +38,4 @@ namespace Lorr
         for (auto &mesh : m_Meshes) mesh.Render();
     }
 
-}  // namespace Lorr
+}  // namespace lr

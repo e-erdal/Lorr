@@ -9,7 +9,7 @@
 
 #define TEXTURE_MAG_NEAREST (BGFX_SAMPLER_MIN_POINT | BGFX_SAMPLER_MAG_POINT | BGFX_SAMPLER_UVW_CLAMP)
 
-namespace Lorr
+namespace lr
 {
     enum TextureFormat : u16
     {
@@ -123,4 +123,4 @@ namespace Lorr
         TextureHandle Create(const Identifier &ident, TextureDesc *pDesc, TextureData *pData);
         TextureHandle Get(const Identifier &ident);
     }  // namespace Texture
-}  // namespace Lorr
+}  // namespace lr

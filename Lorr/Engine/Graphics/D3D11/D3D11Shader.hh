@@ -10,7 +10,7 @@
 
 #include "D3D11Renderer.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D11Shader : public BaseShader
     {
@@ -39,6 +39,6 @@ namespace Lorr
         }
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

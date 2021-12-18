@@ -4,7 +4,7 @@
 
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
 
-namespace Lorr
+namespace lr
 {
     constexpr glm::vec4 color = glm::vec4(0, 0, 0, 0);
 
@@ -148,6 +148,6 @@ namespace Lorr
             m_Targets.erase(it);
         }
     }
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

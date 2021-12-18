@@ -8,7 +8,7 @@
 
 #define ZLIB_PADDING_BYTES (1024 * 5)
 
-namespace Lorr
+namespace lr
 {
     class BufferStreamMemoyWatcher
     {
@@ -441,6 +441,6 @@ namespace Lorr
         size_t m_DataLen = 0;
 
         uintptr_t m_Offset = 0;
-    };  // namespace Lorr
+    };  // namespace lr
 
-}  // namespace Lorr
+}  // namespace lr

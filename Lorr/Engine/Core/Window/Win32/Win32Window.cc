@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr
+namespace lr
 {
     constexpr DWORD g_defWindowStyle = (WS_OVERLAPPED | WS_CAPTION | WS_SYSMENU | WS_MINIMIZEBOX | WS_VISIBLE | WS_POPUP | WS_VISIBLE);
 
@@ -412,4 +412,4 @@ namespace Lorr
     {
         return m_Handle;
     }
-}  // namespace Lorr
+}  // namespace lr

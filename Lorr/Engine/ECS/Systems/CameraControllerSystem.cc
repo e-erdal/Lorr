@@ -2,7 +2,7 @@
 
 #include "Engine/ECS/Components/CameraComponent.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     void CameraControllerSystem::Tick(float deltaTime)
     {
@@ -21,4 +21,4 @@ namespace Lorr::System
     {
     }
 
-}  // namespace Lorr::System
+}  // namespace lr::System

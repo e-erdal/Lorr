@@ -5,7 +5,7 @@
 #include "Engine/App/Engine.hh"
 #include "Engine/ECS/Entity.hh"
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Camera3DController
     {
@@ -31,4 +31,4 @@ namespace Lorr::Component
         Camera2D m_Handle;
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

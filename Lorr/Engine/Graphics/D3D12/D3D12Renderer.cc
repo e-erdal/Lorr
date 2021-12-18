@@ -3,11 +3,11 @@
 
 // #include "Engine/Graphics/D3D12/D3D12Texture.hh"
 
-static Lorr::D3D12Renderer *g_D3D12Renderer;
+static lr::D3D12Renderer *g_D3D12Renderer;
 
 constexpr D3D_FEATURE_LEVEL kMinimumFeatureLevel = { D3D_FEATURE_LEVEL_11_0 };
 
-namespace Lorr
+namespace lr
 {
     bool D3D12Renderer::Init(PlatformWindow *pWindow, u32 width, u32 height)
     {
@@ -302,6 +302,6 @@ namespace Lorr
         return g_D3D12Renderer;
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

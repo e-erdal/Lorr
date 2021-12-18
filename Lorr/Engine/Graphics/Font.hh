@@ -14,7 +14,7 @@
 #include "Engine/Graphics/Common/BaseTexture.hh"
 #include "Engine/Resource/IResource.hh"
 
-namespace Lorr
+namespace lr
 {
     struct RenderableChar
     {
@@ -94,4 +94,4 @@ namespace Lorr
         void AlignAll(const tiny_utf8::string &text, std::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
     };
 
-}  // namespace Lorr
+}  // namespace lr

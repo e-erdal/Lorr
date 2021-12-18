@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     typedef intptr_t PlatformHandle;
 
@@ -122,4 +122,4 @@ namespace Lorr
         u32 m_UsingMonitor = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr

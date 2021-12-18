@@ -1,6 +1,6 @@
 #include "ShaderManager.hh"
 
-namespace Lorr
+namespace lr
 {
     void ShaderManager::Init()
     {
@@ -87,4 +87,4 @@ namespace Lorr
         return it->second;
     }
 
-}  // namespace Lorr
+}  // namespace lr

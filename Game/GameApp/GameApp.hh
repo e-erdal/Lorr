@@ -8,7 +8,7 @@
 
 #include "Engine/ECS/Scene.hh"
 
-class GameApp : public Lorr::BaseApp
+class GameApp : public lr::BaseApp
 {
 public:
     void Init() override;

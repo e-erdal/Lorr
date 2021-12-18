@@ -4,11 +4,11 @@
 
 #pragma once
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Base
     {
         Identifier m_Identifier = kEmptyIdentifier;
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

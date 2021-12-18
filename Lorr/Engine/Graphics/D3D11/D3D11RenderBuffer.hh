@@ -10,7 +10,7 @@
 
 #include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D11RenderBuffer : public BaseRenderBuffer
     {
@@ -47,6 +47,6 @@ namespace Lorr
         D3D11_MAP m_Mapping;
         D3D11_MAPPED_SUBRESOURCE m_MappedResc;
     };
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

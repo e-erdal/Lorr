@@ -18,7 +18,7 @@
 #include "Engine/Graphics/Font.hh"
 #include "Engine/Model/Model.hh"
 
-namespace Lorr
+namespace lr
 {
     class ResourceManager
     {
@@ -110,4 +110,4 @@ namespace Lorr
         std::unordered_map<Identifier, void *> m_Resources;
     };
 
-}  // namespace Lorr
+}  // namespace lr

@@ -4,7 +4,7 @@
 
 #include "Engine/Graphics/D3D/D3DType.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D11Texture::Init(const Identifier &ident, TextureDesc *pDesc, TextureData *pData)
     {
@@ -327,6 +327,6 @@ namespace Lorr
         Delete();
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

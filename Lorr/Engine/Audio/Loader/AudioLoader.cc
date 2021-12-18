@@ -4,7 +4,7 @@
 #include "OggLoader.hh"
 #include "MP3Loader.hh"
 
-namespace Lorr::AudioLoader
+namespace lr::AudioLoader
 {
     bool LoadAudio(AudioLoaderType eType, AudioData *audioData, BufferStream &buf)
     {
@@ -34,4 +34,4 @@ namespace Lorr::AudioLoader
 
         return false;
     }
-}  // namespace Lorr::AudioLoader
+}  // namespace lr::AudioLoader

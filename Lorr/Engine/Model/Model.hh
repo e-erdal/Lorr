@@ -8,7 +8,7 @@
 
 #include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
-namespace Lorr
+namespace lr
 {
     struct ModelDesc
     {
@@ -45,4 +45,4 @@ namespace Lorr
         u32 m_IndexCount = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr

@@ -7,7 +7,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr::GUI
+namespace lr::GUI
 {
     struct Vertex
     {
@@ -83,4 +83,4 @@ namespace Lorr::GUI
     void Render();
     void EndFrame();
 
-}  // namespace Lorr::GUI
+}  // namespace lr::GUI

@@ -2,7 +2,7 @@
 
 #include "D3D11RendererStateManager.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D11RendererStateManager::SetDevice(ID3D11Device *pDevice)
     {
@@ -75,6 +75,6 @@ namespace Lorr
         return it->second;
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

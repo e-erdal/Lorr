@@ -1,6 +1,6 @@
 #include "ResourceManager.hh"
 
-namespace Lorr
+namespace lr
 {
     void ResourceManager::Init()
     {
@@ -260,4 +260,4 @@ namespace Lorr
 
     /// -------------------------------------------------------------------------------------------
 
-}  // namespace Lorr
+}  // namespace lr

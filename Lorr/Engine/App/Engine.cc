@@ -5,7 +5,7 @@
 
 #include "Engine/Graphics/Renderer2D.hh"
 
-namespace Lorr
+namespace lr
 {
     BufferStreamMemoyWatcher *g_pBSWatcher;
 
@@ -81,7 +81,7 @@ namespace Lorr
         ZoneScoped;
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #if TRACY_ENABLE
 void *operator new(size_t s)

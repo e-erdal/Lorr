@@ -17,7 +17,7 @@ class ModelCompiler
 public:
     ModelCompiler(const std::string &path, const std::string &out)
     {
-        using namespace Lorr;
+        using namespace lr;
 
         printf("Loading Model %s -> %s\n", path.c_str(), out.c_str());
 

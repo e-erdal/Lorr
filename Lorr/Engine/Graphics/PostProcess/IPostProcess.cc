@@ -2,7 +2,7 @@
 
 #include "LensFlare/LensFlare.hh"
 
-namespace Lorr
+namespace lr
 {
     void PostProcessManager::Init()
     {
@@ -14,4 +14,4 @@ namespace Lorr
         for (auto pass : m_Passes) pass.second->Draw();
     }
 
-}  // namespace Lorr
+}  // namespace lr

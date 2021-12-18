@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr
+namespace lr
 {
     void Camera2D::Init(const glm::vec2 &pos, const glm::vec2 &size)
     {
@@ -49,4 +49,4 @@ namespace Lorr
         CalculateMetrices();
     }
 
-}  // namespace Lorr
+}  // namespace lr

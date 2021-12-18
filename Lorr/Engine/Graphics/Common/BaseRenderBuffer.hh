@@ -6,7 +6,7 @@
 
 #include "Engine/Graphics/Common/InputLayout.hh"
 
-namespace Lorr
+namespace lr
 {
     enum class RenderBufferUsage : u8
     {
@@ -88,4 +88,4 @@ namespace Lorr
         RenderBufferHandle Create(const RenderBufferDesc &desc);
     }
 
-}  // namespace Lorr
+}  // namespace lr

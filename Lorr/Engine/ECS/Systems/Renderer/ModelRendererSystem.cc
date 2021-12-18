@@ -4,7 +4,7 @@
 
 #include "Engine/Model/Model.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     void ModelRendererSystem::Tick(float deltaTime)
     {
@@ -40,4 +40,4 @@ namespace Lorr::System
         // pRenderer->SetCurrentTarget("renderer://backbuffer");
     }
 
-}  // namespace Lorr::System
+}  // namespace lr::System

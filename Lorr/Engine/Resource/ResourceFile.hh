@@ -6,7 +6,7 @@
 
 #include "IResource.hh"
 
-namespace Lorr
+namespace lr
 {
     constexpr u32 kResourceFileSignature = 1920102220;
     constexpr u16 kResourceMinVersion = 1;
@@ -30,4 +30,4 @@ namespace Lorr
     };
 #pragma pack(pop)
 
-}  // namespace Lorr
+}  // namespace lr

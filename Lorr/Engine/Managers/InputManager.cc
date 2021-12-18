@@ -6,7 +6,7 @@
 
 #include "Engine/ECS/Components/CameraComponent.hh"
 
-namespace Lorr
+namespace lr
 {
     void InputManager::OnKeyboardState(ButtonState state, Key key, KeyMod mods)
     {
@@ -93,4 +93,4 @@ namespace Lorr
         m_MousePos = pos;
     }
 
-}  // namespace Lorr
+}  // namespace lr

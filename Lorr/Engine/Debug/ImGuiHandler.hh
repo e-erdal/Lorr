@@ -14,7 +14,7 @@
 
 #include <imgui.h>
 
-namespace Lorr
+namespace lr
 {
     class Engine;
     class ImGuiHandler
@@ -49,4 +49,4 @@ namespace Lorr
 
         TextureHandle m_FontTexture = 0;
     };
-}  // namespace Lorr
+}  // namespace lr

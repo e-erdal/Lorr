@@ -6,7 +6,7 @@
 
 #include "ModelLoader.hh"
 
-namespace Lorr::ModelLoader
+namespace lr::ModelLoader
 {
     class OBJLoader : public IModelLoader
     {
@@ -14,4 +14,4 @@ namespace Lorr::ModelLoader
         bool LoadBinary(ModelData *modelData, BufferStream &buf) override;
     };
 
-}  // namespace Lorr::ModelLoader
+}  // namespace lr::ModelLoader

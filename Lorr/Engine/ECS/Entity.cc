@@ -2,7 +2,7 @@
 
 #include "Components/BaseComponent.hh"
 
-namespace Lorr
+namespace lr
 {
     Entity::Entity(const Identifier &ident, EntityRegistry *pRegistry) : m_Registry(pRegistry)
     {
@@ -17,4 +17,4 @@ namespace Lorr
         ZoneScoped;
     }
 
-}  // namespace Lorr
+}  // namespace lr

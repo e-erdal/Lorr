@@ -6,7 +6,7 @@
 
 #include "InputVars.hh"
 
-namespace Lorr
+namespace lr
 {
     class InputManager
     {
@@ -32,4 +32,4 @@ namespace Lorr
         std::unordered_map<MouseButton, ButtonState> m_MouseButtonState;
     };
 
-}  // namespace Lorr
+}  // namespace lr

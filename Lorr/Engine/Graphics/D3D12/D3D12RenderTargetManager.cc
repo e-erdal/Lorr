@@ -2,7 +2,7 @@
 
 #include "D3D12Renderer.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D12RenderTargetManager::Init()
     {
@@ -10,4 +10,4 @@ namespace Lorr
         auto pSwapChain = DX12Renderer->GetSwapChain();
     }
 
-}  // namespace Lorr
+}  // namespace lr

@@ -23,7 +23,7 @@
 
 #include <box2d/box2d.h>
 
-namespace Lorr
+namespace lr
 {
     class Engine
     {
@@ -74,4 +74,4 @@ namespace Lorr
         return GetApp()->GetEngine();
     }
 
-}  // namespace Lorr
+}  // namespace lr

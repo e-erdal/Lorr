@@ -6,7 +6,7 @@
 
 #include "Queue.hh"
 
-namespace Lorr::Job
+namespace lr::Job
 {
     class Worker
     {
@@ -26,4 +26,4 @@ namespace Lorr::Job
 
     };
 
-}  // namespace Lorr::Job
+}  // namespace lr::Job

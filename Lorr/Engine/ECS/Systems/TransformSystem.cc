@@ -2,7 +2,7 @@
 
 #include "Engine/ECS/Components/TransformComponent.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     void TransformSystem::Tick(float deltaTime)
     {
@@ -29,4 +29,4 @@ namespace Lorr::System
     {
     }
 
-}  // namespace Lorr::System
+}  // namespace lr::System

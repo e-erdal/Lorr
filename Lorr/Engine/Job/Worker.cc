@@ -1,6 +1,6 @@
 #include "Worker.hh"
 
-namespace Lorr::Job
+namespace lr::Job
 {
     Worker::Worker()
     {
@@ -26,4 +26,4 @@ namespace Lorr::Job
         }
     }
 
-}  // namespace Lorr::Job
+}  // namespace lr::Job

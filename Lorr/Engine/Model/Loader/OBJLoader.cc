@@ -3,7 +3,7 @@
 #include <obj_loader.h>
 #include <meshoptimizer.h>
 
-namespace Lorr::ModelLoader
+namespace lr::ModelLoader
 {
     bool OBJLoader::LoadBinary(ModelData *modelData, BufferStream &buf)
     {
@@ -60,4 +60,4 @@ namespace Lorr::ModelLoader
         return true;
     }
 
-}  // namespace Lorr::ModelLoader
+}  // namespace lr::ModelLoader

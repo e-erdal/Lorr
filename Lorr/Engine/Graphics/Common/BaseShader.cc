@@ -11,10 +11,10 @@
 
 #define FIND_SHADER(type)                                                                                                                                      \
     std::find_if(pData->Shaders.begin(), pData->Shaders.end(), [](const ShaderInfo &x) {                                                                       \
-        return x.Renderer == Lorr::IRenderer::CurrentAPI() && x.Type == ShaderType::type;                                                                      \
+        return x.Renderer == lr::IRenderer::CurrentAPI() && x.Type == ShaderType::type;                                                                      \
     })
 
-namespace Lorr
+namespace lr
 {
     void BaseShader::ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer)
     {
@@ -86,4 +86,4 @@ namespace Lorr
         return 0;
     }
 
-}  // namespace Lorr
+}  // namespace lr

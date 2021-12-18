@@ -15,7 +15,7 @@
 #include "Audio.hh"
 #include "AudioChannel.hh"
 
-namespace Lorr
+namespace lr
 {
     class AudioSystem
     {
@@ -35,4 +35,4 @@ namespace Lorr
         ALCcontext *m_alContext;  // Active OpenAL Context (once per thread)
     };
 
-}  // namespace Lorr
+}  // namespace lr

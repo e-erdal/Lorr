@@ -10,7 +10,7 @@
 
 #include <d3d12.h>
 
-namespace Lorr
+namespace lr
 {
     class D3D12RenderTargetManager
     {
@@ -24,6 +24,6 @@ namespace Lorr
 
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

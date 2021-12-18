@@ -7,7 +7,7 @@
 #include "AudioChannel.hh"
 #include "Loader/AudioLoader.hh"
 
-namespace Lorr
+namespace lr
 {
     void Audio::Init(const Identifier &ident, AudioDesc *pDesc, AudioData *pData)
     {
@@ -105,4 +105,4 @@ namespace Lorr
     void Audio::SetPosition(glm::vec3 position)
     {
     }
-}  // namespace Lorr
+}  // namespace lr

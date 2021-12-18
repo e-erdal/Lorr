@@ -10,7 +10,7 @@
 #include "Systems/Renderer/ModelRendererSystem.hh"
 #include "Systems/Renderer/Renderer2DSystem.hh"
 
-namespace Lorr
+namespace lr
 {
     Scene::~Scene()
     {
@@ -63,4 +63,4 @@ namespace Lorr
         });
     }
 
-}  // namespace Lorr
+}  // namespace lr

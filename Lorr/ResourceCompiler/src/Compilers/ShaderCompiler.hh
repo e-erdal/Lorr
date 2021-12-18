@@ -16,7 +16,7 @@ class ShaderCompiler
 public:
     ShaderCompiler(const std::string &path, const std::string &out)
     {
-        using namespace Lorr;
+        using namespace lr;
 
         BufferStream buf;
 

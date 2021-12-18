@@ -7,7 +7,7 @@
 #include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 
-namespace Lorr
+namespace lr
 {
     struct ShaderProgram
     {
@@ -37,4 +37,4 @@ namespace Lorr
         std::unordered_map<Identifier, ShaderProgram> m_Programs;
         std::unordered_map<Identifier, RenderBufferHandle> m_Buffers;  // TODO: Move this to BufferManager
     };
-}  // namespace Lorr
+}  // namespace lr

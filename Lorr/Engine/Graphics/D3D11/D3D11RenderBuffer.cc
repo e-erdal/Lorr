@@ -2,7 +2,7 @@
 
 #include "D3D11RenderBuffer.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D11RenderBuffer::Init(const RenderBufferDesc &desc)
     {
@@ -185,6 +185,6 @@ namespace Lorr
         Delete();
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

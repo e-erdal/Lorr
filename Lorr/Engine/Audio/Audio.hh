@@ -7,7 +7,7 @@
 
 #include "Engine/Resource/IResource.hh"
 
-namespace Lorr
+namespace lr
 {
     class AudioChannel;
     
@@ -64,4 +64,4 @@ namespace Lorr
         void __SetVolume(float volume);
     };
 
-}  // namespace Lorr
+}  // namespace lr

@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr::Job  // Special module for Lorr
+namespace lr::Job  // Special module for Lorr
 {
     using JobFn = std::function<void()>;
 
@@ -28,4 +28,4 @@ namespace Lorr::Job  // Special module for Lorr
         size_t m_MaxJobsSize;
     };
 
-}  // namespace Lorr::Job
+}  // namespace lr::Job

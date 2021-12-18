@@ -6,5 +6,5 @@
 
 #if _WIN32
     #include "Win32/Win32Window.hh"
-typedef Lorr::Win32Window PlatformWindow;
+typedef lr::Win32Window PlatformWindow;
 #endif

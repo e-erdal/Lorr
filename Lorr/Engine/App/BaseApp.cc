@@ -4,7 +4,7 @@
 
 #include "Engine/Utils/FPSLimiter.hh"
 
-namespace Lorr
+namespace lr
 {
     BaseApp::BaseApp() : m_pEngine(new Engine)
     {
@@ -58,4 +58,4 @@ namespace Lorr
         m_pCurrentScene = pScene;
     }
 
-}  // namespace Lorr
+}  // namespace lr

@@ -6,7 +6,7 @@
 
 #include <random>
 
-namespace Lorr
+namespace lr
 {
     class Random
     {
@@ -34,4 +34,4 @@ namespace Lorr
         static inline std::mt19937 m_Device;
     };
 
-}  // namespace Lorr
+}  // namespace lr

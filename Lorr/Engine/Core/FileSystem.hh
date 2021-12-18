@@ -21,7 +21,7 @@
 #include "Engine/Stream/BufferStream.hh"
 #include "Engine/Stream/FileStream.hh"
 
-namespace Lorr::FileSystem
+namespace lr::FileSystem
 {
     constexpr std::string_view GetFileName(std::string_view svPath) noexcept
     {
@@ -207,4 +207,4 @@ namespace Lorr::FileSystem
         w.WritePtr(buf.GetData(), buf.GetSize());
         w.Close();
     }
-}  // namespace Lorr::FileSystem
+}  // namespace lr::FileSystem

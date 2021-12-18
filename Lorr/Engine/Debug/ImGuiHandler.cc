@@ -3,7 +3,7 @@
 #include "Engine/App/Engine.hh"
 #include "Engine/Core/Window/BaseWindow.hh"
 
-namespace Lorr
+namespace lr
 {
     static InputLayout kImGuiInputLayout = {
         { VertexAttribType::Vec2, "POSITION" },
@@ -402,4 +402,4 @@ namespace Lorr
         pRenderer->SetScissor({ 0, 0, pWindow->GetWidth(), pWindow->GetHeight() });
     }
 
-}  // namespace Lorr
+}  // namespace lr

@@ -4,6 +4,8 @@
 
 #include "Block.hh"
 
+#include "Engine/Graphics/VertexBatcher.hh"
+
 class TerrainMeshBuilder
 {
 public:
@@ -18,4 +20,6 @@ private:
     };
 
     std::vector<Chunk> m_Chunks;
+
+    /// Renderer Components ///
 };

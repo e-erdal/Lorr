@@ -2,7 +2,7 @@
 
 #include "OBJLoader.hh"
 
-namespace Lorr
+namespace lr
 {
     bool ModelLoader::LoadModel(ModelLoaderType type, ModelData *modelData, BufferStream &buf)
     {
@@ -14,4 +14,4 @@ namespace Lorr
         return false;
     }
 
-}  // namespace Lorr
+}  // namespace lr

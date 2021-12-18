@@ -14,7 +14,7 @@
 #include "D3D12SwapChain.hh"
 #include "D3D12RenderTargetManager.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D12Renderer : public BaseRenderer
     {
@@ -96,6 +96,6 @@ namespace Lorr
 
 #define DX12Renderer D3D12Renderer::Get()
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

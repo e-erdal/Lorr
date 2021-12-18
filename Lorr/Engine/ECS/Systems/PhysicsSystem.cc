@@ -3,7 +3,7 @@
 #include "Engine/ECS/Components/TransformComponent.hh"
 #include "Engine/ECS/Components/PhysicsComponent.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     void PhysicsSystem::Tick(float deltaTime)
     {
@@ -27,4 +27,4 @@ namespace Lorr::System
     {
     }
 
-}  // namespace Lorr::System
+}  // namespace lr::System

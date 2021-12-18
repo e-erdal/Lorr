@@ -8,7 +8,7 @@
 #include <streambuf>
 #include <string>
 
-namespace Lorr
+namespace lr
 {
     class FileStream
     {
@@ -128,4 +128,4 @@ namespace Lorr
         FILE *m_File = 0;
         long m_FileSize = 0;
     };
-}  // namespace Lorr
+}  // namespace lr

@@ -15,7 +15,7 @@ HASH_INTERFACE(D3D11_RASTERIZER_DESC);
 HASH_INTERFACE(D3D11_DEPTH_STENCIL_DESC);
 HASH_INTERFACE(D3D11_BLEND_DESC);
 
-namespace Lorr
+namespace lr
 {
     class D3D11RendererStateManager
     {
@@ -34,7 +34,7 @@ namespace Lorr
         ID3D11Device *m_pDevice = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 // std::unordered_map operator support
 OPR_INTERFACE_CMP(D3D11_RASTERIZER_DESC);

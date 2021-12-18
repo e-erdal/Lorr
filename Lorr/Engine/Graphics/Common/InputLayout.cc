@@ -1,6 +1,6 @@
 #include "InputLayout.hh"
 
-namespace Lorr
+namespace lr
 {
     InputLayout::InputLayout(std::initializer_list<VertexAttrib> elements) : m_Elements(elements)
     {
@@ -14,4 +14,4 @@ namespace Lorr
         }
     }
 
-}  // namespace Lorr
+}  // namespace lr

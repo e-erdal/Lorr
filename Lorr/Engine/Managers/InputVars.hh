@@ -6,7 +6,7 @@
 
 #include <cstdint>
 
-namespace Lorr
+namespace lr
 {
     enum class ButtonState : u8
     {
@@ -178,4 +178,4 @@ namespace Lorr
     };
     BitFlags(MouseButton);
 
-}  // namespace Lorr
+}  // namespace lr

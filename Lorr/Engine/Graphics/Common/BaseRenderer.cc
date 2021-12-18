@@ -1,6 +1,6 @@
 #include "BaseRenderer.hh"
 
-namespace Lorr
+namespace lr
 {
     RendererType BaseRenderer::m_CurrentAPI = RendererType::None;
 
@@ -14,4 +14,4 @@ namespace Lorr
         m_PostProcessMan.Draw();
     }
 
-}  // namespace Lorr
+}  // namespace lr

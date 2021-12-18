@@ -6,7 +6,7 @@
 
 #include "AudioLoader.hh"
 
-namespace Lorr::AudioLoader
+namespace lr::AudioLoader
 {
     class OggAudioLoader : public IAudioLoader
     {
@@ -14,4 +14,4 @@ namespace Lorr::AudioLoader
         bool LoadBinary(AudioData *audioData, BufferStream &buf) override;
     };
     
-}  // namespace Lorr::AudioLoader
+}  // namespace lr::AudioLoader

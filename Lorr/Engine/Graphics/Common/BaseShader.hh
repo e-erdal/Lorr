@@ -9,7 +9,7 @@
 #include "Engine/Graphics/Types.hh"
 #include "Engine/Resource/IResource.hh"
 
-namespace Lorr
+namespace lr
 {
     enum class ShaderType : u8
     {
@@ -62,4 +62,4 @@ namespace Lorr
         ShaderHandle Create(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData);
     }  // namespace Shader
 
-}  // namespace Lorr
+}  // namespace lr

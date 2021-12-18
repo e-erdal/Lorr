@@ -17,7 +17,7 @@ class FontCompiler
 public:
     FontCompiler(const std::string &path, const std::string &out)
     {
-        using namespace Lorr;
+        using namespace lr;
 
         printf("Loading Font %s -> %s\n", path.c_str(), out.c_str());
 

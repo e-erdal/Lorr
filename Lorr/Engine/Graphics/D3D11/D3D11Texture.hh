@@ -11,7 +11,7 @@
 
 #include "Engine/Graphics/D3D11/D3D11Renderer.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D11Texture : public BaseTexture
     {
@@ -74,6 +74,6 @@ namespace Lorr
 
         ID3D11DepthStencilView *m_pDepthStencil = 0;
     };
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr
+namespace lr
 {
     void Camera3D::Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar)
     {
@@ -103,4 +103,4 @@ namespace Lorr
         if (m_Pos != lastPos) CalculateView();
     }
 
-}  // namespace Lorr
+}  // namespace lr

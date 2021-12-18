@@ -14,7 +14,7 @@
 #include "Common/BaseRenderBuffer.hh"
 #include "Common/BaseTexture.hh"
 
-namespace Lorr::PostProcess
+namespace lr::PostProcess
 {
     class ShadowMap : public IPostProcess
     {
@@ -25,4 +25,4 @@ namespace Lorr::PostProcess
     private:
     };
 
-}  // namespace Lorr::PostProcess
+}  // namespace lr::PostProcess

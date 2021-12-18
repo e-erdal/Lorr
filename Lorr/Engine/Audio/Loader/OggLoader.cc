@@ -5,7 +5,7 @@
 #include <vorbis/codec.h>
 #include <vorbis/vorbisfile.h>
 
-namespace Lorr::AudioLoader
+namespace lr::AudioLoader
 {
     // Vorbis masscare
 
@@ -117,4 +117,4 @@ namespace Lorr::AudioLoader
 
         return true;
     }
-}  // namespace Lorr::AudioLoader
+}  // namespace lr::AudioLoader

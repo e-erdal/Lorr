@@ -1,6 +1,6 @@
 #include "Font.hh"
 
-namespace Lorr
+namespace lr
 {
     using namespace msdfgen;
 
@@ -187,4 +187,4 @@ namespace Lorr
         line.Chars.clear();
     }
 
-}  // namespace Lorr
+}  // namespace lr

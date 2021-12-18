@@ -2,7 +2,7 @@
 
 #include "Engine/Graphics/D3D11/D3D11RenderBuffer.hh"
 
-namespace Lorr
+namespace lr
 {
     RenderBufferHandle RenderBuffer::Create(const RenderBufferDesc &desc)
     {
@@ -21,4 +21,4 @@ namespace Lorr
         return 0;
     }
 
-}  // namespace Lorr
+}  // namespace lr

@@ -8,7 +8,7 @@
 #include "Compilers/TextureCompiler.hh"
 #include "Compilers/ModelCompiler.hh"
 
-class RCApp : public Lorr::BaseApp
+class RCApp : public lr::BaseApp
 {
 public:
     void Init() override{};
@@ -18,27 +18,23 @@ public:
 
 RCApp *app;
 
-namespace Lorr
+lr::BaseApp *lr::GetApp()
 {
-    BaseApp *GetApp()
-    {
-        return app;
-    }
-
-}  // namespace Lorr
+    return app;
+}
 
 #define PERROR(...) printf("ERROR: " __VA_ARGS__);
 
 int main(int argc, char **argv)
 {
-    Lorr::ApplicationDesc desc;
+    lr::ApplicationDesc desc;
     desc.Title = "Lorr: Resource compiler";
     desc.ConsoleApp = true;
 
     app = new RCApp;
     app->Start(desc);
 
-    Lorr::ArgParser parser(argc, argv);
+    lr::ArgParser parser(argc, argv);
 
     std::string path = "";
     if (parser.GetConfig("f", &path))

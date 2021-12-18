@@ -4,7 +4,7 @@
 #include <thread>
 
 // https://stackoverflow.com/a/59165784
-namespace Lorr
+namespace lr
 {
     template<intmax_t FPS>
     class FrameLimiter
@@ -32,4 +32,4 @@ namespace Lorr
         // the time point we'll add to in every loop
         std::chrono::time_point<std::chrono::steady_clock, decltype(time_between_frames)> tp;
     };
-}  // namespace Lorr
+}  // namespace lr

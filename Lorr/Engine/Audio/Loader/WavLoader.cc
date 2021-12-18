@@ -3,7 +3,7 @@
 #include <AL/al.h>
 #include <dr_wav.h>
 
-namespace Lorr::AudioLoader
+namespace lr::AudioLoader
 {
     bool WavAudioLoader::LoadBinary(AudioData *audioData, BufferStream &buf)
     {
@@ -34,4 +34,4 @@ namespace Lorr::AudioLoader
 
         return true;
     }
-}  // namespace Lorr::AudioLoader
+}  // namespace lr::AudioLoader

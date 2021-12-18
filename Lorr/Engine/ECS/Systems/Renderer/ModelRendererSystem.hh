@@ -6,7 +6,7 @@
 
 #include "Engine/ECS/ISystem.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     class ModelRendererSystem : public ISystem
     {
@@ -16,4 +16,4 @@ namespace Lorr::System
         void Draw() override;
     };
 
-}  // namespace Lorr::System
+}  // namespace lr::System

@@ -2,7 +2,7 @@
 
 #include "Engine/Graphics/D3D/D3DType.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D11Shader::Init(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData)
     {
@@ -54,4 +54,4 @@ namespace Lorr
         }
     }
 
-}  // namespace Lorr
+}  // namespace lr

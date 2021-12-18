@@ -4,7 +4,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr
+namespace lr
 {
     void AudioSystem::Init()
     {
@@ -59,4 +59,4 @@ namespace Lorr
         pAudioOut->Init(ident, &desc, pData);
     }
 
-}  // namespace Lorr
+}  // namespace lr

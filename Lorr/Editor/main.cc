@@ -2,7 +2,7 @@
 
 #include "Layers/Main/MainLayer.hh"
 
-using namespace Lorr;
+using namespace lr;
 
 class EditorApp : public BaseApp
 {
@@ -35,7 +35,7 @@ int main()
     desc.Title = "Lorr: Editor";
     desc.Width = 1280;
     desc.Height = 720;
-    desc.Flags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;  // WindowFlags::Resizable | WindowFlags::Centered
+    desc.Flags |= WindowFlags::Resizable | WindowFlags::Centered;  // WindowFlags::Resizable | WindowFlags::Centered
 
     app = new EditorApp;
     app->Start(desc);
@@ -44,7 +44,7 @@ int main()
     return 0;
 }
 
-Lorr::BaseApp *Lorr::GetApp()
+lr::BaseApp *lr::GetApp()
 {
     return app;
 }

@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr::PostProcess
+namespace lr::PostProcess
 {
     void LensFlare::Init()
     {
@@ -58,4 +58,4 @@ namespace Lorr::PostProcess
         //* --------------------------------------------------------------------------------------------------------------- *
     }
 
-}  // namespace Lorr::PostProcess
+}  // namespace lr::PostProcess

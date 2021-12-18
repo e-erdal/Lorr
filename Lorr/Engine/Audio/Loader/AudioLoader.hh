@@ -8,7 +8,7 @@
 #include "Engine/Stream/BufferStream.hh"
 #include "Engine/Audio/Audio.hh"
 
-namespace Lorr
+namespace lr
 {
     namespace AudioLoader
     {
@@ -28,4 +28,4 @@ namespace Lorr
         };
 
     }  // namespace AudioLoader
-}  // namespace Lorr
+}  // namespace lr

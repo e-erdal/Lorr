@@ -1,6 +1,6 @@
 #include "BaseWindow.hh"
 
-namespace Lorr
+namespace lr
 {
     const SystemMetrics::Display *BaseWindow::GetDisplay(u32 monitor) const
     {
@@ -11,4 +11,4 @@ namespace Lorr
         return &m_SystemMetrics.Displays[monitor];
     }
 
-}  // namespace Lorr
+}  // namespace lr

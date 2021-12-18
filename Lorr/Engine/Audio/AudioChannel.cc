@@ -1,6 +1,6 @@
 #include "AudioChannel.hh"
 
-namespace Lorr
+namespace lr
 {
     void AudioChannel::Init(const Identifier &ident)
     {
@@ -28,4 +28,4 @@ namespace Lorr
         }
     }
 
-}  // namespace Lorr
+}  // namespace lr

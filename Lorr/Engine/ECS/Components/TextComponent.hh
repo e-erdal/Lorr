@@ -8,7 +8,7 @@
 
 #include "Engine/Graphics/Font.hh"
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Text
     {
@@ -42,4 +42,4 @@ namespace Lorr::Component
         std::vector<TextLine> m_Lines;
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

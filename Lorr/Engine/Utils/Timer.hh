@@ -3,7 +3,7 @@
 #include <chrono>
 #include <iostream>
 
-namespace Lorr
+namespace lr
 {
     class Timer
     {
@@ -32,4 +32,4 @@ namespace Lorr
         std::chrono::time_point<clock_> beg_;
     };
 
-}  // namespace Lorr
+}  // namespace lr

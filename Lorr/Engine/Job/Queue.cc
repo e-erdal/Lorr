@@ -1,6 +1,6 @@
 #include "Queue.hh"
 
-namespace Lorr::Job
+namespace lr::Job
 {
     Queue::Queue(size_t maxJobs) : m_MaxJobsSize(maxJobs)
     {
@@ -42,4 +42,4 @@ namespace Lorr::Job
         return m_Jobs[m_JobSize];
     }
 
-}  // namespace Lorr::Job
+}  // namespace lr::Job

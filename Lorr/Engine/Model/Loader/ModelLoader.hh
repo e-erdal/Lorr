@@ -7,7 +7,7 @@
 #include "Engine/Model/Model.hh"
 #include "Engine/Stream/BufferStream.hh"
 
-namespace Lorr::ModelLoader
+namespace lr::ModelLoader
 {
     enum class ModelLoaderType
     {
@@ -21,4 +21,4 @@ namespace Lorr::ModelLoader
     public:
         virtual bool LoadBinary(ModelData *modelData, BufferStream &buf) = 0;
     };
-}  // namespace Lorr::ModelLoader
+}  // namespace lr::ModelLoader

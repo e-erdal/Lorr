@@ -9,7 +9,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     // Yet another interface
     class PostProcessManager;
@@ -58,4 +58,4 @@ namespace Lorr
         std::unordered_map<size_t, IPostProcess *> m_Passes;
     };
 
-}  // namespace Lorr
+}  // namespace lr

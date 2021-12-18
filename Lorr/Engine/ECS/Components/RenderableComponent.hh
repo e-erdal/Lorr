@@ -8,7 +8,7 @@
 
 #include "Engine/Graphics/Common/BaseTexture.hh"
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Renderable
     {
@@ -18,4 +18,4 @@ namespace Lorr::Component
         glm::ivec4 Color = { 255, 255, 255, 255 };
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

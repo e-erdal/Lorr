@@ -6,7 +6,7 @@
 
 #include "Engine/ECS/Entity.hh"
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Transform
     {
@@ -35,4 +35,4 @@ namespace Lorr::Component
         }
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

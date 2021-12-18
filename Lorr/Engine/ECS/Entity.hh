@@ -10,7 +10,7 @@
 #include <entt.hpp>
 #include <tinyutf8/tinyutf8.h>
 
-namespace Lorr
+namespace lr
 {
     using EntityRegistry = entt::registry;
     using EntityHandle = entt::entity;
@@ -82,4 +82,4 @@ namespace Lorr
         EntityHandle m_Handle = kInvalidEntity;
     };
 
-}  // namespace Lorr
+}  // namespace lr

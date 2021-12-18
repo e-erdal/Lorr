@@ -16,7 +16,7 @@
 
 #include "Engine/Job/Worker.hh"
 
-using namespace Lorr;
+using namespace lr;
 
 TextureHandle texture;
 Font *pFont;

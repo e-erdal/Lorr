@@ -15,7 +15,7 @@ BX_PRAGMA_DIAGNOSTIC_IGNORED_CLANG_GCC("-Wshadow");
 static bx::DefaultAllocator s_allocator;
 BX_PRAGMA_DIAGNOSTIC_POP();
 
-namespace Lorr
+namespace lr
 {
     void BaseTexture::ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer)
     {
@@ -66,4 +66,4 @@ namespace Lorr
         return GetEngine()->GetResourceMan()->GetResource<BaseTexture>(ident);
     }
 
-}  // namespace Lorr
+}  // namespace lr

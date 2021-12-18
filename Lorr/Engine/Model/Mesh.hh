@@ -10,7 +10,7 @@
 
 #include <bvh/bvh.hpp>
 
-namespace Lorr
+namespace lr
 {
     struct FileMeshVertex
     {
@@ -65,4 +65,4 @@ namespace Lorr
         BVH *m_pBVH;
     };
 
-}  // namespace Lorr
+}  // namespace lr

@@ -8,7 +8,7 @@
 #include "Engine/ECS/Components/RenderableComponent.hh"
 #include "Engine/ECS/Components/TextComponent.hh"
 
-namespace Lorr::System
+namespace lr::System
 {
     void Renderer2DSystem::Tick(float deltaTime)
     {
@@ -96,6 +96,6 @@ namespace Lorr::System
         });
 
         pBatcher->End();
-    }  // namespace Lorr::System
+    }  // namespace lr::System
 
-}  // namespace Lorr::System
+}  // namespace lr::System

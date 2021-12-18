@@ -10,7 +10,7 @@
 #include "Engine/Graphics/Common/BaseShader.hh"
 #include "Engine/Managers/ShaderManager.hh"
 
-namespace Lorr
+namespace lr
 {
     struct Batcher2DBufferData
     {
@@ -94,4 +94,4 @@ namespace Lorr
         static InputLayout m_Batcher2DLayout;
     };
 
-}  // namespace Lorr
+}  // namespace lr

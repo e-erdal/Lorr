@@ -9,7 +9,7 @@
 
 #include "Engine/Core/Window/BaseWindow.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D12SwapChain
     {
@@ -49,6 +49,6 @@ namespace Lorr
         bx::RingBufferControl *m_pRingBuffer;
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

@@ -14,7 +14,7 @@
 #include "D3D11RendererStateManager.hh"
 #include "D3D11RenderTargetManager.hh"
 
-namespace Lorr
+namespace lr
 {
     class D3D11Texture;
     class D3D11Renderer : public BaseRenderer
@@ -104,7 +104,7 @@ namespace Lorr
         bool m_IsContextReady = false;
     };
 
-}  // namespace Lorr
+}  // namespace lr
 
 #define DX11Renderer D3D11Renderer::Get()
 

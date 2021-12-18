@@ -11,7 +11,7 @@
 
 #include "Engine/Managers/ShaderManager.hh"
 
-namespace Lorr
+namespace lr
 {
     template<typename VertexT, u32 VertexCount>
     class VertexBatcher
@@ -171,4 +171,4 @@ namespace Lorr
         TextureHandle m_CurrentTexture = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr

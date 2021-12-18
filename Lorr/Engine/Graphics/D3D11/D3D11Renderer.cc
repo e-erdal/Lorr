@@ -7,14 +7,14 @@
 #include "D3D11Shader.hh"
 #include "D3D11Texture.hh"
 
-static Lorr::D3D11Renderer *g_D3D11Renderer;
+static lr::D3D11Renderer *g_D3D11Renderer;
 
 static ID3D11ShaderResourceView *kNullSRV[1] = { nullptr };
 constexpr ID3D11UnorderedAccessView *kNullUAV[1] = { nullptr };
 constexpr ID3D11Buffer *kNullBuffer[1] = { nullptr };
 constexpr ID3D11SamplerState *kNullSampler[1] = { nullptr };
 
-namespace Lorr
+namespace lr
 {
     bool D3D11Renderer::Init(PlatformWindow *pWindow, u32 width, u32 height)
     {
@@ -563,6 +563,6 @@ namespace Lorr
         m_pContext->Dispatch(thrX, thrY, thrZ);
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

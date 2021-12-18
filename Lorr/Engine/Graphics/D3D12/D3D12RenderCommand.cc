@@ -1,7 +1,7 @@
 #ifdef LR_BACKEND_D3D12
 #include "D3D12RenderCommand.hh"
 
-namespace Lorr
+namespace lr
 {
     void D3D12RenderCommand::Init(ID3D12Device *pDevice, D3D12_COMMAND_LIST_TYPE type)
     {
@@ -77,6 +77,6 @@ namespace Lorr
         m_WorkingFenceIndex = (m_WorkingFenceIndex + 1) % Renderer::Config::kMaxFrameBuffers;  // Ring buffer index implementation, use bx::RingBuffer instead
     }
 
-}  // namespace Lorr
+}  // namespace lr
 
 #endif

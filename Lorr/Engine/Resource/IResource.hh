@@ -6,7 +6,7 @@
 
 #include "Engine/Stream/BufferStream.hh"
 
-namespace Lorr
+namespace lr
 {
     enum class ResourceType : u8
     {
@@ -47,4 +47,4 @@ namespace Lorr
         Identifier m_Ident = kEmptyIdentifier;
     };
 
-}  // namespace Lorr
+}  // namespace lr

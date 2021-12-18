@@ -28,7 +28,7 @@
         abort();                                                                                                                                                         \
     }
 
-namespace Lorr
+namespace lr
 {
     class Console
     {
@@ -70,4 +70,4 @@ namespace Lorr
         }
     };
 
-}  // namespace Lorr
+}  // namespace lr

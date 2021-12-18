@@ -13,7 +13,7 @@
 #include <string_view>
 #include <unordered_map>
 
-namespace Lorr
+namespace lr
 {
     // Please note that this file does NOT own the string!
     class Identifier
@@ -105,13 +105,13 @@ namespace Lorr
     };
 
     constexpr Identifier kEmptyIdentifier = "engine://empty";
-}  // namespace Lorr
+}  // namespace lr
 
 // std::unordered_map support
 template<>
-struct std::hash<Lorr::Identifier>
+struct std::hash<lr::Identifier>
 {
-    size_t operator()(const Lorr::Identifier &s) const noexcept
+    size_t operator()(const lr::Identifier &s) const noexcept
     {
         size_t h1 = std::hash<std::string_view>{}(s.Raw());
 

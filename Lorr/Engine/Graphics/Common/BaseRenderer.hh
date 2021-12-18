@@ -14,7 +14,7 @@
 
 #include "Engine/Graphics/PostProcess/IPostProcess.hh"
 
-namespace Lorr
+namespace lr
 {
     /// Renderer configurations:
     namespace Renderer::Config
@@ -84,4 +84,4 @@ namespace Lorr
         PostProcessManager m_PostProcessMan;
     };
 
-}  // namespace Lorr
+}  // namespace lr

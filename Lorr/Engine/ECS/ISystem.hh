@@ -6,7 +6,7 @@
 
 #include "Entity.hh"
 
-namespace Lorr
+namespace lr
 {
     class ISystem
     {
@@ -20,4 +20,4 @@ namespace Lorr
         EntityRegistry *m_pRegistry = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr

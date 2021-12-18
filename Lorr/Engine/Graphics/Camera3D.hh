@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     enum class Direction
     {
@@ -74,4 +74,4 @@ namespace Lorr
 
         Direction m_MovingDirection = Direction::NONE;
     };
-}  // namespace Lorr
+}  // namespace lr

@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-using namespace Lorr;
+using namespace lr;
 
 void MainLayer::Init()
 {

@@ -2,7 +2,7 @@
 
 #include "Engine/Graphics/VertexBatcher.hh"
 
-namespace Lorr
+namespace lr
 {
     constexpr glm::mat4 kGUIVertexRectPos = {
         1, 1, 1, 1,  // V1
@@ -195,4 +195,4 @@ namespace Lorr
     {
     }
 
-}  // namespace Lorr
+}  // namespace lr

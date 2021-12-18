@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     enum class VertexAttribType
     {
@@ -87,4 +87,4 @@ namespace Lorr
         u32 m_Stride = 0;
     };
 
-}  // namespace Lorr
+}  // namespace lr

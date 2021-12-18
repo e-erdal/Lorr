@@ -5,7 +5,7 @@
 #include <bvh/triangle.hpp>
 #include <bvh/sweep_sah_builder.hpp>
 
-namespace Lorr
+namespace lr
 {
     InputLayout Mesh::m_Layout = {
         { VertexAttribType::Vec3, "POSITION" },
@@ -173,4 +173,4 @@ namespace Lorr
         pRenderer->DrawIndexed(m_IndexCount);
     }
 
-}  // namespace Lorr
+}  // namespace lr

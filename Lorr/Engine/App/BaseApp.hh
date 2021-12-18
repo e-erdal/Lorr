@@ -8,7 +8,7 @@
 #include "Engine/ECS/Scene.hh"
 #include "Engine/Graphics/Types.hh"
 
-namespace Lorr
+namespace lr
 {
     constexpr std::string_view kSaveFileName = "state.lr";
     struct BaseAppSave
@@ -74,4 +74,4 @@ namespace Lorr
     };
 
     extern BaseApp *GetApp();
-}  // namespace Lorr
+}  // namespace lr

@@ -7,11 +7,11 @@
 #include "Engine/App/Engine.hh"
 #include "Engine/ECS/Entity.hh"
 
-namespace Lorr::Component
+namespace lr::Component
 {
     struct Physics
     {
         b2Body *pBody = 0;
     };
 
-}  // namespace Lorr::Component
+}  // namespace lr::Component

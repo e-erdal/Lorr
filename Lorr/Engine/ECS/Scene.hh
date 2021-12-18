@@ -7,7 +7,7 @@
 #include "Entity.hh"
 #include "ISystem.hh"
 
-namespace Lorr
+namespace lr
 {
     class Scene
     {
@@ -44,4 +44,4 @@ namespace Lorr
         std::vector<ISystem *> m_Systems;
     };
 
-}  // namespace Lorr
+}  // namespace lr

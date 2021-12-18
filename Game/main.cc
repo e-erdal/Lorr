@@ -6,11 +6,11 @@ int main()
 {
     ZoneScoped;
 
-    Lorr::ApplicationDesc desc;
+    lr::ApplicationDesc desc;
     desc.Title = "GameApp";
     desc.Width = 1280;
     desc.Height = 720;
-    desc.Flags |= Lorr::WindowFlags::Resizable | Lorr::WindowFlags::Centered;
+    desc.Flags |= lr::WindowFlags::Resizable | lr::WindowFlags::Centered;
 
     app = new GameApp;
     app->Start(desc);
@@ -19,7 +19,7 @@ int main()
     return 0;
 }
 
-Lorr::BaseApp *Lorr::GetApp()
+lr::BaseApp *lr::GetApp()
 {
     return app;
 }

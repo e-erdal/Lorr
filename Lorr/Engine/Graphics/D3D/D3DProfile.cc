@@ -1,6 +1,6 @@
 #include "D3DProfile.hh"
 
-namespace Lorr
+namespace lr
 {
     std::string_view D3D::VSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
@@ -151,4 +151,4 @@ namespace Lorr
         return "";
     }
 
-}  // namespace Lorr
+}  // namespace lr

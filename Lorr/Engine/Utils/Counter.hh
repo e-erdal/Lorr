@@ -6,7 +6,7 @@
 
 #include <signals.h>
 
-namespace Lorr
+namespace lr
 {
     class Counter
     {
@@ -87,4 +87,4 @@ namespace Lorr
         bool m_Finished = false;
     };
 
-}  // namespace Lorr
+}  // namespace lr

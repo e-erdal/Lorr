@@ -9,7 +9,7 @@
 
 #include <dxgiformat.h>
 
-namespace Lorr::D3D
+namespace lr::D3D
 {
     enum class DepthFunc : u8
     {
@@ -64,4 +64,4 @@ namespace Lorr::D3D
         }
     }
 
-}  // namespace Lorr::D3D
+}  // namespace lr::D3D

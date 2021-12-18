@@ -4,7 +4,7 @@
 
 #pragma once
 
-namespace Lorr
+namespace lr
 {
     enum class RendererType : u8
     {

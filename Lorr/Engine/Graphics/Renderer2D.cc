@@ -2,7 +2,7 @@
 
 #include "Engine/App/Engine.hh"
 
-namespace Lorr
+namespace lr
 {
     InputLayout Renderer2D::m_Batcher2DLayout = {
         { VertexAttribType::Vec3, "POSITION" },
@@ -95,4 +95,4 @@ namespace Lorr
         pRenderer->DrawIndexed(6);
     }
 
-}  // namespace Lorr
+}  // namespace lr

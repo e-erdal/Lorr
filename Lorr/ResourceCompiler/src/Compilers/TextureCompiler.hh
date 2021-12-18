@@ -17,7 +17,7 @@ class TextureCompiler
 public:
     TextureCompiler(const std::string &path, const std::string &out)
     {
-        using namespace Lorr;
+        using namespace lr;
 
         printf("Loading Texture2D %s -> %s\n", path.c_str(), out.c_str());
 

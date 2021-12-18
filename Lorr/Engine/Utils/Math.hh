@@ -6,7 +6,7 @@
 
 #include <glm/gtc/matrix_transform.hpp>
 
-namespace Lorr::Math
+namespace lr::Math
 {
     constexpr float PI = 3.14159265358979323f;
     constexpr float PI2 = 6.283185307f;
@@ -85,4 +85,4 @@ namespace Lorr::Math
         float p = ((((-2.6051615e-07f * y2 + 2.4760495e-05f) * y2 - 0.0013888378f) * y2 + 0.041666638f) * y2 - 0.5f) * y2 + 1.0f;
         *pCos = sign * p;
     }
-}  // namespace Lorr::Math
+}  // namespace lr::Math

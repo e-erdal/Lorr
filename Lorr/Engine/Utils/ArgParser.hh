@@ -11,7 +11,7 @@
 #include <unordered_map>
 #include <vector>
 
-namespace Lorr
+namespace lr
 {
     class ArgParser
     {
@@ -78,4 +78,4 @@ namespace Lorr
         }
     };
 
-}  // namespace Lorr
+}  // namespace lr

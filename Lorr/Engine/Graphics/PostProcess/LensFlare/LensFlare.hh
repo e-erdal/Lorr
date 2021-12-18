@@ -13,7 +13,7 @@
 #include "Common/BaseRenderBuffer.hh"
 #include "Common/BaseTexture.hh"
 
-namespace Lorr::PostProcess
+namespace lr::PostProcess
 {
     class LensFlare : public IPostProcess
     {
@@ -42,4 +42,4 @@ namespace Lorr::PostProcess
         //* --------------------------- *
     };
 
-}  // namespace Lorr::PostProcess
+}  // namespace lr::PostProcess
