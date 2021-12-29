@@ -1,42 +1,54 @@
 [submodule "Vendor/glm"]
-	path = Vendor/glm
+	path = Vendor/utility/glm
 	url = https://github.com/g-truc/glm.git
 [submodule "Vendor/spdlog"]
-	path = Vendor/spdlog
+	path = Vendor/utility/spdlog
 	url = https://github.com/e-erdal/spdlog.git
 [submodule "Vendor/bgfx.cmake"]
 	path = Vendor/bgfx.cmake
 	url = https://github.com/bkaradzic/bgfx.cmake.git
 [submodule "Vendor/vorbis"]
-	path = Vendor/vorbis
+	path = Vendor/audio/vorbis
 	url = https://github.com/xiph/vorbis.git
 [submodule "Vendor/ogg"]
-	path = Vendor/ogg
+	path = Vendor/audio/ogg
 	url = https://github.com/xiph/ogg.git
 [submodule "Vendor/tiny-utf8"]
-	path = Vendor/tiny-utf8
+	path = Vendor/utility/tiny-utf8
 	url = https://github.com/DuffsDevice/tiny-utf8.git
 [submodule "Vendor/box2d"]
-	path = Vendor/box2d
+	path = Vendor/Physics/box2d
 	url = https://github.com/erincatto/box2d.git
 [submodule "Vendor/bx-cmake"]
-	path = Vendor/bx-cmake
+	path = Vendor/utility/bx-cmake
 	url = https://github.com/e-erdal/bx-cmake.git
 [submodule "Vendor/--recursive"]
 	path = Vendor/--recursive
 	url = https://github.com/e-erdal/bimg-cmake.git
 [submodule "Vendor/bimg-cmake"]
-	path = Vendor/bimg-cmake
+	path = Vendor/Graphics/bimg-cmake
 	url = https://github.com/e-erdal/bimg-cmake.git
 [submodule "Vendor/msdf-atlas-gen"]
-	path = Vendor/msdf-atlas-gen
+	path = Vendor/Graphics/msdf-atlas-gen
 	url = https://github.com/Chlumsky/msdf-atlas-gen.git
 [submodule "Vendor/optick"]
 	path = Vendor/optick
 	url = https://github.com/bombomby/optick.git
 [submodule "Vendor/meshoptimizer"]
-	path = Vendor/meshoptimizer
+	path = Vendor/Graphics/meshoptimizer
 	url = https://github.com/zeux/meshoptimizer.git
 [submodule "Vendor/bvh"]
-	path = Vendor/bvh
+	path = Vendor/Graphics/bvh
 	url = https://github.com/madmann91/bvh.git
+[submodule "Vendor/EA/EAThread"]
+	path = Vendor/EA/EAThread
+	url = https://github.com/electronicarts/EAThread.git
+[submodule "Vendor/EA/EAMain"]
+	path = Vendor/EA/EAMain
+	url = https://github.com/electronicarts/EAMain.git
+[submodule "Vendor/EA/EABase"]
+	path = Vendor/EA/EABase
+	url = https://github.com/electronicarts/EABase.git
+[submodule "Vendor/EA/EASTL"]
+	path = Vendor/EA/EASTL
+	url = https://github.com/electronicarts/EASTL.git
