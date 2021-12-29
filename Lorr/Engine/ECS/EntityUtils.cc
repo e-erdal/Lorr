@@ -88,7 +88,7 @@ namespace lr
         return *this;
     }
 
-    Entity &Entity::AttachModel(const std::string &path)
+    Entity &Entity::AttachModel(const eastl::string &path)
     {
         ZoneScoped;
         

@@ -49,6 +49,11 @@ namespace lr
         TEXTURE_TYPE_STAGING
     };
 
+    enum TextureFilers : u32
+    {
+
+    };
+
     struct TextureDesc
     {
         TextureType Type = TEXTURE_TYPE_REGULAR;
@@ -119,7 +124,7 @@ namespace lr
 
     namespace Texture
     {
-        TextureHandle Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc);
+        TextureHandle Create(const Identifier &ident, const eastl::string &path, TextureDesc *pDesc);
         TextureHandle Create(const Identifier &ident, TextureDesc *pDesc, TextureData *pData);
         TextureHandle Get(const Identifier &ident);
     }  // namespace Texture

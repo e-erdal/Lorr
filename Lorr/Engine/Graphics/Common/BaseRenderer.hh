@@ -1,5 +1,6 @@
 //
 // Created on August 20th 2021 by e-erdal.
+/// Renderer will be refactored after D3D12.
 //
 
 #pragma once
@@ -39,6 +40,7 @@ namespace lr
         virtual void SetScissor(const glm::vec4 &lrtb) = 0;
         virtual void SetDepthFunc(D3D::DepthFunc func, bool depthEnabled) = 0;
         virtual void SetCulling(D3D::Cull cull, bool counterClockwise) = 0;
+        virtual void SetWireframeState(bool enabled) = 0;
         virtual void SetBlend(bool enableBlending, bool alphaCoverage) = 0;
         virtual void CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture = 0, u32 mipLevels = 1) = 0;
         virtual void SetCurrentTarget(const Identifier &ident) = 0;
@@ -53,8 +55,8 @@ namespace lr
         virtual void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) = 0;
         virtual void UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot) = 0;
 
-        // virtual void MapBuffer(RenderBufferHandle buffer) = 0;
-        // virtual void UnmapBuffer(RenderBufferHandle buffer) = 0;
+        virtual void MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize) = 0;
+        virtual void UnmapBuffer(RenderBufferHandle buffer) = 0;
 
         virtual void UseShader(ShaderHandle shader) = 0;
 

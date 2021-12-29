@@ -30,6 +30,12 @@ namespace lr
             return distribution(m_Device);
         }
 
+        static inline float Float(float rangeMin, float rangeMax)
+        {
+            std::uniform_real_distribution<float> distribution(rangeMin, rangeMax);
+            return distribution(m_Device);
+        }
+
     private:
         static inline std::mt19937 m_Device;
     };

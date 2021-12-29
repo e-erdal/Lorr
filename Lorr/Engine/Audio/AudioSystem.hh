@@ -29,7 +29,7 @@ namespace lr
         void LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioData *pData, const Identifier &channelIdent);
 
     private:
-        std::unordered_map<Identifier, AudioChannel *> m_AudioChannels;
+        eastl::unordered_map<Identifier, AudioChannel *> m_AudioChannels;
 
         ALCdevice *m_alDevice;    // Active Audio Device
         ALCcontext *m_alContext;  // Active OpenAL Context (once per thread)

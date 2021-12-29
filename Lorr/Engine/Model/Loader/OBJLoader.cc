@@ -53,7 +53,9 @@ namespace lr::ModelLoader
                 fileMesh.Vertices.push_back(vertex);
             }
 
-            fileMesh.Indices.swap(mesh.indexData);
+            fileMesh.Indices.resize(mesh.indexData.size());
+            memcpy(&fileMesh.Indices[0], &mesh.indexData[0], mesh.indexData.size() * sizeof(u32));
+
             modelData->Meshes.push_back(fileMesh);
         }
 

@@ -48,7 +48,7 @@ namespace lr
 
     struct TextLine
     {
-        std::vector<RenderableChar> Chars;
+        eastl::vector<RenderableChar> Chars;
         float Width;
     };
 
@@ -83,15 +83,15 @@ namespace lr
             float Advance = 0;
             i32 Index = 0;
         };
-        std::unordered_map<char32_t, GlyphInfo> m_Chars;
-        std::map<std::pair<i32, i32>, float> m_Kerning;
+        eastl::unordered_map<char32_t, GlyphInfo> m_Chars;
+        eastl::map<eastl::pair<i32, i32>, float> m_Kerning;
 
         TextureHandle m_Texture = 0;
         float m_PixelRangle = 0;
         float m_SizePx = 0;
 
     public:
-        void AlignAll(const tiny_utf8::string &text, std::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
+        void AlignAll(const tiny_utf8::string &text, eastl::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth);
     };
 
 }  // namespace lr

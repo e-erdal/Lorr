@@ -13,7 +13,7 @@ namespace lr
     public:
         ~Win32Window();
 
-        void Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) override;
+        void Init(const eastl::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) override;
         void Poll() override;
 
         void SetCursor(Cursor eCursor) override;

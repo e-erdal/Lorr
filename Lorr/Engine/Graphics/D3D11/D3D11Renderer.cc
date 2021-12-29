@@ -114,6 +114,20 @@ namespace lr
         }
     }
 
+    void D3D11Renderer::SetWireframeState(bool enabled)
+    {
+        ZoneScoped;
+
+        m_RasterizerDesc.FillMode = enabled ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+
+        auto state = m_StateManager.Get(m_RasterizerDesc);
+        if (m_pRasterizerState != state)
+        {
+            m_pRasterizerState = state;
+            m_pContext->RSSetState(m_pRasterizerState);
+        }
+    }
+
     void D3D11Renderer::SetBlend(bool enableBlending, bool alphaCoverage)
     {
         ZoneScoped;
@@ -238,6 +252,24 @@ namespace lr
         if (target & RenderBufferTarget::Compute) m_pContext->CSSetSamplers(slot, 1, &pSampler);
     }
 
+    void D3D11Renderer::MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize)
+    {
+        ZoneScoped;
+
+        D3D11_MAPPED_SUBRESOURCE mappedResc = {};
+        if (SUCCEEDED(m_pContext->Map((ID3D11Resource *)buffer->GetHandle(), 0, ((D3D11RenderBuffer *)buffer)->GetMappingType(), 0, &mappedResc)))
+        {
+            memcpy(mappedResc.pData, pData, dataSize);
+        }
+    }
+
+    void D3D11Renderer::UnmapBuffer(RenderBufferHandle buffer)
+    {
+        ZoneScoped;
+
+        m_pContext->Unmap((ID3D11Resource *)buffer->GetHandle(), 0);
+    }
+
     void D3D11Renderer::UseShader(ShaderHandle shader)
     {
         ZoneScoped;
@@ -353,7 +385,7 @@ namespace lr
         m_SwapChainDesc.SampleDesc.Count = 1;
         m_SwapChainDesc.SampleDesc.Quality = 0;
 
-        m_SwapChainDesc.BufferCount = 1;
+        m_SwapChainDesc.BufferCount = 2;
         m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
         m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
         m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;

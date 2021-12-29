@@ -14,7 +14,7 @@
 class ShaderCompiler
 {
 public:
-    ShaderCompiler(const std::string &path, const std::string &out)
+    ShaderCompiler(const eastl::string &path, const eastl::string &out)
     {
         using namespace lr;
 

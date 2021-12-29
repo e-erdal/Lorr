@@ -20,7 +20,7 @@ namespace lr
     {
         HRESULT hr;
 
-        std::string shader((const char *)inBuffer.GetData(), inBuffer.GetSize());
+        eastl::string shader((const char *)inBuffer.GetData(), inBuffer.GetSize());
         ShaderType currentType;
         if (shader.substr(0, 9) == "//$TYPE v")
         {
@@ -44,7 +44,7 @@ namespace lr
             D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "main", nullptr, nullptr, "main", 
             D3D::GetLatestFeatureLevelString(currentType).data(), flags, 0, &pCode, &pError)) < 0)
         {
-            LOG_ERROR("Failed to compile shader. -- {} -- {}", (char *)pError->GetBufferPointer(), D3D::GetLatestFeatureLevelString(currentType));
+            LOG_ERROR("Failed to compile shader. -- {} -- {}", (char *)pError->GetBufferPointer(), D3D::GetLatestFeatureLevelString(currentType).data());
             return;
         }
         // clang-format on
@@ -57,7 +57,7 @@ namespace lr
         SAFE_RELEASE(pError);
     }
 
-    ShaderHandle Shader::Create(const Identifier &ident, const std::string &path, ShaderDesc *pDesc)
+    ShaderHandle Shader::Create(const Identifier &ident, const eastl::string &path, ShaderDesc *pDesc)
     {
         switch (BaseRenderer::CurrentAPI())
         {

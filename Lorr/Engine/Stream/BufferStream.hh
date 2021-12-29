@@ -58,7 +58,7 @@ namespace lr
             StartOver();
         }
 
-        BufferStream(std::vector<u8> &data)
+        BufferStream(eastl::vector<u8> &data)
         {
             Expand(data.size());
             AssignPtr(&data[0], data.size());
@@ -99,7 +99,7 @@ namespace lr
             StartOver();
         }
 
-        inline void Reset(std::vector<u8> &data)
+        inline void Reset(eastl::vector<u8> &data)
         {
             SAFE_FREE(m_Data);
             m_DataLen = 0;
@@ -200,7 +200,7 @@ namespace lr
         }
 
         template<typename T>
-        inline void AssignStringLen(const std::string &val)
+        inline void AssignStringLen(const eastl::string &val)
         {
             auto lenT = sizeof(T);
             size_t len = val.length();
@@ -210,7 +210,7 @@ namespace lr
             if (val.length()) AssignPtr(val.c_str(), val.length());
         }
 
-        inline void AssignString(const std::string &val)
+        inline void AssignString(const eastl::string &val)
         {
             if (val.length()) AssignPtr(val.c_str(), val.length());
         }
@@ -256,7 +256,7 @@ namespace lr
 
         // Inserts string into block with size
         template<typename T>
-        inline void InsertStringLen(const std::string &val)
+        inline void InsertStringLen(const eastl::string &val)
         {
             auto lenT = sizeof(T);
             size_t len = val.length();
@@ -267,7 +267,7 @@ namespace lr
             if (val.length()) AssignPtr(val.c_str(), val.length());
         }
 
-        inline void InsertString(const std::string &val)
+        inline void InsertString(const eastl::string &val)
         {
             size_t len = val.length();
 
@@ -303,13 +303,13 @@ namespace lr
         }
 
         template<typename T>
-        inline std::string GetString(size_t dataLen = 0)
+        inline eastl::string GetString(size_t dataLen = 0)
         {
             size_t strLen = (dataLen == 0 ? Get<T>() : dataLen);
             char *data = (char *)(m_Data + m_Offset);
             m_Offset += strLen;
 
-            return std::string(data, strLen);
+            return eastl::string(data, strLen);
         }
 
         inline void StartOver()

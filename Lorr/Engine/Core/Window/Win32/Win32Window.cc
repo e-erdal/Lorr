@@ -85,7 +85,7 @@ namespace lr
     {
     }
 
-    void Win32Window::Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags)
+    void Win32Window::Init(const eastl::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags)
     {
         ZoneScoped;
 
@@ -326,10 +326,12 @@ namespace lr
             }
             case WM_LBUTTONUP:
             case WM_RBUTTONUP:
+            case WM_MBUTTONUP:
             {
                 MouseButton keys = MouseButton::NONE;
-                if (wParam & MK_LBUTTON) keys |= MouseButton::BTN_1;
-                if (wParam & MK_RBUTTON) keys |= MouseButton::BTN_2;
+                if (uMSG == WM_LBUTTONUP) keys = MouseButton::BTN_1;
+                if (uMSG == WM_RBUTTONUP) keys = MouseButton::BTN_2;
+                if (uMSG == WM_MBUTTONUP) keys = MouseButton::BTN_3;
 
                 KeyMod mods = KeyMod::None;
 

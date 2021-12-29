@@ -55,13 +55,13 @@ namespace lr::GUI
     struct Context
     {
         /// Panel handler section ///
-        std::vector<Panel> m_Panels;
+        eastl::vector<Panel> m_Panels;
         Panel *m_pCurrentPanel = nullptr;
 
         /// Renderer data section ///
-        std::vector<Vertex> m_Vertices;
+        eastl::vector<Vertex> m_Vertices;
         Vertex *m_pVertPtr = nullptr;
-        std::unordered_map<TextureHandle, DrawData> m_DrawData;
+        eastl::unordered_map<TextureHandle, DrawData> m_DrawData;
 
         RenderBufferHandle m_ConstantBuffer = nullptr;
         RenderBufferHandle m_VertexBuffer = nullptr;
@@ -75,7 +75,7 @@ namespace lr::GUI
     void Init();
 
     /// Widgets ///
-    bool BeginPanel(const Identifier &ident, const glm::ivec2 &pos, const glm::ivec2 &size, const std::string &title);
+    bool BeginPanel(const Identifier &ident, const glm::ivec2 &pos, const glm::ivec2 &size, const eastl::string &title);
     void EndPanel();
 
     /// Rendering ///

@@ -19,7 +19,7 @@ namespace lr
     using Ray = bvh::Ray<Mesh::Scalar>;
     using _vec3 = bvh::Vector3<Mesh::Scalar>;
 
-    void Mesh::Init(std::vector<FileMeshVertex> &vertices, std::vector<u32> &indices)
+    void Mesh::Init(eastl::vector<FileMeshVertex> &vertices, eastl::vector<u32> &indices)
     {
         ZoneScoped;
 
@@ -53,7 +53,7 @@ namespace lr
         m_IndexBuffer = RenderBuffer::Create(indexDesc);
 
         // Init BVH
-        std::vector<Triangle> triangles;
+        eastl::vector<Triangle> triangles;
         triangles.resize(vertices.size() / 3);
 
         for (size_t i = 0; i < vertices.size() / 3; i += 3)
@@ -77,8 +77,8 @@ namespace lr
 
         m_Texture = texture;
 
-        std::vector<MeshVertex> vertexArray;
-        std::vector<u32> indexArray;
+        eastl::vector<MeshVertex> vertexArray;
+        eastl::vector<u32> indexArray;
 
         if (tessellation < 3) return;
 

@@ -35,10 +35,10 @@ namespace lr
     {
         VertexAttrib() = default;
 
-        VertexAttrib(VertexAttribType type, const std::string &name, bool isNormalized = false)
+        VertexAttrib(VertexAttribType type, const eastl::string &name, bool isNormalized = false)
             : m_Name(name), m_Type(type), m_Size(VertexAttribSize(type)), m_Offset(0), m_IsNormalized(isNormalized){};
 
-        std::string m_Name;
+        eastl::string m_Name;
         VertexAttribType m_Type;
         u32 m_Size;
         u32 m_Offset;
@@ -57,33 +57,33 @@ namespace lr
             return m_Stride;
         }
 
-        const std::vector<VertexAttrib> &GetElements() const
+        const eastl::vector<VertexAttrib> &GetElements() const
         {
             return m_Elements;
         }
 
-        std::vector<VertexAttrib>::iterator begin()
+        eastl::vector<VertexAttrib>::iterator begin()
         {
             return m_Elements.begin();
         }
 
-        std::vector<VertexAttrib>::iterator end()
+        eastl::vector<VertexAttrib>::iterator end()
         {
             return m_Elements.end();
         }
 
-        std::vector<VertexAttrib>::const_iterator begin() const
+        eastl::vector<VertexAttrib>::const_iterator begin() const
         {
             return m_Elements.begin();
         }
         
-        std::vector<VertexAttrib>::const_iterator end() const
+        eastl::vector<VertexAttrib>::const_iterator end() const
         {
             return m_Elements.end();
         }
 
     private:
-        std::vector<VertexAttrib> m_Elements;
+        eastl::vector<VertexAttrib> m_Elements;
         u32 m_Stride = 0;
     };
 

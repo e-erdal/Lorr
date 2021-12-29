@@ -2,7 +2,7 @@
 
 namespace lr
 {
-    std::string_view D3D::VSFeatureLevelToString(D3D_FEATURE_LEVEL level)
+    eastl::string_view D3D::VSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -45,7 +45,7 @@ namespace lr
         return "";
     }
 
-    std::string_view D3D::PSFeatureLevelToString(D3D_FEATURE_LEVEL level)
+    eastl::string_view D3D::PSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -88,7 +88,7 @@ namespace lr
         return "";
     }
 
-    std::string_view D3D::CSFeatureLevelToString(D3D_FEATURE_LEVEL level)
+    eastl::string_view D3D::CSFeatureLevelToString(D3D_FEATURE_LEVEL level)
     {
         switch (level)
         {
@@ -131,7 +131,7 @@ namespace lr
         return "";
     }
 
-    std::string_view D3D::GetLatestFeatureLevelString(ShaderType type)
+    eastl::string_view D3D::GetLatestFeatureLevelString(ShaderType type)
     {
         D3D_FEATURE_LEVEL level;
 

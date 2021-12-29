@@ -16,11 +16,9 @@ namespace lr
     {
     public:
         void Init(const RenderBufferDesc &desc) override;
-        void SetData(void *pData, size_t dataLen) override;
-        void *GetData() override;
-        void UnmapData() override;
+
         void Delete() override;
-        ~D3D11RenderBuffer();
+        virtual ~D3D11RenderBuffer();
 
     public:
         void *GetHandle() override
@@ -38,6 +36,11 @@ namespace lr
             return m_pUAV;
         }
 
+        D3D11_MAP GetMappingType()
+        {
+            return m_Mapping;
+        }
+
     private:
         ID3D11Buffer *m_pHandle = 0;
 
@@ -45,7 +48,6 @@ namespace lr
         ID3D11UnorderedAccessView *m_pUAV = 0;
 
         D3D11_MAP m_Mapping;
-        D3D11_MAPPED_SUBRESOURCE m_MappedResc;
     };
 }  // namespace lr
 

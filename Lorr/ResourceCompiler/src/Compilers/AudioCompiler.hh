@@ -15,7 +15,7 @@
 class AudioCompiler
 {
 public:
-    AudioCompiler(const std::string &path, const std::string &out)
+    AudioCompiler(const eastl::string &path, const eastl::string &out)
     {
         using namespace lr;
 

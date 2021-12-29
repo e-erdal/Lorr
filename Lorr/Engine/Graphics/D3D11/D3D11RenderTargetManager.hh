@@ -53,7 +53,7 @@ namespace lr
             }
         };
 
-        std::unordered_map<Identifier, RenderTarget *> m_Targets;
+        eastl::unordered_map<Identifier, RenderTarget *> m_Targets;
 
         ID3D11Device *m_pDevice = 0;
     };

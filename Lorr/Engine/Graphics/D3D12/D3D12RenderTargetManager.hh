@@ -20,7 +20,7 @@ namespace lr
         void Init();
 
     private:
-        std::unordered_map<Identifier, ID3D12Resource *> m_RenderTargets;
+        eastl::unordered_map<Identifier, ID3D12Resource *> m_RenderTargets;
 
     };
 

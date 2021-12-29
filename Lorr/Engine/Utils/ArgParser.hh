@@ -4,12 +4,7 @@
 
 #pragma once
 
-#include <algorithm>
 #include <cassert>
-#include <string>
-#include <string_view>
-#include <unordered_map>
-#include <vector>
 
 namespace lr
 {
@@ -17,14 +12,14 @@ namespace lr
     {
     private:
         /* data */
-        std::vector<std::string_view> m_vArgs;
-        std::unordered_map<std::string_view, std::string> m_umConfig;
+        eastl::vector<eastl::string_view> m_vArgs;
+        eastl::unordered_map<eastl::string_view, eastl::string> m_umConfig;
 
     public:
         ArgParser(size_t iArgCount, char *szArgVal[])
         {
             bool readConfig = false;
-            std::string_view currentConfig{};
+            eastl::string_view currentConfig{};
 
             // Very simple argument parsing logic
             for (size_t i = 0; i < iArgCount; i++)
@@ -41,7 +36,7 @@ namespace lr
                 {
                     currentConfig = _v + 1;
 
-                    m_umConfig.insert(std::make_pair(currentConfig, std::string{}));
+                    m_umConfig.insert(eastl::make_pair(currentConfig, eastl::string{}));
 
                     readConfig = true;
                 }
@@ -49,7 +44,7 @@ namespace lr
         }
 
         // E.G -server = true
-        bool HasArg(std::string_view svName)
+        bool HasArg(eastl::string_view svName)
         {
             auto it = std::find(m_vArgs.begin(), m_vArgs.end(), svName);
             if (it != m_vArgs.end()) return true;
@@ -58,7 +53,7 @@ namespace lr
         }
 
         // E.G +port 27015 = true
-        bool HasConfig(std::string_view svName)
+        bool HasConfig(eastl::string_view svName)
         {
             if (m_umConfig.find(svName) != m_umConfig.end()) return true;
 
@@ -66,7 +61,7 @@ namespace lr
         }
 
         // E.G +port 27015 = true && *t_pValue = 27015
-        bool GetConfig(std::string_view svName, std::string *spTargetValue)
+        bool GetConfig(eastl::string_view svName, eastl::string *spTargetValue)
         {
             assert(spTargetValue != nullptr);
 

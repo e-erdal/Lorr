@@ -130,45 +130,6 @@ namespace lr
         }
     }
 
-    void D3D11RenderBuffer::SetData(void *pData, size_t dataLen)
-    {
-        ZoneScoped;
-
-        auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
-
-        m_MappedResc = {};
-        if (SUCCEEDED(pCtx->Map(m_pHandle, 0, m_Mapping, 0, &m_MappedResc)))
-        {
-            memcpy(m_MappedResc.pData, pData, dataLen);
-
-            pCtx->Unmap(m_pHandle, 0);
-        }
-    }
-
-    void *D3D11RenderBuffer::GetData()
-    {
-        ZoneScoped;
-
-        auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
-
-        m_MappedResc = {};
-        if (SUCCEEDED(pCtx->Map(m_pHandle, 0, m_Mapping, 0, &m_MappedResc)))
-        {
-            return m_MappedResc.pData;
-        }
-
-        return 0;
-    }
-
-    void D3D11RenderBuffer::UnmapData()
-    {
-        ZoneScoped;
-
-        auto *pCtx = D3D11Renderer::Get()->GetDeviceContext();
-
-        pCtx->Unmap(m_pHandle, 0);
-    }
-
     void D3D11RenderBuffer::Delete()
     {
         ZoneScoped;

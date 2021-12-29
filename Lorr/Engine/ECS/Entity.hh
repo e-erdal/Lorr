@@ -54,7 +54,7 @@ namespace lr
                 assert("Entity already has that component.");
             }
 
-            return m_Registry->emplace<T>(m_Handle, std::forward<Args>(tArgs)...);
+            return m_Registry->emplace<T>(m_Handle, eastl::forward<Args>(tArgs)...);
         }
 
         template<typename T>
@@ -70,7 +70,7 @@ namespace lr
         Entity &AttachDynamicBox(float destiny, float friction);
         Entity &AttachStaticBox(float destiny = 0.f);
         Entity &AttachText(const Identifier &fontIdent, TextAlignment alignment, const tiny_utf8::string &text, const glm::vec3 &pos, u32 maxWidth = 0);
-        Entity &AttachModel(const std::string &path);
+        Entity &AttachModel(const eastl::string &path);
         Entity &AttachCamera3D(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar);
         Entity &AttachCamera2D(const glm::vec2 &pos, const glm::vec2 &size);
 

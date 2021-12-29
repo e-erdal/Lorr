@@ -6,6 +6,20 @@
 
 #include "Common.hh"
 
+#include <Windows.h>
+#include <stdint.h>
+
+#include <EASTL/string.h>
+#include <EASTL/string_view.h>
+#include <EASTL/algorithm.h>
+#include <EASTL/vector.h>
+#include <EASTL/fixed_vector.h>
+#include <EASTL/unordered_map.h>
+#include <EASTL/map.h>
+#include <EASTL/array.h>
+#include <EASTL/atomic.h>
+#include <EASTL/iterator.h>
+
 #include <bx/bx.h>
 #include <glm/glm.hpp>
 #include <signals.h>
@@ -18,6 +32,4 @@
 #include "Engine/Utils/Timer.hh"
 #include "Engine/Utils/Identifier.hh"
 
-#include <Windows.h>
-#include <stdint.h>
-#include <vector>
+

@@ -6,7 +6,7 @@ namespace lr
     {
     }
 
-    bool ResourceManager::ExportResource(ResourceType type, const std::string &path, BufferStream &buf)
+    bool ResourceManager::ExportResource(ResourceType type, const eastl::string &path, BufferStream &buf)
     {
         ZoneScoped;
 
@@ -27,7 +27,7 @@ namespace lr
         return true;
     }
 
-    bool ResourceManager::ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf)
+    bool ResourceManager::ParseToBuffer(ResourceType type, const eastl::string &path, BufferStream &outBuf)
     {
         ZoneScoped;
 
@@ -51,7 +51,7 @@ namespace lr
         }
     }
 
-    bool ResourceManager::LoadResourceFile(const std::string &path, BufferStream &buf)
+    bool ResourceManager::LoadResourceFile(const eastl::string &path, BufferStream &buf)
     {
         ZoneScoped;
 

@@ -41,7 +41,7 @@ namespace lr
 
         EntityRegistry m_Registry;
 
-        std::vector<ISystem *> m_Systems;
+        eastl::vector<ISystem *> m_Systems;
     };
 
 }  // namespace lr

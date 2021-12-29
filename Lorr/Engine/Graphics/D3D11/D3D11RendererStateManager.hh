@@ -27,16 +27,16 @@ namespace lr
         ID3D11BlendState *Get(D3D11_BLEND_DESC &desc);
 
     private:
-        std::unordered_map<D3D11_RASTERIZER_DESC, ID3D11RasterizerState *> m_RasterizerStack;
-        std::unordered_map<D3D11_DEPTH_STENCIL_DESC, ID3D11DepthStencilState *> m_DepthStack;
-        std::unordered_map<D3D11_BLEND_DESC, ID3D11BlendState *> m_BlendStack;
+        eastl::unordered_map<D3D11_RASTERIZER_DESC, ID3D11RasterizerState *> m_RasterizerStack;
+        eastl::unordered_map<D3D11_DEPTH_STENCIL_DESC, ID3D11DepthStencilState *> m_DepthStack;
+        eastl::unordered_map<D3D11_BLEND_DESC, ID3D11BlendState *> m_BlendStack;
 
         ID3D11Device *m_pDevice = 0;
     };
 
 }  // namespace lr
 
-// std::unordered_map operator support
+// eastl::unordered_map operator support
 OPR_INTERFACE_CMP(D3D11_RASTERIZER_DESC);
 OPR_INTERFACE_CMP(D3D11_DEPTH_STENCIL_DESC);
 OPR_INTERFACE_CMP(D3D11_BLEND_DESC);

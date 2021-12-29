@@ -23,19 +23,19 @@
 
 namespace lr::FileSystem
 {
-    constexpr std::string_view GetFileName(std::string_view svPath) noexcept
+    constexpr eastl::string_view GetFileName(eastl::string_view svPath) noexcept
     {
         size_t a = svPath.find_last_of('/');
         size_t b = svPath.find_last_of('\\');
 
         size_t c = a + b + 2;
 
-        if (c > 0) return std::string_view(svPath.data() + c);
+        if (c > 0) return eastl::string_view(svPath.data() + c);
 
         return svPath;  // Not found...
     }
 
-    constexpr bool HasExtension(std::string_view svPath, std::string_view svExt) noexcept
+    constexpr bool HasExtension(eastl::string_view svPath, eastl::string_view svExt) noexcept
     {
         if (svPath.length() < svExt.length()) return false;
 
@@ -43,7 +43,7 @@ namespace lr::FileSystem
         return (0 == svPath.compare(svPath.length() - svExt.length(), svExt.length(), svExt));
     }
 
-    inline bool CreateDirectory(std::string_view svPath)
+    inline bool CreateDirectory(eastl::string_view svPath)
     {
 #if BX_PLATFORM_WINDOWS
         return CreateDirectoryA(svPath.data(), NULL);
@@ -61,18 +61,18 @@ namespace lr::FileSystem
         return false;
     }
 
-    inline std::string JoinPath(std::string_view svPath1, std::string_view svPath2)
+    inline eastl::string JoinPath(eastl::string_view svPath1, eastl::string_view svPath2)
     {
         // Make sure our paths are valid
         if (svPath1.length() <= 0) return svPath2.data();
         if (svPath2.length() <= 0) return svPath1.data();
 
-        if (svPath1[svPath1.length() - 1] == '/' || svPath1[svPath1.length() - 1] == '\\') return std::string(svPath1.data()) + svPath2.data();
+        if (svPath1[svPath1.length() - 1] == '/' || svPath1[svPath1.length() - 1] == '\\') return eastl::string(svPath1.data()) + svPath2.data();
 
-        return std::string(svPath1) + "/" + svPath2.data();
+        return eastl::string(svPath1) + "/" + svPath2.data();
     }
 
-    inline bool Exists(std::string_view svPath)
+    inline bool Exists(eastl::string_view svPath)
     {
 #if BX_PLATFORM_WINDOWS
         const auto dir_type = GetFileAttributesA(svPath.data());
@@ -86,7 +86,7 @@ namespace lr::FileSystem
         return false;
     }
 
-    inline bool IsDirectory(std::string_view svPath)
+    inline bool IsDirectory(eastl::string_view svPath)
     {
         if (!Exists(svPath)) return false;
 
@@ -103,9 +103,9 @@ namespace lr::FileSystem
 #endif
     }
 
-    inline std::vector<std::string> ReadDirectory(std::string_view svPath, bool bRecursive = false)
+    inline eastl::vector<eastl::string> ReadDirectory(eastl::string_view svPath, bool bRecursive = false)
     {
-        std::vector<std::string> directories;
+        eastl::vector<eastl::string> directories;
 
 #if BX_PLATFORM_WINDOWS
         HANDLE hFind;
@@ -116,7 +116,7 @@ namespace lr::FileSystem
         {
             do
             {
-                if (std::string_view(FindFileData.cFileName) == "." || std::string_view(FindFileData.cFileName) == "..") continue;
+                if (eastl::string_view(FindFileData.cFileName) == "." || eastl::string_view(FindFileData.cFileName) == "..") continue;
 
                 directories.push_back(FileSystem::JoinPath(svPath, FindFileData.cFileName));
             } while (FindNextFile(hFind, &FindFileData));
@@ -129,7 +129,7 @@ namespace lr::FileSystem
         {
             while ((ent = readdir(dir)) != nullptr)
             {
-                if (std::string_view(ent->d_name) == "." || std::string_view(ent->d_name) == "..") continue;
+                if (eastl::string_view(ent->d_name) == "." || eastl::string_view(ent->d_name) == "..") continue;
 
                 directories.push_back(FileSystem::JoinPath(svPath, ent->d_name));
             }
@@ -156,7 +156,7 @@ namespace lr::FileSystem
         return directories;
     }
 
-    inline std::string ResolveFullPath(std::string_view svPath)
+    inline eastl::string ResolveFullPath(eastl::string_view svPath)
     {
 #if BX_PLATFORM_WINDOWS
         char buffer[4096];
@@ -176,13 +176,13 @@ namespace lr::FileSystem
             return "";
         }
 
-        return std::string(buffer);
+        return eastl::string(buffer);
 #else
     #error "Platform not implemented!"
 #endif
     }
 
-    inline bool ReadBinaryFile(std::string_view path, BufferStream &buf)
+    inline bool ReadBinaryFile(eastl::string_view path, BufferStream &buf)
     {
         FileStream f(path.data(), false);
         if (!f.IsOK())
@@ -201,7 +201,7 @@ namespace lr::FileSystem
         return true;
     }
 
-    inline void WriteBinaryFile(std::string_view path, BufferStream &buf)
+    inline void WriteBinaryFile(eastl::string_view path, BufferStream &buf)
     {
         FileStream w(path.data(), true);
         w.WritePtr(buf.GetData(), buf.GetSize());

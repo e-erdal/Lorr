@@ -27,7 +27,7 @@ namespace lr
             ID3D12GraphicsCommandList *pList = nullptr;
             HANDLE Event;
         };
-        std::array<CommandList, Renderer::Config::kMaxFrameBuffers> m_CommandLists;
+        eastl::array<CommandList, Renderer::Config::kMaxFrameBuffers> m_CommandLists;
 
         u32 m_WorkingFenceIndex = 0;
         u64 m_FenceValue = 0;

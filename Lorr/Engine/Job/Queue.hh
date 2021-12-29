@@ -24,7 +24,7 @@ namespace lr::Job  // Special module for Lorr
         std::atomic_size_t m_JobSize;
         std::atomic_size_t m_CompletedJobs;
 
-        std::vector<JobFn> m_Jobs;
+        eastl::vector<JobFn> m_Jobs;
         size_t m_MaxJobsSize;
     };
 

@@ -121,7 +121,7 @@ namespace lr
         s_pContext->m_ConstantBuffer = RenderBuffer::Create(desc);
     }
 
-    bool GUI::BeginPanel(const Identifier &ident, const glm::ivec2 &pos, const glm::ivec2 &size, const std::string &title)
+    bool GUI::BeginPanel(const Identifier &ident, const glm::ivec2 &pos, const glm::ivec2 &size, const eastl::string &title)
     {
         s_pContext->m_pCurrentPanel = CreatePanel();
 
@@ -155,7 +155,7 @@ namespace lr
         GUI::ConstantBuffer constantBuffer;
         constantBuffer.Matrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
         constantBuffer.EdgeRadius = 0.f;
-        s_pContext->m_ConstantBuffer->SetData(&constantBuffer, sizeof(GUI::ConstantBuffer));
+        // s_pContext->m_ConstantBuffer->SetData(&constantBuffer, sizeof(GUI::ConstantBuffer));
 
         /// Create transient vertex buffer
         SAFE_DELETE(s_pContext->m_VertexBuffer);

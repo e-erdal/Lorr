@@ -6,7 +6,7 @@
 
 namespace lr
 {
-    constexpr glm::vec4 color = glm::vec4(0, 0, 0, 0);
+    constexpr glm::vec4 color = glm::vec4(0.1, 0.1, 0.1, 1);
 
     void D3D11RenderTargetManager::Init(ID3D11Device *pDevice)
     {

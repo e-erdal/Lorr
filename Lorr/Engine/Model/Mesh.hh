@@ -21,8 +21,8 @@ namespace lr
 
     struct FileMesh
     {
-        std::vector<FileMeshVertex> Vertices;
-        std::vector<u32> Indices;
+        eastl::vector<FileMeshVertex> Vertices;
+        eastl::vector<u32> Indices;
     };
 
     struct MeshVertex
@@ -38,7 +38,7 @@ namespace lr
     public:
         Mesh() = default;
 
-        void Init(std::vector<FileMeshVertex> &vertices, std::vector<u32> &indices);
+        void Init(eastl::vector<FileMeshVertex> &vertices, eastl::vector<u32> &indices);
         void Init(float radius, u32 tessellation, TextureHandle texture);
         void Render();
 
@@ -59,7 +59,7 @@ namespace lr
         RenderBufferHandle m_VertexBuffer = 0;
         RenderBufferHandle m_IndexBuffer = 0;
 
-        std::vector<MeshVertex> m_Vertices;
+        eastl::vector<MeshVertex> m_Vertices;
         u32 m_IndexCount = 0;
 
         BVH *m_pBVH;

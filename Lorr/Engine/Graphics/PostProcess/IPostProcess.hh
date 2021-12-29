@@ -23,7 +23,7 @@ namespace lr
         virtual void Draw() = 0;
 
     protected:
-        std::string_view m_Name;
+        eastl::string_view m_Name;
 
         friend PostProcessManager;
     };
@@ -55,7 +55,7 @@ namespace lr
         }
 
     private:
-        std::unordered_map<size_t, IPostProcess *> m_Passes;
+        eastl::unordered_map<size_t, IPostProcess *> m_Passes;
     };
 
 }  // namespace lr

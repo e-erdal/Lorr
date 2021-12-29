@@ -58,7 +58,7 @@ namespace lr
 
     namespace Shader
     {
-        ShaderHandle Create(const Identifier &ident, const std::string &path, ShaderDesc *pDesc = 0);
+        ShaderHandle Create(const Identifier &ident, const eastl::string &path, ShaderDesc *pDesc = 0);
         ShaderHandle Create(const Identifier &ident, ShaderDesc *pDesc, ShaderData *pData);
     }  // namespace Shader
 

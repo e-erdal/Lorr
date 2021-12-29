@@ -23,7 +23,7 @@ namespace lr
                     break;
                 }
 
-                std::vector<D3D11_INPUT_ELEMENT_DESC> elements;
+                eastl::vector<D3D11_INPUT_ELEMENT_DESC> elements;
                 for (const auto &element : pDesc->Layout.GetElements())
                 {
                     DXGI_FORMAT type = D3D::VertexTypeToDXFormat(element.m_Type);  // long ass d3d functions, had to satisfy clang format

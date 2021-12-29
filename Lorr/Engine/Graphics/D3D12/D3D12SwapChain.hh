@@ -45,7 +45,7 @@ namespace lr
 
         u32 m_BackBufferIndex = 0;
         ID3D12DescriptorHeap *m_pFrameBufferHeap = nullptr;
-        std::array<ID3D12Resource *, 3> m_FrameBuffers;
+        eastl::array<ID3D12Resource *, 3> m_FrameBuffers;
         bx::RingBufferControl *m_pRingBuffer;
     };
 

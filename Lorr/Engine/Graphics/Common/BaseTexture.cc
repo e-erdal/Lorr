@@ -31,7 +31,7 @@ namespace lr
         bimg::imageFree(imageContainer);
     }
 
-    TextureHandle Texture::Create(const Identifier &ident, const std::string &path, TextureDesc *pDesc)
+    TextureHandle Texture::Create(const Identifier &ident, const eastl::string &path, TextureDesc *pDesc)
     {
         switch (BaseRenderer::CurrentAPI())
         {

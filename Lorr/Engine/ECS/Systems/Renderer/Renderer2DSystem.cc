@@ -30,7 +30,9 @@ namespace lr::System
         RenderBufferHandle fontCBuf = pShaderMan->GetRenderBuffer("cbuffer://font");
 
         Batcher2DBufferData batcherCBufData = { .Matrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix() };
-        batcherCBuf->SetData(&batcherCBufData, sizeof(Batcher2DBufferData));
+
+        pRenderer->MapBuffer(batcherCBuf, &batcherCBufData, sizeof(Batcher2DBufferData));
+        pRenderer->UnmapBuffer(batcherCBuf);
 
         pBatcher->SetCurrentProgram(pBatcherProgram);
         pBatcher->Begin();
@@ -58,7 +60,10 @@ namespace lr::System
                 FontRenderBuffer fontRenderBufferData;
                 float distanceFactor = text.m_PixelRange * (transform.Size.x / text.m_SizePx);
                 fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
-                fontCBuf->SetData(&fontRenderBufferData, sizeof(FontRenderBuffer));
+
+                pRenderer->MapBuffer(fontCBuf, &fontRenderBufferData, sizeof(FontRenderBuffer));
+                pRenderer->UnmapBuffer(fontCBuf);
+
                 pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
 
                 /// Set shader resources

@@ -9,11 +9,11 @@
 #include <imgui.h>
 #include <imgui_internal.h>
 
-constexpr ImGuiWindowFlags g_DockWindowStyle = ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
+constexpr ImGuiWindowFlags g_DockWindowStyle = ImGuiWindowFlags_NoDocking | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoCollapse
                                                | ImGuiWindowFlags_NoResize | ImGuiWindowFlags_NoMove | ImGuiWindowFlags_NoBringToFrontOnFocus
                                                | ImGuiWindowFlags_NoNavFocus | ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoScrollWithMouse;
 
-constexpr ImGuiWindowFlags g_WindowStyle = ImGuiWindowFlags_NoNav;
+constexpr ImGuiWindowFlags g_WindowStyle = 0;
 
 class LayerWindow
 {

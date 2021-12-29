@@ -18,7 +18,7 @@ namespace lr::Job
         void Run();
 
     private:
-        std::vector<Queue *> m_Queues;
+        eastl::vector<Queue *> m_Queues;
 
         std::thread *m_pThread = 0;
         std::atomic_flag m_Lock = ATOMIC_FLAG_INIT;

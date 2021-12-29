@@ -1,20 +1,18 @@
 #include "GameApp.hh"
+#include <bitset>
+
+#include "Terrain/TerrainMeshBuilder.hh"
 
 #include "Engine/App/Engine.hh"
 
 #include "Engine/ECS/Components/CameraComponent.hh"
 #include "Engine/ECS/Components/RenderableComponent.hh"
 #include "Engine/ECS/Components/TransformComponent.hh"
-#include "Engine/ECS/Components/PhysicsComponent.hh"
 #include "Engine/ECS/Components/TextComponent.hh"
 
 #include "Engine/Graphics/D3D11/D3D11Texture.hh"
 #include "Engine/Graphics/Font.hh"
 #include "Engine/Graphics/Renderer2D.hh"
-
-#include "Engine/Model/Model.hh"
-
-#include "Engine/Job/Worker.hh"
 
 using namespace lr;
 
@@ -22,10 +20,12 @@ TextureHandle texture;
 Font *pFont;
 ShaderProgram *fontShader;
 
-Entity textEntity;
+TerrainMeshBuilder terrain;
 
 void GameApp::Init()
 {
+    ZoneScoped;
+
     LoadResources();
 
     //* Required vars
@@ -52,18 +52,23 @@ void GameApp::Init()
     Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
 
-    textEntity = m_pCurrentScene->CreateEntity("test");
-    auto &transformComp = textEntity.AddComponent<Component::Transform>(glm::vec3(100, 100, 1), glm::vec3(50, 50, 1));
-    auto &textComp = textEntity.AddComponent<Component::Text>(pFont, TextAlignment::Middle, "Middle\nAligned\nText");
+    terrain.Init();
+    terrain.Generate();
 }
 
 void GameApp::Tick(float fDelta)
 {
+    ZoneScoped;
+
     m_pCurrentScene->Tick(fDelta);
 }
 
+bool wireframe = false;
+
 void GameApp::Draw()
 {
+    ZoneScoped;
+
     m_pCurrentScene->Draw();
     BaseRenderer *pRenderer = GetEngine()->GetRenderer();
     ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
@@ -73,14 +78,25 @@ void GameApp::Draw()
 
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
-    glm::vec3 &size = textEntity.GetComponent<Component::Transform>().Size;
-    ImGui::SliderFloat("Scale", &size.x, 0, 2000);
-    size.y = size.x;
+
+    u32 vertex = terrain.GetVertexCount();
+    ImGui::Text("Vertices: %s", fmt::format(std::locale("en_US.UTF-8"), "{:L}", vertex * 4).c_str());
+    ImGui::Text("Indices: %s", fmt::format(std::locale("en_US.UTF-8"), "{:L}", vertex * 6).c_str());
+
+    if (ImGui::Checkbox("Wireframe", &wireframe))
+    {
+        pRenderer->SetWireframeState(wireframe);
+    }
+
     ImGui::End();
+
+    terrain.Draw();
 }
 
 void GameApp::LoadResources()
 {
+    ZoneScoped;
+
     auto shaderMan = GetEngine()->GetShaderMan();
     auto resourceMan = GetEngine()->GetResourceMan();
 
@@ -113,6 +129,8 @@ void GameApp::LoadResources()
 
 void GameApp::OnResolutionChanged(u32 width, u32 height)
 {
+    ZoneScoped;
+
     Entity camera2D = m_pCurrentScene->GetEntity("entity://camera2d");
     Entity camera3D = m_pCurrentScene->GetEntity("entity://camera3d");
     auto &camera2DComp = camera2D.GetComponent<Component::Camera2DController>();

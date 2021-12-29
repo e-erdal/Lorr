@@ -1,7 +1,6 @@
 #pragma once
 
-#include <chrono>
-#include <iostream>
+#include <EASTL/chrono.h>
 
 namespace lr
 {
@@ -23,13 +22,13 @@ namespace lr
         }
         double elapsed() const
         {
-            return std::chrono::duration_cast<second_>(clock_::now() - beg_).count();
+            return eastl::chrono::duration_cast<second_>(clock_::now() - beg_).count();
         }
 
     private:
-        typedef std::chrono::high_resolution_clock clock_;
-        typedef std::chrono::duration<double, std::ratio<1>> second_;
-        std::chrono::time_point<clock_> beg_;
+        typedef eastl::chrono::high_resolution_clock clock_;
+        typedef eastl::chrono::duration<double, eastl::ratio<1>> second_;
+        eastl::chrono::time_point<clock_> beg_;
     };
 
 }  // namespace lr

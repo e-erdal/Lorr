@@ -69,16 +69,11 @@ namespace lr
     {
     public:
         virtual void Init(const RenderBufferDesc &desc) = 0;
-        // If we already have data, just pass it
-        virtual void SetData(void *pData, size_t dataLen) = 0;
-        // If we don't have data, get buffer's data and pass it so we save memory
-        virtual void *GetData() = 0;
-        virtual void UnmapData() = 0;
-        virtual void Delete() = 0;
 
         virtual void *GetHandle() = 0;
 
-        virtual ~BaseRenderBuffer() = default;
+        virtual void Delete() = 0;
+        virtual ~BaseRenderBuffer(){};
     };
 
     typedef BaseRenderBuffer *RenderBufferHandle;

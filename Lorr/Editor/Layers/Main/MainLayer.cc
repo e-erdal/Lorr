@@ -35,31 +35,25 @@ void MainLayer::BuildDock(ImGuiID DockID)
     ImGui::DockBuilderDockWindow("Game View", DockID);
 }
 
-float rotate = 0;
-
 void MainLayer::Update()
 {
     ZoneScoped;
 
-    const ImGuiViewport *viewport = ImGui::GetMainViewport();
-    ImGui::SetNextWindowPos(viewport->WorkPos);
-    ImGui::SetNextWindowSize(viewport->WorkSize);
-    ImGui::SetNextWindowViewport(viewport->ID);
+    ImGuiViewport *pViewport = ImGui::GetMainViewport();
 
-    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
-    ImGui::Begin("MainDock", nullptr, g_DockWindowStyle);
+    float frameHeight = ImGui::GetFrameHeight();
+    ImGuiWindowFlags windowFlags = ImGuiWindowFlags_NoScrollbar | ImGuiWindowFlags_NoSavedSettings | ImGuiWindowFlags_MenuBar;
+
+    if (ImGui::BeginViewportSideBar("##MenuBar1", pViewport, ImGuiDir_Up, frameHeight, windowFlags))
     {
-        ImGui::PopStyleVar();
-
-        const auto dockspace_id = ImGui::GetID("EngineDockSpace");
-        if (!ImGui::DockBuilderGetNode(dockspace_id)) BuildDock(dockspace_id);
-        ImGui::DockSpace(dockspace_id);
-
         if (ImGui::BeginMenuBar())
         {
             if (ImGui::BeginMenu("File"))
             {
-                ImGui::Text("yepp");
+                ImGui::MenuItem("Open Project...");
+                ImGui::MenuItem("Save");
+                ImGui::Separator();
+                ImGui::MenuItem("Save");
                 ImGui::EndMenu();
             }
 
@@ -71,13 +65,14 @@ void MainLayer::Update()
 
             if (ImGui::BeginMenu("View"))
             {
-                ImGui::Text("yepp");
+                ImGui::MenuItem("Statistics");
                 ImGui::EndMenu();
             }
 
             if (ImGui::BeginMenu("Tools"))
             {
-                ImGui::Text("yepp");
+                ImGui::MenuItem("Audio Editor");
+                ImGui::MenuItem("Shader Sandbox");
                 ImGui::EndMenu();
             }
 
@@ -90,27 +85,56 @@ void MainLayer::Update()
             ImGui::EndMenuBar();
         }
 
-        ImGuiWindowClass window_class;
-        window_class.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoWindowMenuButton | ImGuiDockNodeFlags_NoCloseButton;
-        ImGui::SetNextWindowClass(&window_class);
+        ImGui::End();
+    }
 
-        ImGui::Begin(m_ResourceWindow.m_Title, nullptr, g_WindowStyle);
+    if (ImGui::BeginViewportSideBar("##MenuBar2", pViewport, ImGuiDir_Up, frameHeight, windowFlags))
+    {
+        ImGui::End();
+    }
+
+    if (ImGui::BeginViewportSideBar("##MenuBar3", pViewport, ImGuiDir_Down, frameHeight, windowFlags))
+    {
+        if (ImGui::BeginMenuBar())
         {
-            m_ResourceWindow.Update();
+            ImGui::Text("Test");
+            ImGui::EndMenuBar();
         }
         ImGui::End();
+    }
 
-        ImGui::SetNextWindowClass(&window_class);
+    ImGui::SetNextWindowPos(pViewport->WorkPos);
+    ImGui::SetNextWindowSize(pViewport->WorkSize);
+    ImGui::SetNextWindowViewport(pViewport->ID);
 
-        ImGui::Begin(m_EntityWindow.m_Title, nullptr, g_WindowStyle);
+    ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+    ImGui::Begin("MainDock", nullptr, g_DockWindowStyle);
+    {
+        ImGui::PopStyleVar();
+
+        const auto dockspace_id = ImGui::GetID("EngineDockSpace");
+        if (!ImGui::DockBuilderGetNode(dockspace_id)) BuildDock(dockspace_id);
+        ImGui::DockSpace(dockspace_id);
+
+        ImGuiWindowClass windowClass;
+        windowClass.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoWindowMenuButton;
+
+        ImGui::SetNextWindowClass(&windowClass);
+        ImGui::Begin(m_EntityWindow.m_Title, nullptr);
         {
             m_EntityWindow.Update();
         }
         ImGui::End();
 
-        ImGui::SetNextWindowClass(&window_class);
+        ImGui::SetNextWindowClass(&windowClass);
+        ImGui::Begin(m_ResourceWindow.m_Title, nullptr);
+        {
+            m_ResourceWindow.Update();
+        }
+        ImGui::End();
 
-        ImGui::Begin(m_PropertiesWindow.m_Title, nullptr, g_WindowStyle);
+        ImGui::SetNextWindowClass(&windowClass);
+        ImGui::Begin(m_PropertiesWindow.m_Title, nullptr);
         {
             m_PropertiesWindow.Update();
         }

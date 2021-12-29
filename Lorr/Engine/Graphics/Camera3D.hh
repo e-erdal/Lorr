@@ -69,7 +69,7 @@ namespace lr
         float m_Aspect = 0.f;
         float m_zNear = 0.f;
         float m_zFar = 0.f;
-        float m_MovingSpeed = 100.f;
+        float m_MovingSpeed = 50.f;
         float m_AngleX = 0, m_AngleY = 0;
 
         Direction m_MovingDirection = Direction::NONE;

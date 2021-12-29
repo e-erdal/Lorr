@@ -26,7 +26,9 @@ namespace lr::System
         // pRenderer->SetCurrentTarget("renderer://postprocess");
 
         glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera3d").GetCameraMatrix();
-        modelCBuf->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
+
+        pRenderer->MapBuffer(modelCBuf, &cameraMatrix[0][0], sizeof(glm::mat4));
+        pRenderer->UnmapBuffer(modelCBuf);
 
         m_pRegistry->view<Model>().each([&](auto entity, Model &model) {
             pRenderer->UseShader(modelProgram->Vertex);

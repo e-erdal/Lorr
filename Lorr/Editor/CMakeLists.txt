@@ -5,10 +5,23 @@ set(EDITOR_VENDOR
 
 set(EDITOR_COMPONENTS
     LorrEditorLayers
+    LorrEditorApp
 )
 
 ######### Editor components ########
-# # Editor
+# App
+LorrComponent(
+    NAME
+    LorrEditorApp
+    INCLUDE
+        ./
+    SOURCE
+        ./App/*.cc
+    VENDOR
+        ${EDITOR_VENDOR}
+)
+
+# Layers
 LorrComponent(
     NAME
         LorrEditorLayers

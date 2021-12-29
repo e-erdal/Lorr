@@ -8,9 +8,9 @@
 
 namespace lr::D3D
 {
-    std::string_view GetLatestFeatureLevelString(ShaderType type);
+    eastl::string_view GetLatestFeatureLevelString(ShaderType type);
 
-    std::string_view VSFeatureLevelToString(D3D_FEATURE_LEVEL level);
-    std::string_view PSFeatureLevelToString(D3D_FEATURE_LEVEL level);
-    std::string_view CSFeatureLevelToString(D3D_FEATURE_LEVEL level);
+    eastl::string_view VSFeatureLevelToString(D3D_FEATURE_LEVEL level);
+    eastl::string_view PSFeatureLevelToString(D3D_FEATURE_LEVEL level);
+    eastl::string_view CSFeatureLevelToString(D3D_FEATURE_LEVEL level);
 }  // namespace lr::D3D

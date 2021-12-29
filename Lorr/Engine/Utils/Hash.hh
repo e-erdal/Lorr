@@ -6,7 +6,7 @@
 
 #define HASH_INTERFACE(intf)                                                                                                                                   \
     template<>                                                                                                                                                 \
-    struct std::hash<intf>                                                                                                                                     \
+    struct eastl::hash<intf>                                                                                                                                     \
     {                                                                                                                                                          \
         size_t operator()(const intf &) const noexcept                                                                                                         \
         {                                                                                                                                                      \

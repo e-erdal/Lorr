@@ -29,6 +29,7 @@ namespace lr
         void SetScissor(const glm::vec4 &lrtb) override;
         void SetDepthFunc(D3D::DepthFunc func, bool depthEnabled) override;
         void SetCulling(D3D::Cull cull, bool counterClockwise) override;
+        void SetWireframeState(bool enabled) override;
         void SetBlend(bool enableBlending, bool alphaCoverage) override;
 
         void CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture = 0, u32 mipLevels = 1) override;
@@ -43,6 +44,9 @@ namespace lr
         void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
         void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
         void UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+
+        void MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize) override;
+        void UnmapBuffer(RenderBufferHandle buffer) override;
 
         void UseShader(ShaderHandle shader) override;
 

@@ -35,6 +35,7 @@ set(ENGINE_VENDOR
     bimg
     bvh
     DirectX-Headers
+    EASTL
     glm
     imgui
     lw

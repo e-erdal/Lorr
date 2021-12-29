@@ -1,7 +1,5 @@
 #pragma once
 
-#include <memory>
-
 #include <spdlog/fmt/ostr.h>
 #include <spdlog/sinks/android_sink.h>
 #include <spdlog/sinks/basic_file_sink.h>
@@ -13,18 +11,18 @@
 
 #define ENABLE_LOG_TRACE
 #ifdef ENABLE_LOG_TRACE
-    #define LOG_TRACE(...) Console::GetCoreLogger()->trace(__VA_ARGS__)
+    #define LOG_TRACE(...) lr::Console::GetCoreLogger()->trace(__VA_ARGS__)
 #else
     #define LOG_TRACE(...) (void *)0
 #endif
 
-#define LOG_INFO(...) Console::GetCoreLogger()->info(__VA_ARGS__)
-#define LOG_WARN(...) Console::GetCoreLogger()->warn(__VA_ARGS__)
+#define LOG_INFO(...) lr::Console::GetCoreLogger()->info(__VA_ARGS__)
+#define LOG_WARN(...) lr::Console::GetCoreLogger()->warn(__VA_ARGS__)
 #define LOG_ERROR(...)                                                                                                                                                   \
     {                                                                                                                                                                    \
-        Console::GetCoreLogger()->error(__VA_ARGS__);                                                                                                                    \
-        Console::GetCoreLogger()->dump_backtrace();                                                                                                                      \
-        Console::GetCoreLogger()->flush();                                                                                                                               \
+        lr::Console::GetCoreLogger()->error(__VA_ARGS__);                                                                                                                    \
+        lr::Console::GetCoreLogger()->dump_backtrace();                                                                                                                      \
+        lr::Console::GetCoreLogger()->flush();                                                                                                                               \
         abort();                                                                                                                                                         \
     }
 
@@ -41,7 +39,7 @@ namespace lr
         {
             if (g_LoggerInitialized) return;
 
-            std::vector<spdlog::sink_ptr> logSinks;
+            eastl::vector<spdlog::sink_ptr> logSinks;
 
 #if PLATFORM_ANDROID
             // ANDROID
@@ -56,7 +54,7 @@ namespace lr
             logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %L | %v");
 #endif
 
-            s_pCoreLogger = std::make_shared<spdlog::logger>("Engine", begin(logSinks), end(logSinks));
+            s_pCoreLogger = std::make_shared<spdlog::logger>("Engine", logSinks.begin(), logSinks.end());
             spdlog::register_logger(s_pCoreLogger);
             s_pCoreLogger->set_level(spdlog::level::trace);
             s_pCoreLogger->flush_on(spdlog::level::trace);

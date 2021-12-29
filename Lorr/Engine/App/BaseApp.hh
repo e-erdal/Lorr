@@ -10,7 +10,7 @@
 
 namespace lr
 {
-    constexpr std::string_view kSaveFileName = "state.lr";
+    constexpr eastl::string_view kSaveFileName = "state.lr";
     struct BaseAppSave
     {
         u32 m_LastSaveDate = 0;  // Unix timestamp
@@ -26,8 +26,8 @@ namespace lr
 
     struct ApplicationDesc
     {
-        std::string Title = "Lorr";
-        std::string Icon = "";
+        eastl::string Title = "Lorr";
+        eastl::string Icon = "";
 
         WindowFlags Flags = WindowFlags::None;
 

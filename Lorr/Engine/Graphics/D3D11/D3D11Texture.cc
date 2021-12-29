@@ -72,6 +72,8 @@ namespace lr
 
     void D3D11Texture::Delete()
     {
+        ZoneScoped;
+        
         SAFE_RELEASE(m_pHandle);
 
         SAFE_RELEASE(m_pShaderResource);
@@ -85,6 +87,8 @@ namespace lr
 
     void D3D11Texture::CreateTexture2D(TextureData *pData)
     {
+        ZoneScoped;
+        
         HRESULT hr;
         u32 miscFlags = 0;
         auto device = DX11Renderer->GetDevice();
@@ -117,6 +121,8 @@ namespace lr
 
     void D3D11Texture::CreateDepthTexture()
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto device = DX11Renderer->GetDevice();
         auto context = DX11Renderer->GetDeviceContext();
@@ -154,6 +160,8 @@ namespace lr
 
     void D3D11Texture::CreateRenderTarget()
     {
+        ZoneScoped;
+        
         HRESULT hr;
         u32 miscFlags = 0;
         auto device = DX11Renderer->GetDevice();
@@ -196,6 +204,8 @@ namespace lr
 
     void D3D11Texture::CreateRWTexture()
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto device = DX11Renderer->GetDevice();
         auto context = DX11Renderer->GetDeviceContext();
@@ -233,6 +243,8 @@ namespace lr
 
     void D3D11Texture::CreateStagingTexture()
     {
+        ZoneScoped;
+        
         HRESULT hr;
         auto device = DX11Renderer->GetDevice();
 
@@ -286,7 +298,7 @@ namespace lr
         ID3D11Device *pDevice = D3D11Renderer::Get()->GetDevice();
 
         D3D11_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
         samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;

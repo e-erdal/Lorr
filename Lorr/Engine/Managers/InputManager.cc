@@ -8,6 +8,10 @@
 
 namespace lr
 {
+    static eastl::unordered_map<Key, Direction> kCameraMoveLUT = { { Key::Key_W, Direction::FORWARD }, { Key::Key_S, Direction::BACKWARD },
+                                                                 { Key::Key_A, Direction::LEFT },    { Key::Key_D, Direction::RIGHT },
+                                                                 { Key::Key_Q, Direction::UP },      { Key::Key_E, Direction::DOWN } };
+
     void InputManager::OnKeyboardState(ButtonState state, Key key, KeyMod mods)
     {
         ZoneScoped;
@@ -24,15 +28,10 @@ namespace lr
                 auto &component = view.get<Component::Camera3DController>(entity);
 
                 bool stop = state == ButtonState::Released;
-                switch (key)
+                auto keyIt = kCameraMoveLUT.find(key);
+                if (keyIt != kCameraMoveLUT.end())
                 {
-                    case Key::Key_W: component.m_Handle.Move(Direction::FORWARD, stop); break;
-                    case Key::Key_S: component.m_Handle.Move(Direction::BACKWARD, stop); break;
-                    case Key::Key_A: component.m_Handle.Move(Direction::LEFT, stop); break;
-                    case Key::Key_D: component.m_Handle.Move(Direction::RIGHT, stop); break;
-                    case Key::Key_Q: component.m_Handle.Move(Direction::UP, stop); break;
-                    case Key::Key_E: component.m_Handle.Move(Direction::DOWN, stop); break;
-                    default: break;
+                    component.m_Handle.Move(keyIt->second, stop);
                 }
             }
         }
@@ -70,7 +69,7 @@ namespace lr
 
                 auto buttonIt = m_MouseButtonState.find(MouseButton::BTN_1);
                 if (buttonIt == m_MouseButtonState.end())
-                    dragAvailable = false;
+                    continue;
                 else if (buttonIt->second == ButtonState::Pressed)
                     dragAvailable = true;
 
@@ -85,7 +84,6 @@ namespace lr
     void InputManager::OnKeyInput()
     {
         ZoneScoped;
-
     }
 
     void InputManager::SetMousePos(const glm::ivec2 &pos)

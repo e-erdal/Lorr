@@ -55,6 +55,8 @@ namespace lr
 
     void Camera3D::Move(Direction direction, bool stop)
     {
+        ZoneScoped;
+        
         if (!stop)
             m_MovingDirection |= direction;
         else

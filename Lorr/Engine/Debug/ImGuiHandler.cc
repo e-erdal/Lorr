@@ -149,11 +149,11 @@ namespace lr
         ImGui::CreateContext();
 
         ImGuiIO &io = ImGui::GetIO();
-        (void)io;
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
         io.IniFilename = 0;
-        io.Fonts->AddFontFromFileTTF("font.ttf", 14);
+        io.Fonts->AddFontFromFileTTF("segoeui.ttf", 17);
+        io.Fonts->AddFontFromFileTTF("segoeuib.ttf", 17);
 
         ImGui::StyleColorsDark();
 
@@ -302,7 +302,7 @@ namespace lr
 
         if (!m_VertexBuffer || g_VertexBufferSize < pDrawData->TotalVtxCount)
         {
-            if (m_VertexBuffer) m_VertexBuffer->Delete();
+            SAFE_DELETE(m_VertexBuffer);
             g_VertexBufferSize = pDrawData->TotalVtxCount + 5000;
 
             RenderBufferDesc desc;
@@ -316,7 +316,7 @@ namespace lr
 
         if (!m_IndexBuffer || g_IndexBufferSize < pDrawData->TotalIdxCount)
         {
-            if (m_IndexBuffer) m_IndexBuffer->Delete();
+            SAFE_DELETE(m_IndexBuffer);
             g_IndexBufferSize = pDrawData->TotalIdxCount + 10000;
 
             RenderBufferDesc desc;
@@ -328,25 +328,33 @@ namespace lr
             m_IndexBuffer = RenderBuffer::Create(desc);
         }
 
-        ImDrawVert *pVerices = (ImDrawVert *)m_VertexBuffer->GetData();
-        ImDrawIdx *pIndices = (ImDrawIdx *)m_IndexBuffer->GetData();
+        ImDrawVert *pVertexData = (ImDrawVert *)malloc(g_VertexBufferSize * sizeof(ImDrawVert));
+        ImDrawVert *pVertex = pVertexData;
+        ImDrawIdx *pIndexData = (ImDrawIdx *)malloc(g_IndexBufferSize * sizeof(ImDrawIdx));
+        ImDrawIdx *pIndex = pIndexData;
 
         for (int i = 0; i < pDrawData->CmdListsCount; i++)
         {
             const ImDrawList *pDrawList = pDrawData->CmdLists[i];
-            memcpy(pVerices, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.Size * sizeof(ImDrawVert));
-            memcpy(pIndices, pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.Size * sizeof(ImDrawIdx));
+            memcpy(pVertex, pDrawList->VtxBuffer.Data, pDrawList->VtxBuffer.Size * sizeof(ImDrawVert));
+            memcpy(pIndex, pDrawList->IdxBuffer.Data, pDrawList->IdxBuffer.Size * sizeof(ImDrawIdx));
 
-            pVerices += pDrawList->VtxBuffer.Size;
-            pIndices += pDrawList->IdxBuffer.Size;
+            pVertex += pDrawList->VtxBuffer.Size;
+            pIndex += pDrawList->IdxBuffer.Size;
         }
 
-        m_VertexBuffer->UnmapData();
-        m_IndexBuffer->UnmapData();
+        pRenderer->MapBuffer(m_VertexBuffer, pVertexData, g_VertexBufferSize * sizeof(ImDrawVert));
+        pRenderer->UnmapBuffer(m_VertexBuffer);
+        pRenderer->MapBuffer(m_IndexBuffer, pIndexData, g_IndexBufferSize * sizeof(ImDrawIdx));
+        pRenderer->UnmapBuffer(m_IndexBuffer);
+
+        free(pVertexData);
+        free(pIndexData);
 
         glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
-        m_VertexConstantBuffer->SetData(&cameraMatrix[0][0], sizeof(glm::mat4));
-        glm::vec2 clipOff = { pDrawData->DisplayPos.x, pDrawData->DisplayPos.y };
+
+        pRenderer->MapBuffer(m_VertexConstantBuffer, &cameraMatrix[0][0], sizeof(glm::mat4));
+        pRenderer->UnmapBuffer(m_VertexConstantBuffer);
 
         pRenderer->UseShader(m_VertexShader);
         pRenderer->UseShader(m_PixelShader);
@@ -357,6 +365,7 @@ namespace lr
 
         u32 vertexOff = 0;
         u32 indexOff = 0;
+        glm::vec2 clipOff = { pDrawData->DisplayPos.x, pDrawData->DisplayPos.y };
 
         for (int i = 0; i < pDrawData->CmdListsCount; i++)
         {
@@ -386,8 +395,11 @@ namespace lr
                     TextureHandle texture = (TextureHandle)cmd.TextureId;
                     glm::vec4 mips = { texture->m_UsingMip, 0.f, 0.f, 0.f };
 
-                    m_PixelConstantBuffer->SetData(&mips, sizeof(glm::vec4));
+                    pRenderer->MapBuffer(m_PixelConstantBuffer, &mips, sizeof(glm::vec4));
+                    pRenderer->UnmapBuffer(m_PixelConstantBuffer);
+
                     pRenderer->UseConstantBuffer(m_PixelConstantBuffer, RenderBufferTarget::Pixel, 0);
+
                     texture->Use();
 
                     pRenderer->DrawIndexed(cmd.ElemCount, cmd.IdxOffset + indexOff, cmd.VtxOffset + vertexOff);

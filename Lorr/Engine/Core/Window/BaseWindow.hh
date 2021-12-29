@@ -36,7 +36,7 @@ namespace lr
     {
         struct Display
         {
-            std::string Name;
+            eastl::string Name;
 
             u32 ResW;
             u32 ResH;
@@ -46,7 +46,7 @@ namespace lr
             u32 RefreshRate;
         };
 
-        std::vector<Display> Displays;
+        eastl::vector<Display> Displays;
     };
 
     class BaseWindow
@@ -54,7 +54,7 @@ namespace lr
     public:
         virtual ~BaseWindow(){};
 
-        virtual void Init(const std::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) = 0;
+        virtual void Init(const eastl::string &title, u32 monitor, u32 width, u32 height, WindowFlags flags) = 0;
         virtual void Poll() = 0;
 
         const SystemMetrics::Display *GetDisplay(u32 monitor) const;

@@ -18,6 +18,8 @@ namespace lr
 
     void Font::Init(const Identifier &ident, FontDesc *pDesc, FontData *pData)
     {
+        ZoneScoped;
+        
         using namespace msdf_atlas;
 
         LOG_TRACE("Generating MTSDF atlas, {}<thread:{}>", ident, kThreadCount);
@@ -115,7 +117,7 @@ namespace lr
 
         for (auto &kerning : m_pGeometry->getKerning())
         {
-            m_Kerning[std::make_pair<i32, i32>((i32)kerning.first.first, (i32)kerning.first.second)] = (float)kerning.second;
+            m_Kerning[eastl::make_pair<i32, i32>((i32)kerning.first.first, (i32)kerning.first.second)] = (float)kerning.second;
         }
 
         m_PixelRangle = packer.getPixelRange();
@@ -126,8 +128,10 @@ namespace lr
     {
     }
 
-    void Font::AlignAll(const tiny_utf8::string &text, std::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
+    void Font::AlignAll(const tiny_utf8::string &text, eastl::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
     {
+        ZoneScoped;
+        
         outPixelRange = m_PixelRangle;
         const msdfgen::FontMetrics fontMetrics = m_pGeometry->getMetrics();
         float fsScale = 1.0 / (fontMetrics.ascenderY - fontMetrics.descenderY);
@@ -166,7 +170,7 @@ namespace lr
             float kerning = 0;
             if (i > 0)
             {
-                auto kerningIt = m_Kerning.find(std::make_pair(beforeIndex, glyph.Index));
+                auto kerningIt = m_Kerning.find(eastl::make_pair(beforeIndex, glyph.Index));
                 if (kerningIt != m_Kerning.end()) kerning = kerningIt->second;
             }
             beforeIndex = glyph.Index;

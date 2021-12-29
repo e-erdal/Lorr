@@ -1,6 +1,6 @@
 #pragma once
 
-#include <chrono>
+#include <EASTL/chrono.h>
 #include <thread>
 
 // https://stackoverflow.com/a/59165784
@@ -11,8 +11,8 @@ namespace lr
     {
     public:
         FrameLimiter():
-            time_between_frames{1},  // std::ratio<1, FPS> seconds
-            tp{std::chrono::steady_clock::now()}
+            time_between_frames{1},  // eastl::ratio<1, FPS> seconds
+            tp{eastl::chrono::steady_clock::now()}
         {
         }
 
@@ -27,9 +27,9 @@ namespace lr
 
     private:
         // a duration with a length of 1/FPS seconds
-        std::chrono::duration<double, std::ratio<1, FPS>> time_between_frames;
+        eastl::chrono::duration<double, eastl::ratio<1, FPS>> time_between_frames;
 
         // the time point we'll add to in every loop
-        std::chrono::time_point<std::chrono::steady_clock, decltype(time_between_frames)> tp;
+        eastl::chrono::time_point<eastl::chrono::steady_clock, decltype(time_between_frames)> tp;
     };
 }  // namespace lr

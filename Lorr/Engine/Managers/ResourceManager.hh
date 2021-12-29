@@ -37,7 +37,7 @@ namespace lr
         }
 
         template<typename T>
-        inline T *LoadResource(const Identifier &ident, const std::string &path, decltype(T::m_DescType) *pDesc)
+        inline T *LoadResource(const Identifier &ident, const eastl::string &path, decltype(T::m_DescType) *pDesc)
         {
             ZoneScoped;
 
@@ -52,7 +52,7 @@ namespace lr
         }
 
         template<typename T>
-        inline bool ImportResource(ResourceType type, const std::string &path, T &outData)
+        inline bool ImportResource(ResourceType type, const eastl::string &path, T &outData)
         {
             ZoneScoped;
 
@@ -78,7 +78,7 @@ namespace lr
             return false;
         }
 
-        bool ExportResource(ResourceType type, const std::string &path, BufferStream &buf);
+        bool ExportResource(ResourceType type, const eastl::string &path, BufferStream &buf);
 
         template<typename T>
         inline void Append(T *pResource)
@@ -87,10 +87,10 @@ namespace lr
         }
 
     public:
-        static bool LoadResourceFile(const std::string &path, BufferStream &buf);
+        static bool LoadResourceFile(const eastl::string &path, BufferStream &buf);
 
     private:
-        bool ParseToBuffer(ResourceType type, const std::string &path, BufferStream &outBuf);
+        bool ParseToBuffer(ResourceType type, const eastl::string &path, BufferStream &outBuf);
 
         // In
         bool ParseTextureDataFromFile(TextureData &outData, BufferStream &resourceBuf);
@@ -107,7 +107,7 @@ namespace lr
         bool ParseModelToBuffer(BufferStream &inBuf, BufferStream &outBuf);
 
     private:
-        std::unordered_map<Identifier, void *> m_Resources;
+        eastl::unordered_map<Identifier, void *> m_Resources;
     };
 
 }  // namespace lr

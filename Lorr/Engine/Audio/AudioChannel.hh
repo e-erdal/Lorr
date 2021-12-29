@@ -30,7 +30,7 @@ namespace lr
 
         float m_Volume = 1.0f;
 
-        std::vector<Audio *> m_LinkedAudio;
+        eastl::vector<Audio *> m_LinkedAudio;
     };
 
 }  // namespace lr

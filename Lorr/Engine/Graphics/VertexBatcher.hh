@@ -49,6 +49,14 @@ namespace lr
                 m_IndexBuffer = RenderBuffer::Create(desc);
 
                 delete[] pQuads;
+
+                desc.pData = nullptr;
+                desc.DataLen = VertexCount * sizeof(VertexT);
+                desc.Type = RenderBufferType::Vertex;
+                desc.Usage = RenderBufferUsage::Dynamic;
+                desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+                m_VertexBuffer = RenderBuffer::Create(desc);
             }
 
             m_InputLayout = inputLayout;
@@ -68,27 +76,19 @@ namespace lr
             ZoneScoped;
         }
 
-        void End()
+        void End(bool discard = true)
         {
             ZoneScoped;
 
             BaseRenderer *pRenderer = GetEngine()->GetRenderer();
-
-            SAFE_DELETE(m_VertexBuffer);
 
             if (m_VerticesOffset > 0 && m_CurrentTexture)
             {
                 pRenderer->UseShader(m_pShaderProgram->Vertex);
                 pRenderer->UseShader(m_pShaderProgram->Pixel);
 
-                RenderBufferDesc desc;
-                desc.pData = m_Vertices.data();
-                desc.DataLen = m_VerticesOffset * sizeof(VertexT);
-                desc.Type = RenderBufferType::Vertex;
-                desc.Usage = RenderBufferUsage::Dynamic;
-                desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
-
-                m_VertexBuffer = RenderBuffer::Create(desc);
+                pRenderer->MapBuffer(m_VertexBuffer, &m_Vertices[0], m_Vertices.size() * sizeof(VertexT));
+                pRenderer->UnmapBuffer(m_VertexBuffer);
 
                 pRenderer->UseVertexBuffer(m_VertexBuffer, &m_InputLayout);
                 pRenderer->UseIndexBuffer(m_IndexBuffer);
@@ -97,8 +97,10 @@ namespace lr
                 pRenderer->DrawIndexed(m_IndexCount);
             }
 
-            m_VerticesOffset = 0;
-            m_IndexCount = 0;
+            if (discard)
+            {
+                DiscardBuffer();
+            }
         }
 
         void SetCurrentTexture(TextureHandle texture)
@@ -125,11 +127,15 @@ namespace lr
 
         void PushRect(const glm::mat4 &transform, const glm::ivec4 &color = { 255, 255, 255, 255 })
         {
+            ZoneScoped;
+
             PushRect(transform, glm::mat4(1.0f), color);
         }
 
         void PushRect(const glm::mat4 &transform, const glm::vec4 &uv, const glm::ivec4 &color = { 255, 255, 255, 255 })
         {
+            ZoneScoped;
+
             const glm::mat4x2 uvMat = { uv.z, uv.w, uv.z, uv.y, uv.x, uv.y, uv.x, uv.w };
             PushRect(transform, uvMat, color);
         }
@@ -147,9 +153,34 @@ namespace lr
             }
         }
 
-        VertexT *AllocRect(u32 count)
+        void SetRects(VertexT *pVertices, u32 count)
         {
             ZoneScoped;
+
+            VertexT *pVerticesPtr = pVertices;
+            while (count != 0)
+            {
+                u32 allocatedCount = 0;
+                VertexT *pAlloc = AllocRect(count, &allocatedCount);
+                memcpy(pAlloc, pVerticesPtr, 4 * allocatedCount * sizeof(VertexT));
+
+                if (m_VerticesOffset == VertexCount)
+                {
+                    End();
+                }
+
+                pVerticesPtr += 4 * allocatedCount;
+                count -= allocatedCount;
+            }
+        }
+
+        VertexT *AllocRect(u32 count, u32 *pOutAllocated = nullptr)
+        {
+            ZoneScoped;
+
+            u32 diff = VertexCount - m_VerticesOffset;
+            count = std::min(diff / 4, count);
+            if (pOutAllocated) *pOutAllocated = count;
 
             VertexT *pVertices = &m_Vertices[m_VerticesOffset];
             m_VerticesOffset += count * 4;
@@ -158,8 +189,14 @@ namespace lr
             return pVertices;
         }
 
+        void DiscardBuffer()
+        {
+            m_VerticesOffset = 0;
+            m_IndexCount = 0;
+        }
+
     private:
-        std::array<VertexT, VertexCount> m_Vertices;
+        eastl::array<VertexT, VertexCount> m_Vertices;
         u32 m_VerticesOffset = 0;
         u32 m_IndexCount = 0;
 

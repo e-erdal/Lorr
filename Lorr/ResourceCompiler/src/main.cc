@@ -36,12 +36,12 @@ int main(int argc, char **argv)
 
     lr::ArgParser parser(argc, argv);
 
-    std::string path = "";
+    eastl::string path = "";
     if (parser.GetConfig("f", &path))
     {
         if (parser.HasArg("shader"))
         {
-            std::string targetPath = "";
+            eastl::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
                 ShaderCompiler c(path, targetPath);
@@ -53,7 +53,7 @@ int main(int argc, char **argv)
         }
         else if (parser.HasArg("texture"))
         {
-            std::string targetPath = "";
+            eastl::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
                 TextureCompiler c(path, targetPath);
@@ -65,7 +65,7 @@ int main(int argc, char **argv)
         }
         else if (parser.HasArg("audio"))
         {
-            std::string targetPath = "";
+            eastl::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
                 AudioCompiler c(path, targetPath);
@@ -77,7 +77,7 @@ int main(int argc, char **argv)
         }
         else if (parser.HasArg("font"))
         {
-            std::string targetPath = "";
+            eastl::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
                 FontCompiler c(path, targetPath);
@@ -89,7 +89,7 @@ int main(int argc, char **argv)
         }
         else if (parser.HasArg("model"))
         {
-            std::string targetPath = "";
+            eastl::string targetPath = "";
             if (parser.GetConfig("o", &targetPath))
             {
                 ModelCompiler c(path, targetPath);

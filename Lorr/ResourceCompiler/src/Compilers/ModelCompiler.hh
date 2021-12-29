@@ -15,7 +15,7 @@
 class ModelCompiler
 {
 public:
-    ModelCompiler(const std::string &path, const std::string &out)
+    ModelCompiler(const eastl::string &path, const eastl::string &out)
     {
         using namespace lr;
 

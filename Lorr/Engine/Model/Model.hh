@@ -17,7 +17,7 @@ namespace lr
 
     struct ModelData
     {
-        std::vector<FileMesh> Meshes;
+        eastl::vector<FileMesh> Meshes;
     };
 
     struct ModelRenderBuffer
@@ -40,7 +40,7 @@ namespace lr
         static constexpr ResourceType m_ResType = ResourceType::Model;
 
     private:
-        std::vector<Mesh> m_Meshes;
+        eastl::vector<Mesh> m_Meshes;
 
         u32 m_IndexCount = 0;
     };

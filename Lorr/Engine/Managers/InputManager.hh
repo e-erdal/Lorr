@@ -29,7 +29,7 @@ namespace lr
 
     private:
         glm::ivec2 m_MousePos;
-        std::unordered_map<MouseButton, ButtonState> m_MouseButtonState;
+        eastl::unordered_map<MouseButton, ButtonState> m_MouseButtonState;
     };
 
 }  // namespace lr

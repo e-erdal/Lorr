@@ -6,7 +6,6 @@
 
 #include <fstream>
 #include <streambuf>
-#include <string>
 
 namespace lr
 {
@@ -15,7 +14,7 @@ namespace lr
     public:
         FileStream() = default;
 
-        FileStream(const std::string &path, bool write)
+        FileStream(const eastl::string &path, bool write)
         {
             if (write)
             {
@@ -27,7 +26,7 @@ namespace lr
             }
         }
 
-        void Reopen(const std::string &path, bool write)
+        void Reopen(const eastl::string &path, bool write)
         {
             if (IsOK()) Close();
 
@@ -39,13 +38,6 @@ namespace lr
             {
                 m_File = fopen(path.c_str(), "rb");
             }
-        }
-
-        static std::string ReadAsString(const char *path)
-        {
-            std::ifstream i(path);
-
-            return std::string((std::istreambuf_iterator<char>(i)), std::istreambuf_iterator<char>());
         }
 
         inline void Close()
@@ -98,7 +90,7 @@ namespace lr
             fwrite(t, 1, size, m_File);
         }
 
-        inline void WriteString(const std::string &val)
+        inline void WriteString(const eastl::string &val)
         {
             fwrite(val.c_str(), 1, val.length(), m_File);
         }

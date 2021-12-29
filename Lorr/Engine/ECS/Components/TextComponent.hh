@@ -39,7 +39,7 @@ namespace lr::Component
 
         TextureHandle m_Texture;
 
-        std::vector<TextLine> m_Lines;
+        eastl::vector<TextLine> m_Lines;
     };
 
 }  // namespace lr::Component
