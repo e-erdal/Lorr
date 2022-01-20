@@ -52,3 +52,9 @@
 [submodule "Vendor/EA/EASTL"]
 	path = Vendor/EA/EASTL
 	url = https://github.com/electronicarts/EASTL.git
+[submodule "Vendor/Utility/loguru"]
+	path = Vendor/Utility/loguru
+	url = https://github.com/emilk/loguru.git
+[submodule "Vendor/Utility/miniz"]
+	path = Vendor/Utility/miniz
+	url = https://github.com/richgel999/miniz.git
