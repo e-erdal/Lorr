@@ -5,16 +5,14 @@
 
 #pragma once
 
-#include <AL/al.h>
-#include <AL/alc.h>
-#include <AL/alext.h>
-
-#include "Engine/Stream/BufferStream.hh"
+#include "Engine/Utils/BufferStream.hh"
 #include "Engine/Core/FileSystem.hh"
 
 #include "Audio.hh"
 #include "AudioChannel.hh"
 
+class ALCdevice;
+class ALCcontext;
 namespace lr
 {
     class AudioSystem
@@ -23,7 +21,6 @@ namespace lr
         ~AudioSystem();
 
         void Init();
-
         void CreateChannel(Identifier const &ident, AudioChannel *pChannel);
 
         void LoadAudio(Identifier const &ident, Audio *pAudioOut, AudioData *pData, const Identifier &channelIdent);

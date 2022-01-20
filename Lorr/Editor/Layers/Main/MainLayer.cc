@@ -82,6 +82,14 @@ void MainLayer::Update()
                 ImGui::EndMenu();
             }
 
+            eastl::string projName = "GameApp - Scene: %";
+            ImGui::SetCursorPosX(ImGui::GetCursorPosX() + ImGui::GetColumnWidth() - ImGui::CalcTextSize(projName.c_str()).x - ImGui::GetScrollX()
+                                 - 2 * ImGui::GetStyle().ItemSpacing.x);
+
+            ImGui::PushFont("segoeuib");
+            ImGui::Text("%s", projName.c_str());
+            ImGui::PopFont();
+
             ImGui::EndMenuBar();
         }
 

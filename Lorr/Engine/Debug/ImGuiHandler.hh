@@ -14,6 +14,11 @@
 
 #include <imgui.h>
 
+namespace ImGui
+{
+    void PushFont(const lr::Identifier &ident);
+}
+
 namespace lr
 {
     class Engine;

@@ -1,70 +1,39 @@
 #pragma once
 
-#include <spdlog/fmt/ostr.h>
-#include <spdlog/sinks/android_sink.h>
-#include <spdlog/sinks/basic_file_sink.h>
-#include <spdlog/sinks/stdout_color_sinks.h>
-#include <spdlog/spdlog.h>
+#include <loguru.hpp>
 
-#define CHECK(expr, fail_msg, ...)                                                                                                                                       \
+#define CHECK(expr, fail_msg, ...)                                                                                                                   \
     if (!(expr)) LOG_ERROR(fail_msg, ##__VA_ARGS__);
 
 #define ENABLE_LOG_TRACE
 #ifdef ENABLE_LOG_TRACE
-    #define LOG_TRACE(...) lr::Console::GetCoreLogger()->trace(__VA_ARGS__)
+#define LOG_TRACE(...) DLOG_F(INFO, __VA_ARGS__)
 #else
-    #define LOG_TRACE(...) (void *)0
+#define LOG_TRACE(...) (void *)0
 #endif
 
-#define LOG_INFO(...) lr::Console::GetCoreLogger()->info(__VA_ARGS__)
-#define LOG_WARN(...) lr::Console::GetCoreLogger()->warn(__VA_ARGS__)
-#define LOG_ERROR(...)                                                                                                                                                   \
-    {                                                                                                                                                                    \
-        lr::Console::GetCoreLogger()->error(__VA_ARGS__);                                                                                                                    \
-        lr::Console::GetCoreLogger()->dump_backtrace();                                                                                                                      \
-        lr::Console::GetCoreLogger()->flush();                                                                                                                               \
-        abort();                                                                                                                                                         \
+#define LOG_INFO(...) LOG_F(INFO, __VA_ARGS__)
+#define LOG_WARN(...) LOG_F(WARNING, __VA_ARGS__)
+#define LOG_ERROR(...)                                                                                                                               \
+    {                                                                                                                                                \
+        ABORT_F(__VA_ARGS__);                                                                                                                        \
+        abort();                                                                                                                                     \
     }
 
 namespace lr
 {
     class Console
     {
-    private:
-        inline static std::shared_ptr<spdlog::logger> s_pCoreLogger = nullptr;
-        inline static bool g_LoggerInitialized = false;
-
     public:
         static void Init()
         {
-            if (g_LoggerInitialized) return;
-
-            eastl::vector<spdlog::sink_ptr> logSinks;
-
-#if PLATFORM_ANDROID
-            // ANDROID
-            logSinks.emplace_back(std::make_shared<spdlog::sinks::android_sink_mt>());
-            logSinks[0]->set_pattern("%T %5^%l%$\t| %v");
+#if _DEBUG
+            loguru::g_stderr_verbosity = loguru::Verbosity_MAX;
+            loguru::add_file("lorr.log", loguru::Truncate, loguru::Verbosity_MAX);
 #else
-            // PC
-            logSinks.emplace_back(std::make_shared<spdlog::sinks::stdout_color_sink_mt>());
-            logSinks.emplace_back(std::make_shared<spdlog::sinks::basic_file_sink_mt>("lorr.log", true));
-
-            logSinks[0]->set_pattern("%Y-%m-%d_%T.%e | %5^%L%$ | %v");
-            logSinks[1]->set_pattern("%Y-%m-%d_%T.%e | %L | %v");
+            loguru::g_stderr_verbosity = loguru::Verbosity_INFO;
+            loguru::add_file("lorr.log", loguru::Truncate, loguru::Verbosity_INFO);
 #endif
-
-            s_pCoreLogger = std::make_shared<spdlog::logger>("Engine", logSinks.begin(), logSinks.end());
-            spdlog::register_logger(s_pCoreLogger);
-            s_pCoreLogger->set_level(spdlog::level::trace);
-            s_pCoreLogger->flush_on(spdlog::level::trace);
-
-            g_LoggerInitialized = true;
-        }
-
-        static std::shared_ptr<spdlog::logger> &GetCoreLogger()
-        {
-            return s_pCoreLogger;
         }
     };
 

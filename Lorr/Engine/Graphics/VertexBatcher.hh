@@ -49,15 +49,15 @@ namespace lr
                 m_IndexBuffer = RenderBuffer::Create(desc);
 
                 delete[] pQuads;
-
-                desc.pData = nullptr;
-                desc.DataLen = VertexCount * sizeof(VertexT);
-                desc.Type = RenderBufferType::Vertex;
-                desc.Usage = RenderBufferUsage::Dynamic;
-                desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
-
-                m_VertexBuffer = RenderBuffer::Create(desc);
             }
+            
+            RenderBufferDesc desc;
+            desc.pData = nullptr;
+            desc.DataLen = VertexCount * sizeof(VertexT);
+            desc.Type = RenderBufferType::Vertex;
+            desc.Usage = RenderBufferUsage::Dynamic;
+            desc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+            m_VertexBuffer = RenderBuffer::Create(desc);
 
             m_InputLayout = inputLayout;
         }
@@ -68,7 +68,7 @@ namespace lr
 
             m_IndexBuffer = indexBuffer;
 
-            Init();
+            Init(inputLayout);
         }
 
         void Begin()
@@ -84,14 +84,13 @@ namespace lr
 
             if (m_VerticesOffset > 0 && m_CurrentTexture)
             {
-                pRenderer->UseShader(m_pShaderProgram->Vertex);
-                pRenderer->UseShader(m_pShaderProgram->Pixel);
+                pRenderer->SetShader(m_pShaderProgram->Vertex);
+                pRenderer->SetShader(m_pShaderProgram->Pixel);
 
                 pRenderer->MapBuffer(m_VertexBuffer, &m_Vertices[0], m_Vertices.size() * sizeof(VertexT));
-                pRenderer->UnmapBuffer(m_VertexBuffer);
 
-                pRenderer->UseVertexBuffer(m_VertexBuffer, &m_InputLayout);
-                pRenderer->UseIndexBuffer(m_IndexBuffer);
+                pRenderer->SetVertexBuffer(m_VertexBuffer, &m_InputLayout);
+                pRenderer->SetIndexBuffer(m_IndexBuffer);
 
                 m_CurrentTexture->Use();
                 pRenderer->DrawIndexed(m_IndexCount);
@@ -194,6 +193,9 @@ namespace lr
             m_VerticesOffset = 0;
             m_IndexCount = 0;
         }
+
+    public:
+        const u32 m_kVertexCount = VertexCount;
 
     private:
         eastl::array<VertexT, VertexCount> m_Vertices;

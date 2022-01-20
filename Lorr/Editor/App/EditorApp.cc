@@ -3,7 +3,6 @@
 #include "Engine/ECS/Entity.hh"
 #include "Engine/ECS/Components/CameraComponent.hh"
 
-#define rgb(r, g, b) ImVec4((float)r / 255.0f, (float)g / 255.0f, (float)b / 255.0f, 1.0f)
 #define SetColor(enum, col) style.Colors[enum] = col
 
 void EditorApp::Init()
@@ -18,7 +17,7 @@ void EditorApp::Init()
     m_pCurrentScene->Init("scene://editor");
 
     lr::Entity camera3D = m_pCurrentScene->CreateEntity("entity://camera3d");
-    camera3D.AttachCamera3D(glm::vec3(0, 0, -5), glm::vec2(width, height), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 60.f, 0.1f, 10000.f);
+    camera3D.AttachCamera3D(glm::vec3(0, 0, -5), glm::vec2(width, height), glm::vec3(0, 0, 1), glm::vec3(0, 1, 0), 60.f, 0.1f, 1000.f);
 
     lr::Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
@@ -38,12 +37,6 @@ void EditorApp::Init()
     style.PopupRounding = 0.f;
     style.TabRounding = 5.f;
     style.WindowTitleAlign = ImVec2(0, 0);
-
-    // const ImVec4 kDefaultGreen = rgb(39, 174, 96);
-    // const ImVec4 kDefaultGreenLower = rgb(21, 156, 78);
-    const ImVec4 kDefaultGray = rgb(32, 32, 32);
-    const ImVec4 kDefaultGrayLower = rgb(22, 22, 22);
-    const ImVec4 kDefaultBlack = rgb(15, 15, 15);
 
     /// Text
     SetColor(ImGuiCol_Text, rgb(218, 218, 218));
@@ -83,13 +76,6 @@ void EditorApp::Init()
     SetColor(ImGuiCol_TabActive, kDefaultGray);
     SetColor(ImGuiCol_TabUnfocused, kDefaultGray);
     SetColor(ImGuiCol_TabUnfocusedActive, kDefaultGray);
-
-    // ImGuiIO &io = ImGui::GetIO();
-    // io.Fonts->AddFontDefault();
-    // io.Fonts->AddFontFromFileTTF("segoeui.ttf", 17);
-    // io.Fonts->AddFontFromFileTTF("segoeuib.ttf", 17);
-    // ImGui::PushFont(pRegularFont);
-    // ImGui::PopFont();
 
     /// LAYER INITIALIZATION ///
     m_MainLayer->Init();

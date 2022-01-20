@@ -1,11 +1,14 @@
 #include "Engine/App/Engine.hh"
+#include "D3D11/D3D11Texture.hh"
 
 #include "App/EditorApp.hh"
 static EditorApp *app = nullptr;
 
-int main()
+int main(int argc, char **argv)
 {
     ZoneScoped;
+
+    loguru::init(argc, argv);
 
     lr::ApplicationDesc desc;
     desc.Title = "Lorr: Editor";

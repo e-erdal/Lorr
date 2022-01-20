@@ -4,6 +4,8 @@
 
 #pragma once
 
+#include <functional>
+
 namespace lr::Job  // Special module for Lorr
 {
     using JobFn = std::function<void()>;

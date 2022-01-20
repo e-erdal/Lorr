@@ -15,7 +15,9 @@ namespace lr
     {
         Vertex,
         Pixel,
-        Compute
+        Compute,
+
+        Count
     };
 
     struct ShaderDesc

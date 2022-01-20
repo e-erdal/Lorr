@@ -11,16 +11,18 @@
 
 namespace lr
 {
-    enum TextureFormat : u16
+    enum class TextureFormat : u16
     {
-        TEXTURE_FORMAT_RGBA8U,            /// Each channel is u8, packed into normalized u32
-        TEXTURE_FORMAT_RGBA32F,           /// Each channel is float
-        TEXTURE_FORMAT_RGB32F,            /// Each channel is float
-        TEXTURE_FORMAT_R24TG8T,           /// R channel is 24 bits, G channel is 8 bits
-        TEXTURE_FORMAT_R32T,              /// R channel is 32 bits typeless
-        TEXTURE_FORMAT_R32F,              /// R channel is 32 bits float
-        TEXTURE_FORMAT_DEPTH32F,          /// Depth format, A channel is float
-        TEXTURE_FORMAT_DEPTH24_STENCIL8,  /// Z-Buffer format, 24 bits for depth, 8 bits for stencil
+        Unidentified,      //! Throw error
+        RGBA8,             /// Each channel is u8, packed into normalized u32
+        RGBA16,            ///
+        RGBA32F,           /// Each channel is float
+        R24TG8T,           /// R channel is 24 bits, G channel is 8 bits
+        R32T,              /// R channel is 32 bits typeless
+        R32U,              /// R channel is 32 bits u32
+        R32F,              /// R channel is 32 bits float
+        DEPTH32F,          /// Depth format, A channel is float
+        DEPTH24_STENCIL8,  /// Z-Buffer format, 24 bits for depth, 8 bits for stencil
 
     };
 
@@ -28,14 +30,15 @@ namespace lr
     {
         switch (format)
         {
-            case TEXTURE_FORMAT_RGBA8U: return sizeof(float);
-            case TEXTURE_FORMAT_RGBA32F: return sizeof(float) * 4;
-            case TEXTURE_FORMAT_RGB32F: return sizeof(float) * 3;
-            case TEXTURE_FORMAT_R24TG8T: return sizeof(u32);
-            case TEXTURE_FORMAT_R32T: return sizeof(u32);
-            case TEXTURE_FORMAT_R32F: return sizeof(float);
-            case TEXTURE_FORMAT_DEPTH32F: return sizeof(float);
-            case TEXTURE_FORMAT_DEPTH24_STENCIL8: return sizeof(u32);
+            case TextureFormat::RGBA8: return sizeof(u8) * 4;
+            case TextureFormat::RGBA16: return sizeof(u16) * 4;
+            case TextureFormat::RGBA32F: return sizeof(float) * 4;
+            case TextureFormat::R24TG8T: return sizeof(u32);
+            case TextureFormat::R32T:
+            case TextureFormat::R32U: return sizeof(u32);
+            case TextureFormat::R32F: return sizeof(float);
+            case TextureFormat::DEPTH32F: return sizeof(float);
+            case TextureFormat::DEPTH24_STENCIL8: return sizeof(u32);
             default: return 0;
         }
     }
@@ -66,7 +69,7 @@ namespace lr
         u32 Width = 0;
         u32 Height = 0;
 
-        TextureFormat Format = TEXTURE_FORMAT_RGBA8U;
+        TextureFormat Format = TextureFormat::Unidentified;
 
         u32 DataSize = 0;
         u8 *Data = 0;

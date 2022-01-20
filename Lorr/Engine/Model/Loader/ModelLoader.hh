@@ -5,7 +5,7 @@
 #pragma once
 
 #include "Engine/Model/Model.hh"
-#include "Engine/Stream/BufferStream.hh"
+#include "Engine/Utils/BufferStream.hh"
 
 namespace lr::ModelLoader
 {

@@ -1,0 +1,11 @@
+#pragma once
+
+namespace msdfgen
+{
+    class FontHandle;
+}
+
+namespace msdf_atlas
+{
+    class FontGeometry;
+}

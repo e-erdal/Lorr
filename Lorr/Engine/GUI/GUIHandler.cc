@@ -141,16 +141,16 @@ namespace lr
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         /// We probably want to render this into backbuffer
-        pRenderer->SetCurrentTarget("renderer://backbuffer");
+        // pRenderer->SetCurrentTarget("renderer://backbuffer");
 
         /// Set renderer states, no backup unlike imgui
-        pRenderer->SetDepthFunc(D3D::DepthFunc::Always, false);
-        pRenderer->SetCulling(D3D::Cull::None, false);
+        pRenderer->SetDepthFunc(DepthFunc::Always, false);
+        pRenderer->SetCulling(Cull::None, false);
         pRenderer->SetBlend(true, false);
 
         /// Set render buffers
-        pRenderer->UseShader(s_pContext->m_pBaseShaderProgram->Vertex);
-        pRenderer->UseShader(s_pContext->m_pBaseShaderProgram->Pixel);
+        // pRenderer->UseShader(s_pContext->m_pBaseShaderProgram->Vertex);
+        // pRenderer->UseShader(s_pContext->m_pBaseShaderProgram->Pixel);
 
         GUI::ConstantBuffer constantBuffer;
         constantBuffer.Matrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
@@ -166,9 +166,9 @@ namespace lr
 
         s_pContext->m_VertexBuffer = RenderBuffer::Create(desc);
 
-        pRenderer->UseVertexBuffer(s_pContext->m_VertexBuffer, &kGUIInputLayout);
-        pRenderer->UseIndexBuffer(s_pContext->m_IndexBuffer, false);
-        pRenderer->UseShaderBuffer(s_pContext->m_ConstantBuffer, RenderBufferTarget::Vertex | RenderBufferTarget::Pixel, 0);
+        // pRenderer->UseVertexBuffer(s_pContext->m_VertexBuffer, &kGUIInputLayout);
+        // pRenderer->UseIndexBuffer(s_pContext->m_IndexBuffer, false);
+        // pRenderer->UseShaderBuffer(s_pContext->m_ConstantBuffer, RenderBufferTarget::Vertex | RenderBufferTarget::Pixel, 0);
     }
 
     void GUI::Render()

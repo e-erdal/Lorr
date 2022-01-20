@@ -32,23 +32,16 @@ endif()
 # Third party applications
 set(ENGINE_VENDOR
     bx
-    bimg
-    bvh
-    DirectX-Headers
     EASTL
     glm
     imgui
     lw
-    OpenAL
-    spdlog
+    loguru
     tinyutf8
     tracy
-    vorbis
-    vorbisfile
-    zlib1
     box2d
-    meshoptimizer
-    msdf-atlas-gen
+    lua
+    LuaBridge
 )
 
 set(ENGINE_COMPONENTS
@@ -61,6 +54,10 @@ set(ENGINE_COMPONENTS
     LorrJob
     LorrManagers
     LorrModel
+    LorrResource
+    LorrScripting
+    LorrTerrain
+    LorrUtils
 )
 
 ######### Engine components ########
@@ -75,7 +72,7 @@ LorrComponent(
     SOURCE
         Audio/*.cc
     VENDOR
-        ${ENGINE_VENDOR}
+        ${ENGINE_VENDOR} OpenAL vorbis vorbisfile
 )
 
 # Core
@@ -131,7 +128,7 @@ LorrComponent(
     SOURCE
         Graphics/*.cc
     VENDOR
-        ${ENGINE_VENDOR}
+        ${ENGINE_VENDOR} zlib1 msdf-atlas-gen bimg DirectX-Headers
 )
 
 # GUI
@@ -188,6 +185,62 @@ LorrComponent(
         Model/*.cc
     VENDOR
         ${ENGINE_VENDOR}
+)
+
+# Resource
+LorrComponent(
+    NAME
+        LorrResource
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Resource/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# Scripting
+LorrComponent(
+    NAME
+        LorrScripting
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Scripting/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# Terrain
+LorrComponent(
+    NAME
+        LorrTerrain
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Terrain/*.cc
+    VENDOR
+        ${ENGINE_VENDOR}
+)
+
+# Utils
+LorrComponent(
+    NAME
+        LorrUtils
+    INCLUDE
+        ../
+    PCH
+        App/pch.hh
+    SOURCE
+        Utils/*.cc
+    VENDOR
+        ${ENGINE_VENDOR} zlib1
 )
 
 LorrComponent(

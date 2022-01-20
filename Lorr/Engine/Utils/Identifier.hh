@@ -68,6 +68,11 @@ namespace lr
             return eastl::string_view(m_vString.data());
         }
 
+        constexpr operator char *() const
+        {
+            return (char *)m_vString.data();
+        }
+
         constexpr operator const char *() const
         {
             return m_vString.data();
@@ -95,7 +100,7 @@ namespace lr
         }
 
     private:
-        std::array<char, 64> m_vString{};
+        eastl::array<char, 64> m_vString{};
 
         u32 m_iProtoEnd = 0;
         u32 m_iProtoSize = 0;

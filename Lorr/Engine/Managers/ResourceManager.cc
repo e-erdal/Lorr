@@ -4,6 +4,7 @@ namespace lr
 {
     void ResourceManager::Init()
     {
+        m_ResourceMeta.Read(".resmeta");
     }
 
     bool ResourceManager::ExportResource(ResourceType type, const eastl::string &path, BufferStream &buf)
@@ -34,7 +35,7 @@ namespace lr
         BufferStream fileBuf;
         if (!FileSystem::ReadBinaryFile(path, fileBuf))
         {
-            LOG_WARN("Failed to load resource {}.", path.c_str());
+            LOG_WARN("Failed to load resource %s.", path.c_str());
             return false;
         }
 
@@ -58,7 +59,7 @@ namespace lr
         BufferStream rawBuf;
         if (!FileSystem::ReadBinaryFile(path.data(), rawBuf))
         {
-            LOG_ERROR("Unable to load file {}.", path.c_str());
+            LOG_ERROR("Unable to load file %s.", path.c_str());
             return false;
         }
 
@@ -81,7 +82,7 @@ namespace lr
         if (header.EngineVersion != ENGINE_VERSION_PACKED) LOG_WARN("Engine version does not match. But we will let the parser handle this.");
         if (header.Version < kResourceMinVersion)
         {
-            LOG_WARN("Attempted to load outdated resource. Min: {}, req: {}.", kResourceMinVersion, header.Version);
+            LOG_WARN("Attempted to load outdated resource. Min: %d, req: %d.", kResourceMinVersion, header.Version);
             return false;
         }
         // !NOTE: Encryption has to be first.
@@ -132,8 +133,8 @@ namespace lr
         ZoneScoped;
 
         resourceBuf.StartOver();
-        outData.Renderer = resourceBuf.Get<RendererType>();
         outData.Type = resourceBuf.Get<ShaderType>();
+        outData.Renderer = resourceBuf.Get<RendererType>();
         u32 len = resourceBuf.Get<u32>();
         outData.Buffer.Reset(resourceBuf.GetPtr<u8>(len), len);
 
@@ -217,8 +218,8 @@ namespace lr
         BaseShader::ParseToMemory(&data, inBuf);
 
         outBuf.Reset();
-        outBuf.Insert(data.Renderer);
         outBuf.Insert(data.Type);
+        outBuf.Insert(data.Renderer);
         outBuf.Insert<u32>(data.Buffer.GetSize());
         outBuf.Insert(data.Buffer);
 

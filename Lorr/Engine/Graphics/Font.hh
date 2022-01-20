@@ -5,9 +5,7 @@
 
 #pragma once
 
-#include <msdfgen.h>
-#include <msdfgen-ext.h>
-#include <msdf-atlas-gen/msdf-atlas-gen.h>
+#include "Font.def"
 
 #include <tinyutf8/tinyutf8.h>
 

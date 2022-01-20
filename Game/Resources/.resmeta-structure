@@ -1,0 +1,22 @@
+# Auto-generated binary file by Resource Compiler, DO NOT CHANGE!
+# This file contains all info about resources.
+# Generation date: 0
+# Generation version: 1
+
+# Structure of generic ".resmeta", do not ship this, also delete this line
+
+# (u16) generation version <- resource file version specified in engine
+# (u32) generation time
+# (u32) flags
+# (u32) category count
+
+# for each categories
+# CATEGORY HEADER
+# (str) category name
+# (u32) resource count
+
+# for each resources
+# (str) resource_name 
+# (str) path/to/resource.lr
+# (u32) raw hash
+# (u32) compiled hash

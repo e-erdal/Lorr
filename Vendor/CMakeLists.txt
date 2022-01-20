@@ -15,7 +15,7 @@ option(ALSOFT_INSTALL_UTILS "Install utility programs (openal-info, alsoft-confi
 option(ALSOFT_UPDATE_BUILD_VERSION "Update git build version info" ON)
 add_subdirectory(Audio/openal)
 
-set(BUILD_TESTING OFF)
+option(BUILD_TESTING "" OFF)
 add_subdirectory(Audio/ogg)
 add_subdirectory(Audio/vorbis)
 
@@ -29,25 +29,35 @@ add_subdirectory(EA/EAThread)
 
 ###############################################################################################
 
+add_definitions(-DZLIB_DLL)
+add_subdirectory(Utility/zlib)
+
 add_subdirectory(Utility/bx-cmake)
 add_subdirectory(Utility/freetype)
 add_subdirectory(Utility/glm)
 add_subdirectory(Utility/lw)
-add_subdirectory(Utility/spdlog)
 add_subdirectory(Utility/tiny-utf8)
 add_subdirectory(Utility/tracy)
 
-add_definitions(-DZLIB_DLL)
-add_subdirectory(Utility/zlib)
+add_library(loguru Utility/loguru/loguru.cpp)
+    target_include_directories(loguru PUBLIC Utility/loguru)
 
 ###############################################################################################
 
 add_subdirectory(Graphics/bimg-cmake)
-add_subdirectory(Graphics/bvh)
 add_subdirectory(Graphics/DirectX-Headers)
 add_subdirectory(Graphics/imgui)
-add_subdirectory(Graphics/meshoptimizer)
+# add_subdirectory(Graphics/meshoptimizer)
 add_subdirectory(Graphics/msdf-atlas-gen)
+
+###############################################################################################
+
+file(GLOB lua_src Scripting/lua/*.c)
+set_source_files_properties(${lua_src} "Scripting/lua.c" "Scripting/luac.c" PROPERTIES LANGUAGE CXX)
+add_library(lua STATIC ${lua_src})
+    target_include_directories(lua PUBLIC Scripting/lua)
+
+add_subdirectory(Scripting/LuaBridge)
 
 ###############################################################################################
 

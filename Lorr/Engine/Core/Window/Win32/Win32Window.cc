@@ -119,7 +119,7 @@ namespace lr
         auto currentDisplay = GetDisplay(monitor);
         if (!currentDisplay)
         {
-            LOG_ERROR("DISPLAY{} is not available?", monitor + 1);
+            LOG_ERROR("DISPLAY%d is not available?", monitor + 1);
             return;
         }
 
@@ -129,7 +129,7 @@ namespace lr
             height = currentDisplay->ResH;
         }
 
-        LOG_TRACE("Creating new window \"{}\"<{}, {}>", title.c_str(), width, height);
+        LOG_TRACE("Creating new window \"%s\"<%d, %d>", title.c_str(), width, height);
 
         // Getting ready for window
         WNDCLASSEX wc;
@@ -276,7 +276,7 @@ namespace lr
             {
                 if (pWindow->m_SizeEnded)
                 {
-                    LOG_TRACE("Window size changed to {}, {}", LOWORD(lParam), HIWORD(lParam));
+                    LOG_TRACE("Window size changed to %d, %d", LOWORD(lParam), HIWORD(lParam));
                     pWindow->OnResolutionChanged((u32)LOWORD(lParam), (u32)HIWORD(lParam));
                     pWindow->m_Width = (u32)LOWORD(lParam);
                     pWindow->m_Height = (u32)HIWORD(lParam);
@@ -288,7 +288,7 @@ namespace lr
                 pWindow->m_SizeEnded = true;
                 RECT rc;
                 GetClientRect(pWindow->m_Handle, &rc);
-                LOG_TRACE("Window size changed to {}, {}", rc.right, rc.bottom);
+                LOG_TRACE("Window size changed to %ld, %ld", rc.right, rc.bottom);
                 pWindow->OnResolutionChanged((u32)rc.right, (u32)rc.bottom);
                 pWindow->m_Width = (u32)rc.right;
                 pWindow->m_Height = (u32)rc.bottom;

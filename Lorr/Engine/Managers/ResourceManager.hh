@@ -7,9 +7,10 @@
 
 #include "Engine/Resource/IResource.hh"
 #include "Engine/Resource/ResourceFile.hh"
+#include "Engine/Resource/ResourceMeta.hh"
 
-#include "Engine/Stream/BufferStream.hh"
-#include "Engine/Stream/FileStream.hh"
+#include "Engine/Utils/BufferStream.hh"
+#include "Engine/Utils/FileStream.hh"
 
 #include "Engine/Graphics/Common/BaseTexture.hh"
 #include "Engine/Graphics/Common/BaseShader.hh"
@@ -52,12 +53,14 @@ namespace lr
         }
 
         template<typename T>
-        inline bool ImportResource(ResourceType type, const eastl::string &path, T &outData)
+        inline bool ImportResource(ResourceType type, const eastl::string &resIdent, T &outData)
         {
             ZoneScoped;
 
+            eastl::string path = m_ResourceMeta.GetResourcePath(resIdent);
+
             BufferStream resourceBuf;
-            if (!ResourceManager::LoadResourceFile(path, resourceBuf))
+            if (path == "" || !ResourceManager::LoadResourceFile(path, resourceBuf))
             {
                 LOG_WARN("Failed to load resource file.");
                 return false;
@@ -87,7 +90,7 @@ namespace lr
         }
 
     public:
-        static bool LoadResourceFile(const eastl::string &path, BufferStream &buf);
+        static bool LoadResourceFile(const eastl::string &resIdent, BufferStream &buf);
 
     private:
         bool ParseToBuffer(ResourceType type, const eastl::string &path, BufferStream &outBuf);
@@ -108,6 +111,7 @@ namespace lr
 
     private:
         eastl::unordered_map<Identifier, void *> m_Resources;
+        ResourceMeta m_ResourceMeta;
     };
 
 }  // namespace lr

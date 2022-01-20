@@ -21,36 +21,48 @@ namespace lr
     public:
         bool Init(PlatformWindow *pWindow, u32 width, u32 height) override;
 
-        void ChangeResolution(u32 width, u32 height) override;
+        /// SWAPCHAIN ///
+        void Resize(u32 width, u32 height) override;
 
+        /// RS STAGE ///
         void SetViewport(u32 width, u32 height, float farZ, float nearZ) override;
-        void SetClearColor() override;
         void SetScissor(const glm::vec4 &lrtb) override;
-        void SetDepthFunc(D3D::DepthFunc func, bool depthEnabled) override;
-        void SetCulling(D3D::Cull cull, bool counterClockwise) override;
+        void SetDepthFunc(DepthFunc func, bool depthEnabled) override;
+        void SetCulling(Cull cull, bool counterClockwise) override;
+        void SetWireframeState(bool enabled) override;
         void SetBlend(bool enableBlending, bool alphaCoverage) override;
+        void SetPrimitiveType(PrimitiveType type) override;
 
-        void CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture = 0, u32 mipLevels = 1) override;
-        void SetCurrentTarget(const Identifier &ident) override;
-        TextureHandle GetTargetTexture(const Identifier &ident) override;
+        /// RENDER TARGETS ///
+        void CreateRenderTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture = 0, u32 mipLevels = 1) override;
+        void SetRenderTarget(const Identifier &ident) override;
+        void SetRenderTargetClearColor(const Identifier &ident, const glm::vec4 &color) override;
+        TextureHandle GetRenderTargetTexture(const Identifier &ident) override;
 
-        void UseVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset = 0) override;
-        void UseIndexBuffer(RenderBufferHandle buffer, bool index32 = true, u32 offset = 0) override;
-        void UseConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
-        void UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
-        void UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
-        void UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
-        void UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
-        void UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+        /// IA STAGE ///
+        void SetVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset = 0) override;
+        void SetIndexBuffer(RenderBufferHandle buffer, bool index32 = true, u32 offset = 0) override;
 
-        void UseShader(ShaderHandle shader) override;
+        /// RENDER BUFFERS ///
+        void SetConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
 
+        void SetShaderResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
+        void SetUAVResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot) override;
+
+        void SetShaderResource(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+        void SetUAVResource(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+        void SetSamplerState(TextureHandle texture, RenderBufferTarget target, u32 slot) override;
+
+        void MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize) override;
         void TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer) override;
         void TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture) override;
 
-        void Frame(u32 interval) override;
-        void HandlePreFrame() override;
+        /// SHADERS  ///
+        void SetShader(ShaderHandle shader) override;
 
+        /// DRAWING STAGE ///
+        void BeginFrame() override;
+        void Frame() override;
         void DrawIndexed(u32 indexCount, u32 startIndex, u32 baseVertex) override;
         void Dispatch(u32 thrX, u32 thrY, u32 thrZ) override;
 

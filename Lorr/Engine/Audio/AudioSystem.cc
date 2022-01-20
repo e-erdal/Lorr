@@ -1,5 +1,9 @@
 #include "AudioSystem.hh"
 
+#include <AL/al.h>
+#include <AL/alc.h>
+#include <AL/alext.h>
+
 #include "Helper.hh"
 
 #include "Engine/App/Engine.hh"
@@ -30,7 +34,7 @@ namespace lr
         if (alcIsExtensionPresent(m_alDevice, "ALC_ENUMERATE_ALL_EXT")) name = alcGetString(m_alDevice, ALC_ALL_DEVICES_SPECIFIER);
         if (!name || alcGetError(m_alDevice) != AL_NO_ERROR) name = alcGetString(m_alDevice, ALC_DEVICE_SPECIFIER);
 
-        LOG_TRACE("Audio Device: {}", name);
+        LOG_TRACE("Audio Device: %s", name);
         LOG_TRACE("Successfully Initialized Audio System!");
     }
 

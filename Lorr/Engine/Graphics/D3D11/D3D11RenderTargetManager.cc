@@ -45,7 +45,7 @@ namespace lr
             TextureData data;
             data.Width = width;
             data.Height = height;
-            data.Format = TextureFormat::TEXTURE_FORMAT_RGBA32F;
+            data.Format = TextureFormat::RGBA32F;
 
             handle = new RenderTarget;
             handle->ViewTextureDesc = desc;
@@ -73,7 +73,7 @@ namespace lr
             TextureData data;
             data.Width = width;
             data.Height = height;
-            data.Format = TextureFormat::TEXTURE_FORMAT_RGBA32F;
+            data.Format = TextureFormat::RGBA32F;
 
             if (!pTargetTexture) pTargetTexture = Texture::Create(ident, &desc, &data);
             D3D11Texture *d11Texture = (D3D11Texture *)pTargetTexture;

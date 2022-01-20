@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Engine/Stream/BufferStream.hh"
+#include "Engine/Utils/BufferStream.hh"
 
 namespace lr
 {

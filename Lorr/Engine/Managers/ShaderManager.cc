@@ -15,8 +15,8 @@ namespace lr
 
         ShaderDesc vertexDesc;
         vertexDesc.Layout = layout;
-        program.Vertex = Shader::Create(fmt::format("{}-v", ident), vertexPath, &vertexDesc);
-        program.Pixel = Shader::Create(fmt::format("{}-p", ident), pixelPath);
+        program.Vertex = Shader::Create(Format("%s-v", ident), vertexPath, &vertexDesc);
+        program.Pixel = Shader::Create(Format("%s-p", ident), pixelPath);
 
         if (program.Vertex && program.Pixel)
         {
@@ -41,7 +41,7 @@ namespace lr
 
         ShaderDesc vertexDesc;
         vertexDesc.Layout = layout;
-        if (ShaderHandle shader = Shader::Create(fmt::format("{}", ident), vertexPath.data(), &vertexDesc))
+        if (ShaderHandle shader = Shader::Create(ident, vertexPath.data(), &vertexDesc))
         {
             return m_Shaders.emplace(ident, shader).first->second;
         }
@@ -53,7 +53,7 @@ namespace lr
     {
         ZoneScoped;
 
-        if (ShaderHandle shader = Shader::Create(fmt::format("{}", ident), path.data()))
+        if (ShaderHandle shader = Shader::Create(ident, path.data()))
         {
             return m_Shaders.emplace(ident, shader).first->second;
         }

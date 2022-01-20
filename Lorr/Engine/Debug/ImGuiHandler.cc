@@ -3,12 +3,23 @@
 #include "Engine/App/Engine.hh"
 #include "Engine/Core/Window/BaseWindow.hh"
 
+struct ImGuiResources
+{
+    eastl::unordered_map<lr::Identifier, ImFont *> Fonts;
+};
+static ImGuiResources *m_pResourceHeap = nullptr;
+
+void ImGui::PushFont(const lr::Identifier &ident)
+{
+    ImGui::PushFont(m_pResourceHeap->Fonts[ident]);
+}
+
 namespace lr
 {
     static InputLayout kImGuiInputLayout = {
         { VertexAttribType::Vec2, "POSITION" },
         { VertexAttribType::Vec2, "TEXCOORD" },
-        { VertexAttribType::UInt, "COLOR" },
+        { VertexAttribType::UInt, "BLENDINDICES" },
     };
 
     static u32 g_VertexBufferSize = 5000;
@@ -148,12 +159,14 @@ namespace lr
 
         ImGui::CreateContext();
 
+        m_pResourceHeap = new ImGuiResources;
+
         ImGuiIO &io = ImGui::GetIO();
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
         io.IniFilename = 0;
-        io.Fonts->AddFontFromFileTTF("segoeui.ttf", 17);
-        io.Fonts->AddFontFromFileTTF("segoeuib.ttf", 17);
+        m_pResourceHeap->Fonts["segoeui"] = io.Fonts->AddFontFromFileTTF(".raw/fonts/segoeui.ttf", 17);
+        m_pResourceHeap->Fonts["segoeuib"] = io.Fonts->AddFontFromFileTTF(".raw/fonts/segoeuib.ttf", 17);
 
         ImGui::StyleColorsDark();
 
@@ -219,15 +232,15 @@ namespace lr
 
         //* IRenderer backend initialization *//
         ShaderDesc vsDesc{ .Layout = kImGuiInputLayout };
-        m_VertexShader = Shader::Create("imgui://vertex-shader", "shaders/imguiv.lr", &vsDesc);
-        m_PixelShader = Shader::Create("imgui://pixel-shader", "shaders/imguip.lr");
+        m_VertexShader = Shader::Create("imgui://vertex-shader", "shader:imgui.v", &vsDesc);
+        m_PixelShader = Shader::Create("imgui://pixel-shader", "shader:imgui.p");
 
         u8 *pFontData;
         i32 fontW, fontH;
         io.Fonts->GetTexDataAsRGBA32(&pFontData, &fontW, &fontH);
 
         TextureDesc desc;
-        TextureData texData{ .Width = (u32)fontW, .Height = (u32)fontH, .Data = pFontData };
+        TextureData texData{ .Width = (u32)fontW, .Height = (u32)fontH, .Format = TextureFormat::RGBA8, .Data = pFontData };
         m_FontTexture = Texture::Create("imgui://font", &desc, &texData);
 
         io.Fonts->TexID = m_FontTexture;  // We dont use IDs, so just scrap that in
@@ -292,11 +305,12 @@ namespace lr
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
         BaseWindow *pWindow = GetEngine()->GetWindow();
 
-        pRenderer->SetCurrentTarget("renderer://backbuffer");
+        pRenderer->SetRenderTarget("renderer://backbuffer");
 
-        pRenderer->SetDepthFunc(D3D::DepthFunc::Always, false);
-        pRenderer->SetCulling(D3D::Cull::None, false);
+        pRenderer->SetDepthFunc(DepthFunc::Always, false);
+        pRenderer->SetCulling(Cull::None, false);
         pRenderer->SetBlend(true, false);
+        pRenderer->SetPrimitiveType(PrimitiveType::TriangleList);
 
         if (pDrawData->DisplaySize.x <= 0.0f || pDrawData->DisplaySize.y <= 0.0f) return;
 
@@ -344,9 +358,7 @@ namespace lr
         }
 
         pRenderer->MapBuffer(m_VertexBuffer, pVertexData, g_VertexBufferSize * sizeof(ImDrawVert));
-        pRenderer->UnmapBuffer(m_VertexBuffer);
         pRenderer->MapBuffer(m_IndexBuffer, pIndexData, g_IndexBufferSize * sizeof(ImDrawIdx));
-        pRenderer->UnmapBuffer(m_IndexBuffer);
 
         free(pVertexData);
         free(pIndexData);
@@ -354,14 +366,13 @@ namespace lr
         glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix();
 
         pRenderer->MapBuffer(m_VertexConstantBuffer, &cameraMatrix[0][0], sizeof(glm::mat4));
-        pRenderer->UnmapBuffer(m_VertexConstantBuffer);
 
-        pRenderer->UseShader(m_VertexShader);
-        pRenderer->UseShader(m_PixelShader);
+        pRenderer->SetShader(m_VertexShader);
+        pRenderer->SetShader(m_PixelShader);
 
-        pRenderer->UseConstantBuffer(m_VertexConstantBuffer, RenderBufferTarget::Vertex, 0);
-        pRenderer->UseVertexBuffer(m_VertexBuffer, &kImGuiInputLayout);
-        pRenderer->UseIndexBuffer(m_IndexBuffer, false);
+        pRenderer->SetConstantBuffer(m_VertexConstantBuffer, RenderBufferTarget::Vertex, 0);
+        pRenderer->SetVertexBuffer(m_VertexBuffer, &kImGuiInputLayout);
+        pRenderer->SetIndexBuffer(m_IndexBuffer, false);
 
         u32 vertexOff = 0;
         u32 indexOff = 0;
@@ -396,13 +407,14 @@ namespace lr
                     glm::vec4 mips = { texture->m_UsingMip, 0.f, 0.f, 0.f };
 
                     pRenderer->MapBuffer(m_PixelConstantBuffer, &mips, sizeof(glm::vec4));
-                    pRenderer->UnmapBuffer(m_PixelConstantBuffer);
 
-                    pRenderer->UseConstantBuffer(m_PixelConstantBuffer, RenderBufferTarget::Pixel, 0);
+                    pRenderer->SetConstantBuffer(m_PixelConstantBuffer, RenderBufferTarget::Pixel, 0);
 
-                    texture->Use();
+                    pRenderer->SetSamplerState(texture, RenderBufferTarget::Pixel, 0);
+                    pRenderer->SetShaderResource(texture, RenderBufferTarget::Pixel, 0);
 
                     pRenderer->DrawIndexed(cmd.ElemCount, cmd.IdxOffset + indexOff, cmd.VtxOffset + vertexOff);
+                    pRenderer->SetConstantBuffer(nullptr, RenderBufferTarget::Pixel, 0);
                 }
             }
 

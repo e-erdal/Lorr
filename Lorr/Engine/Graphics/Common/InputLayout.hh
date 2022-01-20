@@ -12,6 +12,7 @@ namespace lr
         Float,
         Vec2,
         Vec3,
+        Vec3_3x10,
         Vec4,
         Mat4,
         UInt,
@@ -23,6 +24,7 @@ namespace lr
         {
             case VertexAttribType::Float: return sizeof(float);
             case VertexAttribType::Vec2: return sizeof(glm::vec2);
+            case VertexAttribType::Vec3_3x10:
             case VertexAttribType::Vec3: return sizeof(glm::vec3);
             case VertexAttribType::Vec4: return sizeof(glm::vec4);
             case VertexAttribType::Mat4: return sizeof(glm::mat4);

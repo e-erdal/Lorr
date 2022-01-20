@@ -2,9 +2,6 @@
 
 #include "Engine/App/Engine.hh"
 
-#include <bvh/triangle.hpp>
-#include <bvh/sweep_sah_builder.hpp>
-
 namespace lr
 {
     InputLayout Mesh::m_Layout = {
@@ -13,11 +10,6 @@ namespace lr
         { VertexAttribType::Vec2, "TEXCOORD" },
         { VertexAttribType::Vec4, "COLOR" },
     };
-
-    // *** BVH Helpers ***
-    using Triangle = bvh::Triangle<Mesh::Scalar>;
-    using Ray = bvh::Ray<Mesh::Scalar>;
-    using _vec3 = bvh::Vector3<Mesh::Scalar>;
 
     void Mesh::Init(eastl::vector<FileMeshVertex> &vertices, eastl::vector<u32> &indices)
     {
@@ -51,24 +43,6 @@ namespace lr
         indexDesc.Type = RenderBufferType::Index;
 
         m_IndexBuffer = RenderBuffer::Create(indexDesc);
-
-        // Init BVH
-        eastl::vector<Triangle> triangles;
-        triangles.resize(vertices.size() / 3);
-
-        for (size_t i = 0; i < vertices.size() / 3; i += 3)
-        {
-            const auto &v0 = vertices[i + 0];
-            const auto &v1 = vertices[i + 1];
-            const auto &v2 = vertices[i + 2];
-            triangles[i] = (Triangle(_vec3(v0.Pos.x, v0.Pos.y, v0.Pos.z), _vec3(v1.Pos.x, v1.Pos.y, v1.Pos.z), _vec3(v2.Pos.x, v2.Pos.y, v2.Pos.z)));
-        }
-
-        auto [bboxes, centers] = bvh::compute_bounding_boxes_and_centers(triangles.data(), triangles.size());
-        auto globalBBox = bvh::compute_bounding_boxes_union(bboxes.get(), triangles.size());
-        m_pBVH = new BVH;
-        bvh::SweepSahBuilder<BVH> builder(*m_pBVH);
-        builder.build(globalBBox, bboxes.get(), centers.get(), triangles.size());
     }
 
     void Mesh::Init(float radius, u32 tessellation, TextureHandle texture)
@@ -167,8 +141,8 @@ namespace lr
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
         m_Texture->Use();
-        pRenderer->UseVertexBuffer(m_VertexBuffer, &m_Layout);
-        pRenderer->UseIndexBuffer(m_IndexBuffer);
+        // pRenderer->UseVertexBuffer(m_VertexBuffer, &m_Layout);
+        // pRenderer->UseIndexBuffer(m_IndexBuffer);
 
         pRenderer->DrawIndexed(m_IndexCount);
     }

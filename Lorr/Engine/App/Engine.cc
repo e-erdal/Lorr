@@ -5,6 +5,8 @@
 
 #include "Engine/Graphics/Renderer2D.hh"
 
+#include "Engine/Scripting/Lua.hh"
+
 namespace lr
 {
     BufferStreamMemoyWatcher *g_pBSWatcher;
@@ -32,8 +34,6 @@ namespace lr
 
         if (description.ConsoleApp)
         {
-            m_pResourceMan->Init();
-            m_pAudioSystem->Init();
             m_pRenderer->Init(0, 0, 0);
             return true;
         }
@@ -57,14 +57,17 @@ namespace lr
         b2Vec2 gravity(0.0f, 9.89f);
         m_World = new b2World(gravity);
 
+        /// Scripting ///
+        Lua::Init();
+
         return true;
     }
 
     void Engine::BeginFrame()
     {
         ZoneScoped;
-
-        m_pRenderer->HandlePreFrame();
+        
+        m_pRenderer->BeginFrame();
         m_pImGui->BeginFrame();
     }
 
@@ -73,7 +76,7 @@ namespace lr
         ZoneScoped;
 
         m_pImGui->EndFrame();
-        m_pRenderer->Frame(0);
+        m_pRenderer->Frame();
     }
 
     void Engine::Tick(float deltaTime)
@@ -82,21 +85,3 @@ namespace lr
     }
 
 }  // namespace lr
-
-#if TRACY_ENABLE
-void *operator new(size_t s)
-{
-    void *p = malloc(s);
-
-    TracySecureAlloc(p, s);
-
-    return p;
-}
-
-void operator delete(void *p) noexcept
-{
-    TracySecureFree(p);
-
-    free(p);
-}
-#endif

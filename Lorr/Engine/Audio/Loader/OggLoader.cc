@@ -98,7 +98,7 @@ namespace lr::AudioLoader
             if (len == 0)
                 finished = true;
             else if (len < 0 && len == OV_EBADLINK)
-                LOG_ERROR("Bitstream error @ {}.", offset);
+                LOG_ERROR("Bitstream error @ %llu.", offset);
         }
 
         ov_clear(&vf);

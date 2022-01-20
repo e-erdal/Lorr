@@ -1,7 +1,5 @@
 #if LR_BACKEND_D3D11
 
-#include "bx/string.h"
-
 #include "D3D11RenderBuffer.hh"
 #include "D3D11Renderer.hh"
 #include "D3D11Shader.hh"
@@ -16,326 +14,6 @@ constexpr ID3D11SamplerState *kNullSampler[1] = { nullptr };
 
 namespace lr
 {
-    bool D3D11Renderer::Init(PlatformWindow *pWindow, u32 width, u32 height)
-    {
-        ZoneScoped;
-
-        g_D3D11Renderer = this;
-        m_CurrentAPI = RendererType::D3D11;
-
-        if (!CreateDevice()) return false;
-
-        if (!pWindow)
-        {
-            LOG_WARN("Console application mode, only initializing D3D11 device.");
-            return true;
-        }
-
-        // Create default members we needed
-        m_StateManager.SetDevice(m_pDevice);
-        m_TargetManager.Init(m_pDevice);
-        if (!CreateSwapChain(pWindow, width, height)) return false;
-        if (!CreateDepthTexture(width, height)) return false;
-        if (!CreateBackBuffer()) return false;
-        if (!CreateDepthStencil()) return false;
-        if (!CreateBlendState()) return false;
-        if (!CreateRasterizer()) return false;
-
-        m_IsContextReady = true;
-
-        SetViewport(width, height, 1.f, 0.0f);
-
-        LOG_TRACE("Successfully initialized D3D11 device.");
-
-        TextureDesc desc;
-
-        constexpr u32 whiteColor = 0xffffffff;
-        TextureData data;
-        data.Width = 1;
-        data.Height = 1;
-        data.DataSize = sizeof(u32);
-        data.Data = (u8 *)malloc(data.DataSize);
-        memcpy(data.Data, &whiteColor, data.DataSize);
-
-        m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
-
-        InitParent();
-
-        return true;
-    }
-
-    void D3D11Renderer::SetClearColor()
-    {
-        ZoneScoped;
-
-        if (!m_IsContextReady) return;
-
-        m_TargetManager.ClearAll(m_pContext);
-        m_pContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
-    }
-
-    void D3D11Renderer::SetScissor(const glm::vec4 &lrtb)
-    {
-        ZoneScoped;
-
-        const D3D11_RECT rect = { (LONG)lrtb.x, (LONG)lrtb.y, (LONG)lrtb.z, (LONG)lrtb.w };
-
-        m_pContext->RSSetScissorRects(1, &rect);
-    }
-
-    void D3D11Renderer::SetDepthFunc(D3D::DepthFunc func, bool depthEnabled)
-    {
-        ZoneScoped;
-
-        m_DepthStencilDesc.DepthEnable = depthEnabled;
-        m_DepthStencilDesc.StencilEnable = depthEnabled;
-        m_DepthStencilDesc.DepthFunc = (D3D11_COMPARISON_FUNC)func;
-
-        auto state = m_StateManager.Get(m_DepthStencilDesc);
-        if (m_pDepthStencilState != state)
-        {
-            m_pDepthStencilState = state;
-            m_pContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
-        }
-    }
-
-    void D3D11Renderer::SetCulling(D3D::Cull cull, bool counterClockwise)
-    {
-        ZoneScoped;
-
-        m_RasterizerDesc.FrontCounterClockwise = counterClockwise;
-        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)cull;
-
-        auto state = m_StateManager.Get(m_RasterizerDesc);
-        if (m_pRasterizerState != state)
-        {
-            m_pRasterizerState = state;
-            m_pContext->RSSetState(m_pRasterizerState);
-        }
-    }
-
-    void D3D11Renderer::SetWireframeState(bool enabled)
-    {
-        ZoneScoped;
-
-        m_RasterizerDesc.FillMode = enabled ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-
-        auto state = m_StateManager.Get(m_RasterizerDesc);
-        if (m_pRasterizerState != state)
-        {
-            m_pRasterizerState = state;
-            m_pContext->RSSetState(m_pRasterizerState);
-        }
-    }
-
-    void D3D11Renderer::SetBlend(bool enableBlending, bool alphaCoverage)
-    {
-        ZoneScoped;
-
-        m_BlendDesc.AlphaToCoverageEnable = alphaCoverage;
-        m_BlendDesc.RenderTarget[0].BlendEnable = enableBlending;
-
-        auto state = m_StateManager.Get(m_BlendDesc);
-        if (m_pBlendState != state)
-        {
-            m_pBlendState = state;
-            glm::vec4 factor = { 1, 1, 1, 1 };
-            m_pContext->OMSetBlendState(m_pBlendState, &factor[0], 0xffffffff);
-        }
-    }
-
-    void D3D11Renderer::CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture, u32 mipLevels)
-    {
-        ZoneScoped;
-
-        auto target = m_TargetManager.Create(ident, width, height, texture, mipLevels);
-    }
-
-    void D3D11Renderer::SetCurrentTarget(const Identifier &ident)
-    {
-        ZoneScoped;
-
-        m_pContext->PSSetShaderResources(0, 1, kNullSRV);
-
-        auto target = m_TargetManager.GetView(ident);
-        m_pContext->OMSetRenderTargets(1, &target, m_pDepthTexture->GetDepthStencil());
-    }
-
-    TextureHandle D3D11Renderer::GetTargetTexture(const Identifier &ident)
-    {
-        ZoneScoped;
-
-        return m_TargetManager.GetTexture(ident);
-    }
-
-    void D3D11Renderer::UseVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset)
-    {
-        ZoneScoped;
-
-        auto stride = pLayout->GetStride();
-        ID3D11Buffer *d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
-        m_pContext->IASetVertexBuffers(0, 1, &d11Buffer, &stride, &offset);
-    }
-
-    void D3D11Renderer::UseIndexBuffer(RenderBufferHandle buffer, bool index32, u32 offset)
-    {
-        ZoneScoped;
-
-        m_pContext->IASetIndexBuffer((ID3D11Buffer *)buffer->GetHandle(), index32 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, offset);
-    }
-
-    void D3D11Renderer::UseConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11Buffer *d11Buffer = *kNullBuffer;
-        if (buffer) d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
-
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetConstantBuffers(slot, 1, &d11Buffer);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetConstantBuffers(slot, 1, &d11Buffer);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetConstantBuffers(slot, 1, &d11Buffer);
-    }
-
-    void D3D11Renderer::UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11ShaderResourceView **ppSRV = kNullSRV;
-        if (buffer) ppSRV[0] = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
-
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
-    }
-
-    void D3D11Renderer::UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11ShaderResourceView **ppSRV = kNullSRV;
-        if (texture) ppSRV[0] = ((D3D11Texture *)texture)->GetShaderResource();
-
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
-    }
-
-    void D3D11Renderer::UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
-        if (buffer) pUAV = ((D3D11RenderBuffer *)buffer)->GetUAV();
-
-        m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
-    }
-
-    void D3D11Renderer::UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
-        if (texture) pUAV = ((D3D11Texture *)texture)->GetUAV();
-
-        m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
-    }
-
-    void D3D11Renderer::UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot)
-    {
-        ZoneScoped;
-
-        ID3D11SamplerState *pSampler = *kNullSampler;
-        if (texture) pSampler = ((D3D11Texture *)texture)->GetSampler();
-
-        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetSamplers(slot, 1, &pSampler);
-        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetSamplers(slot, 1, &pSampler);
-        if (target & RenderBufferTarget::Compute) m_pContext->CSSetSamplers(slot, 1, &pSampler);
-    }
-
-    void D3D11Renderer::MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize)
-    {
-        ZoneScoped;
-
-        D3D11_MAPPED_SUBRESOURCE mappedResc = {};
-        if (SUCCEEDED(m_pContext->Map((ID3D11Resource *)buffer->GetHandle(), 0, ((D3D11RenderBuffer *)buffer)->GetMappingType(), 0, &mappedResc)))
-        {
-            memcpy(mappedResc.pData, pData, dataSize);
-        }
-    }
-
-    void D3D11Renderer::UnmapBuffer(RenderBufferHandle buffer)
-    {
-        ZoneScoped;
-
-        m_pContext->Unmap((ID3D11Resource *)buffer->GetHandle(), 0);
-    }
-
-    void D3D11Renderer::UseShader(ShaderHandle shader)
-    {
-        ZoneScoped;
-
-        D3D11Shader *d11Shader = (D3D11Shader *)shader;
-
-        switch (d11Shader->GetType())
-        {
-            case ShaderType::Vertex:
-                m_pContext->IASetInputLayout(d11Shader->GetLayout());
-                m_pContext->VSSetShader(d11Shader->GetShader().m_pVertexShader, 0, 0);
-                break;
-            case ShaderType::Pixel: m_pContext->PSSetShader(d11Shader->GetShader().m_pPixelShader, 0, 0); break;
-            case ShaderType::Compute: m_pContext->CSSetShader(d11Shader->GetShader().m_pComputeShader, 0, 0); break;
-        }
-    }
-
-    void D3D11Renderer::TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer)
-    {
-        ZoneScoped;
-
-        m_pContext->CopyResource((ID3D11Resource *)outputBuffer->GetHandle(), (ID3D11Resource *)inputBuffer->GetHandle());
-    }
-
-    void D3D11Renderer::TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture)
-    {
-        ZoneScoped;
-
-        D3D11Texture *pD11Input = (D3D11Texture *)inputTexture;
-        D3D11Texture *pD11Output = (D3D11Texture *)outputTexture;
-        m_pContext->CopyResource((ID3D11Resource *)pD11Output->GetHandle(), (ID3D11Resource *)pD11Input->GetHandle());
-        // pD11Output->Map(pD11Input);
-    }
-
-    void D3D11Renderer::Frame(u32 uInterval)
-    {
-        ZoneScoped;
-
-        if (!m_IsContextReady) return;
-
-        if (m_NeedToPresent)
-        {
-            m_pSwapChain->Present(uInterval, 0);
-            m_pContext->Flush();
-        }
-    }
-
-    void D3D11Renderer::SetViewport(u32 width, u32 height, float fFar, float fNear)
-    {
-        ZoneScoped;
-
-        if (!m_IsContextReady) return;
-
-        D3D11_VIEWPORT vp;
-        ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
-
-        vp.Width = (float)width;
-        vp.Height = (float)height;
-        vp.MaxDepth = fFar;
-        vp.MinDepth = fNear;
-        vp.TopLeftX = 0;
-        vp.TopLeftY = 0;
-
-        m_pContext->RSSetViewports(1, &vp);
-    }
-
     bool D3D11Renderer::CreateDevice()
     {
         ZoneScoped;
@@ -353,13 +31,15 @@ namespace lr
 
         // feature level that device will select
         D3D_FEATURE_LEVEL currentFeatureLevel;
-        if (FAILED(hr = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, 0, flags, featureLevels, _countof(featureLevels), D3D11_SDK_VERSION, &m_pDevice,
-                                          &currentFeatureLevel, &m_pContext)))
+        if (FAILED(hr = D3D11CreateDevice(0, D3D_DRIVER_TYPE_HARDWARE, 0, flags, featureLevels, _countof(featureLevels), D3D11_SDK_VERSION,
+                                          &m_pDevice, &currentFeatureLevel, &m_pContext)))
 
         {
             LOG_ERROR("Failed to create D3D11 device!");
             return false;
         }
+
+        m_TracyContext = TracyD3D11Context(m_pDevice, m_pContext);
 
         return true;
     }
@@ -368,70 +48,6 @@ namespace lr
     {
         ZoneScoped;
 
-        HRESULT hr;
-        m_SwapChainDesc = {};
-
-        pWindow->OnResolutionChanged.connect<&D3D11Renderer::ChangeResolution>(this);
-
-        // Buffer description
-        m_SwapChainDesc.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
-        m_SwapChainDesc.BufferDesc.Width = width;
-        m_SwapChainDesc.BufferDesc.Height = height;
-        m_SwapChainDesc.BufferDesc.RefreshRate.Numerator = pWindow->GetDisplay(pWindow->GetUsingMonitor())->RefreshRate;
-        m_SwapChainDesc.BufferDesc.RefreshRate.Denominator = 1;
-        m_SwapChainDesc.BufferDesc.Scaling = DXGI_MODE_SCALING_UNSPECIFIED;
-        m_SwapChainDesc.BufferDesc.ScanlineOrdering = DXGI_MODE_SCANLINE_ORDER_UNSPECIFIED;
-
-        m_SwapChainDesc.SampleDesc.Count = 1;
-        m_SwapChainDesc.SampleDesc.Quality = 0;
-
-        m_SwapChainDesc.BufferCount = 2;
-        m_SwapChainDesc.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
-        m_SwapChainDesc.Flags = DXGI_SWAP_CHAIN_FLAG_ALLOW_MODE_SWITCH;
-        m_SwapChainDesc.SwapEffect = DXGI_SWAP_EFFECT_DISCARD;
-        m_SwapChainDesc.OutputWindow = (HWND)pWindow->GetHandle();
-        m_SwapChainDesc.Windowed = !pWindow->IsFullscreen();
-
-        IDXGIDevice *pDXGIDevice = 0;
-        IDXGIAdapter *pDXGIAdapter = 0;
-        IDXGIFactory *pDXGIFactory = 0;
-        IDXGIOutput *pDXGIOutput = 0;
-        m_pDevice->QueryInterface(__uuidof(IDXGIDevice), (void **)&pDXGIDevice);
-        pDXGIDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&pDXGIAdapter);  // get interface factory from our device
-        pDXGIAdapter->GetParent(__uuidof(IDXGIFactory), (void **)&pDXGIFactory);
-
-        hr = pDXGIFactory->CreateSwapChain(m_pDevice, &m_SwapChainDesc, &m_pSwapChain);
-
-        if (hr < 0)
-        {
-            LOG_ERROR("Failed to create D3D11 swapchain!");
-            return false;
-        }
-
-        DXGI_ADAPTER_DESC adapterDesc = {};
-        pDXGIAdapter->GetDesc(&adapterDesc);
-
-        char driverMame[BX_COUNTOF(adapterDesc.Description)];
-        wcstombs(driverMame, adapterDesc.Description, BX_COUNTOF(adapterDesc.Description));
-
-        char dedicatedVideo[16];
-        bx::prettify(dedicatedVideo, BX_COUNTOF(dedicatedVideo), adapterDesc.DedicatedVideoMemory);
-
-        LOG_INFO("DXGI Desc: {} ({}, {}).", driverMame, adapterDesc.VendorId, adapterDesc.DeviceId);
-        LOG_INFO("GPU Dedicated Memory: {}.", dedicatedVideo);
-
-        SAFE_RELEASE(pDXGIOutput);
-        SAFE_RELEASE(pDXGIDevice);
-        SAFE_RELEASE(pDXGIAdapter);
-        SAFE_RELEASE(pDXGIFactory);
-
-        // Check if we are in fullscreen
-        if (pWindow->IsFullscreen())
-        {
-            LOG_TRACE("Going into fullscreen. (swapchain)");
-            m_pSwapChain->SetFullscreenState(true, 0);
-        }
-
         return true;
     }
 
@@ -439,16 +55,7 @@ namespace lr
     {
         ZoneScoped;
 
-        HRESULT hr;
-        ID3D11Texture2D *pBackBuffer = 0;
-
-        hr = m_pSwapChain->GetBuffer(0, IID_PPV_ARGS(&pBackBuffer));
-
-        if (hr < 0)
-        {
-            LOG_ERROR("Failed to create D3D11 BackBuffer!");
-            return false;
-        }
+        ID3D11Texture2D *pBackBuffer = m_pSwapChain->GetBackBuffer();
 
         auto view = m_TargetManager.Create("renderer://backbuffer", pBackBuffer, true);
         m_pContext->OMSetRenderTargets(1, &view, m_pDepthTexture->GetDepthStencil());
@@ -468,7 +75,7 @@ namespace lr
         desc.Type = TEXTURE_TYPE_DEPTH;
 
         TextureData depthData = {};
-        depthData.Format = TEXTURE_FORMAT_R32T, depthData.Width = width, depthData.Height = height;
+        depthData.Format = TextureFormat::R32T, depthData.Width = width, depthData.Height = height;
 
         m_pDepthTexture = (D3D11Texture *)Texture::Create("renderer://depth-texture", &desc, &depthData);
 
@@ -521,7 +128,7 @@ namespace lr
     {
         ZoneScoped;
 
-        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)D3D::Cull::Back;
+        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)Cull::Back;
         m_RasterizerDesc.FillMode = D3D11_FILL_SOLID;
 
         m_RasterizerDesc.DepthClipEnable = true;
@@ -537,7 +144,58 @@ namespace lr
         return m_pRasterizerState = m_StateManager.Get(m_RasterizerDesc);
     }
 
-    void D3D11Renderer::ChangeResolution(u32 width, u32 height)
+    bool D3D11Renderer::Init(PlatformWindow *pWindow, u32 width, u32 height)
+    {
+        ZoneScoped;
+
+        g_D3D11Renderer = this;
+        m_CurrentAPI = RendererType::D3D11;
+
+        if (!CreateDevice()) return false;
+
+        if (!pWindow)
+        {
+            LOG_WARN("Console application mode, only initializing D3D11 device.");
+            return true;
+        }
+
+        m_pSwapChain = new D3D11SwapChain;
+
+        m_pSwapChain->Init(m_pDevice, pWindow, SwapChainFlags::None);
+        m_StateManager.SetDevice(m_pDevice);
+        m_TargetManager.Init(m_pDevice);
+
+        if (!CreateDepthTexture(width, height)) return false;
+        if (!CreateBackBuffer()) return false;
+        if (!CreateDepthStencil()) return false;
+        if (!CreateBlendState()) return false;
+        if (!CreateRasterizer()) return false;
+
+        m_IsContextReady = true;
+
+        SetViewport(width, height, 1.f, 0.0f);
+
+        LOG_TRACE("Successfully initialized D3D11 device.");
+
+        TextureDesc desc;
+
+        constexpr u32 whiteColor = 0xffffffff;
+        TextureData data;
+        data.Width = 1;
+        data.Height = 1;
+        data.DataSize = sizeof(u32);
+        data.Data = (u8 *)malloc(data.DataSize);
+        data.Format = TextureFormat::RGBA8;
+        memcpy(data.Data, &whiteColor, data.DataSize);
+
+        m_PlaceholderTexture = Texture::Create("batcher://placeholder", &desc, &data);
+
+        pWindow->OnResolutionChanged.connect<&D3D11Renderer::Resize>(this);
+
+        return true;
+    }
+
+    void D3D11Renderer::Resize(u32 width, u32 height)
     {
         ZoneScoped;
 
@@ -548,11 +206,7 @@ namespace lr
         m_TargetManager.Release("renderer://backbuffer");
         m_pDepthTexture->Delete();
 
-        if (FAILED(m_pSwapChain->ResizeBuffers(0, 0, 0, m_SwapChainDesc.BufferDesc.Format, 0)))
-        {
-            LOG_ERROR("Failed to resize swap chain!");
-            return;
-        }
+        m_pSwapChain->Resize(width, height);
 
         CreateBackBuffer();
         CreateDepthTexture(width, height);
@@ -562,23 +216,290 @@ namespace lr
         SetViewport(width, height, 1.f, 0.f);
     }
 
-    D3D11Renderer *&D3D11Renderer::Get()
-    {
-        return g_D3D11Renderer;
-    }
-
-    void D3D11Renderer::HandlePreFrame()
+    void D3D11Renderer::SetViewport(u32 width, u32 height, float farZ, float nearZ)
     {
         ZoneScoped;
 
-        SetDepthFunc(D3D::DepthFunc::Less, true);
-        SetCulling(D3D::Cull::Back, true);
+        if (!m_IsContextReady) return;
+
+        D3D11_VIEWPORT vp;
+        ZeroMemory(&vp, sizeof(D3D11_VIEWPORT));
+
+        vp.Width = (float)width;
+        vp.Height = (float)height;
+        vp.MaxDepth = farZ;
+        vp.MinDepth = nearZ;
+        vp.TopLeftX = 0;
+        vp.TopLeftY = 0;
+
+        m_pContext->RSSetViewports(1, &vp);
+    }
+
+    void D3D11Renderer::SetScissor(const glm::vec4 &lrtb)
+    {
+        ZoneScoped;
+
+        const D3D11_RECT rect = { (LONG)lrtb.x, (LONG)lrtb.y, (LONG)lrtb.z, (LONG)lrtb.w };
+
+        m_pContext->RSSetScissorRects(1, &rect);
+    }
+
+    void D3D11Renderer::SetDepthFunc(DepthFunc func, bool depthEnabled)
+    {
+        ZoneScoped;
+
+        m_DepthStencilDesc.DepthEnable = depthEnabled;
+        m_DepthStencilDesc.StencilEnable = depthEnabled;
+        m_DepthStencilDesc.DepthFunc = (D3D11_COMPARISON_FUNC)func;
+
+        auto state = m_StateManager.Get(m_DepthStencilDesc);
+        if (m_pDepthStencilState != state)
+        {
+            m_pDepthStencilState = state;
+            m_pContext->OMSetDepthStencilState(m_pDepthStencilState, 1);
+        }
+    }
+
+    void D3D11Renderer::SetCulling(Cull cull, bool counterClockwise)
+    {
+        ZoneScoped;
+
+        m_RasterizerDesc.FrontCounterClockwise = counterClockwise;
+        m_RasterizerDesc.CullMode = (D3D11_CULL_MODE)cull;
+
+        auto state = m_StateManager.Get(m_RasterizerDesc);
+        if (m_pRasterizerState != state)
+        {
+            m_pRasterizerState = state;
+            m_pContext->RSSetState(m_pRasterizerState);
+        }
+    }
+
+    void D3D11Renderer::SetWireframeState(bool enabled)
+    {
+        ZoneScoped;
+
+        m_RasterizerDesc.FillMode = enabled ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+
+        auto state = m_StateManager.Get(m_RasterizerDesc);
+        if (m_pRasterizerState != state)
+        {
+            m_pRasterizerState = state;
+            m_pContext->RSSetState(m_pRasterizerState);
+        }
+    }
+
+    void D3D11Renderer::SetBlend(bool enableBlending, bool alphaCoverage)
+    {
+        ZoneScoped;
+
+        m_BlendDesc.AlphaToCoverageEnable = alphaCoverage;
+        m_BlendDesc.RenderTarget[0].BlendEnable = enableBlending;
+
+        auto state = m_StateManager.Get(m_BlendDesc);
+        if (m_pBlendState != state)
+        {
+            m_pBlendState = state;
+            glm::vec4 factor = { 1, 1, 1, 1 };
+            m_pContext->OMSetBlendState(m_pBlendState, &factor[0], 0xffffffff);
+        }
+    }
+
+    void D3D11Renderer::SetPrimitiveType(PrimitiveType type)
+    {
+        m_pContext->IASetPrimitiveTopology(D3D::ToDXPrimitive(type));
+    }
+
+    void D3D11Renderer::CreateRenderTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture, u32 mipLevels)
+    {
+        ZoneScoped;
+
+        auto target = m_TargetManager.Create(ident, width, height, texture, mipLevels);
+    }
+
+    void D3D11Renderer::SetRenderTarget(const Identifier &ident)
+    {
+        ZoneScoped;
+
+        // m_pContext->PSSetShaderResources(0, 1, kNullSRV);
+
+        auto target = m_TargetManager.GetView(ident);
+        m_pContext->OMSetRenderTargets(1, &target, m_pDepthTexture->GetDepthStencil());
+    }
+
+    void D3D11Renderer::SetRenderTargetClearColor(const Identifier &ident, const glm::vec4 &color)
+    {
+        ZoneScoped;
+
+        auto target = m_TargetManager.GetView(ident);
+        m_pContext->ClearRenderTargetView(target, &color[0]);
+        m_pContext->ClearDepthStencilView(m_pDepthTexture->GetDepthStencil(), D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL, 1.0f, 0);
+    }
+
+    TextureHandle D3D11Renderer::GetRenderTargetTexture(const Identifier &ident)
+    {
+        ZoneScoped;
+
+        return m_TargetManager.GetTexture(ident);
+    }
+
+    void D3D11Renderer::SetVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset)
+    {
+        ZoneScoped;
+
+        auto stride = pLayout->GetStride();
+        ID3D11Buffer *d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
+        m_pContext->IASetVertexBuffers(0, 1, &d11Buffer, &stride, &offset);
+    }
+
+    void D3D11Renderer::SetIndexBuffer(RenderBufferHandle buffer, bool index32, u32 offset)
+    {
+        ZoneScoped;
+
+        m_pContext->IASetIndexBuffer((ID3D11Buffer *)buffer->GetHandle(), index32 ? DXGI_FORMAT_R32_UINT : DXGI_FORMAT_R16_UINT, offset);
+    }
+
+    void D3D11Renderer::SetConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11Buffer *d11Buffer = *kNullBuffer;
+        if (buffer) d11Buffer = (ID3D11Buffer *)buffer->GetHandle();
+
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetConstantBuffers(slot, 1, &d11Buffer);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetConstantBuffers(slot, 1, &d11Buffer);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetConstantBuffers(slot, 1, &d11Buffer);
+    }
+
+    void D3D11Renderer::SetShaderResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11ShaderResourceView **ppSRV = kNullSRV;
+        if (buffer) ppSRV[0] = ((D3D11RenderBuffer *)buffer)->GetShaderResource();
+
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
+    }
+
+    void D3D11Renderer::SetUAVResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
+        if (buffer) pUAV = ((D3D11RenderBuffer *)buffer)->GetUAV();
+
+        m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
+    }
+
+    void D3D11Renderer::SetShaderResource(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11ShaderResourceView **ppSRV = kNullSRV;
+        if (texture) ppSRV[0] = ((D3D11Texture *)texture)->GetShaderResource();
+
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetShaderResources(slot, 1, ppSRV);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetShaderResources(slot, 1, ppSRV);
+    }
+
+    void D3D11Renderer::SetUAVResource(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11UnorderedAccessView *pUAV = *kNullUAV;
+        if (texture) pUAV = ((D3D11Texture *)texture)->GetUAV();
+
+        m_pContext->CSSetUnorderedAccessViews(slot, 1, &pUAV, 0);
+    }
+
+    void D3D11Renderer::SetSamplerState(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    {
+        ZoneScoped;
+
+        ID3D11SamplerState *pSamplerState = *kNullSampler;
+        if (texture) pSamplerState = ((D3D11Texture *)texture)->GetSampler();
+
+        if (target & RenderBufferTarget::Vertex) m_pContext->VSSetSamplers(slot, 1, &pSamplerState);
+        if (target & RenderBufferTarget::Pixel) m_pContext->PSSetSamplers(slot, 1, &pSamplerState);
+        if (target & RenderBufferTarget::Compute) m_pContext->CSSetSamplers(slot, 1, &pSamplerState);
+    }
+
+    void D3D11Renderer::MapBuffer(RenderBufferHandle buffer, void *pData, u32 dataSize)
+    {
+        ZoneScoped;
+
+        D3D11_MAPPED_SUBRESOURCE mappedResc = {};
+        if (SUCCEEDED(m_pContext->Map((ID3D11Resource *)buffer->GetHandle(), 0, ((D3D11RenderBuffer *)buffer)->GetMappingType(), 0, &mappedResc)))
+        {
+            memcpy(mappedResc.pData, pData, dataSize);
+        }
+        m_pContext->Unmap((ID3D11Resource *)buffer->GetHandle(), 0);
+    }
+
+    void D3D11Renderer::TransferResourceData(RenderBufferHandle inputBuffer, RenderBufferHandle outputBuffer)
+    {
+        ZoneScoped;
+
+        m_pContext->CopyResource((ID3D11Resource *)outputBuffer->GetHandle(), (ID3D11Resource *)inputBuffer->GetHandle());
+    }
+
+    void D3D11Renderer::TransferResourceData(TextureHandle inputTexture, TextureHandle outputTexture)
+    {
+        ZoneScoped;
+
+        D3D11Texture *pD11Input = (D3D11Texture *)inputTexture;
+        D3D11Texture *pD11Output = (D3D11Texture *)outputTexture;
+        m_pContext->CopyResource((ID3D11Resource *)pD11Output->GetHandle(), (ID3D11Resource *)pD11Input->GetHandle());
+        // pD11Output->Map(pD11Input);
+    }
+
+    void D3D11Renderer::SetShader(ShaderHandle shader)
+    {
+        ZoneScoped;
+
+        D3D11Shader *d11Shader = (D3D11Shader *)shader;
+
+        switch (d11Shader->GetType())
+        {
+            case ShaderType::Vertex:
+                m_pContext->IASetInputLayout(d11Shader->GetLayout());
+                m_pContext->VSSetShader(d11Shader->GetShader().m_pVertexShader, 0, 0);
+                break;
+            case ShaderType::Pixel: m_pContext->PSSetShader(d11Shader->GetShader().m_pPixelShader, 0, 0); break;
+            case ShaderType::Compute: m_pContext->CSSetShader(d11Shader->GetShader().m_pComputeShader, 0, 0); break;
+        }
+    }
+
+    void D3D11Renderer::BeginFrame()
+    {
+        /// Reset states
+        SetRenderTarget("renderer://backbuffer");
+
+        SetDepthFunc(DepthFunc::Less, true);
+        SetCulling(Cull::Back, false);
         SetBlend(true, true);
+        SetPrimitiveType(PrimitiveType::TriangleList);
 
-        SetClearColor();
-        SetCurrentTarget("renderer://backbuffer");
+        SetRenderTargetClearColor("renderer://backbuffer", glm::vec4(0.1, 0.1, 0.1, 1.0));
+    }
 
-        m_pContext->IASetPrimitiveTopology(D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST);
+    void D3D11Renderer::Frame()
+    {
+        ZoneScoped;
+        TracyD3D11Zone(m_TracyContext, "Present");
+
+        if (!m_IsContextReady) return;
+
+        if (m_NeedToPresent)
+        {
+            m_pSwapChain->Present();
+            m_pContext->Flush();
+
+            TracyD3D11Collect(m_TracyContext);
+        }
     }
 
     void D3D11Renderer::DrawIndexed(u32 indexCount, u32 startIndex, u32 baseVertex)
@@ -593,6 +514,11 @@ namespace lr
         ZoneScoped;
 
         m_pContext->Dispatch(thrX, thrY, thrZ);
+    }
+
+    D3D11Renderer *&D3D11Renderer::Get()
+    {
+        return g_D3D11Renderer;
     }
 
 }  // namespace lr

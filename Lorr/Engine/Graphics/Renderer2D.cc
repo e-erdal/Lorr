@@ -35,8 +35,8 @@ namespace lr
         quadIndexDesc.Type = RenderBufferType::Index;
         m_FullscreenQuadIB = RenderBuffer::Create(quadIndexDesc);
 
-        m_FullscreenVS = pShaderMan->CreateShader("renderer2d://fscv", m_FullscreenQuadLayout, "shaders/fullscreenv.lr");
-        m_FullscreenPS = pShaderMan->CreateShader("renderer2d://fscp", "shaders/fullscreenp.lr");
+        m_FullscreenVS = pShaderMan->CreateShader("renderer2d://fscv", m_FullscreenQuadLayout, "shader:fullscreen.v");
+        m_FullscreenPS = pShaderMan->CreateShader("renderer2d://fscp", "shader:fullscreen.p");
 
         m_Batcher.Init(m_Batcher2DLayout);
     }
@@ -47,14 +47,14 @@ namespace lr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(m_FullscreenVS);
-        pRenderer->UseShader(m_FullscreenPS);
+        pRenderer->SetShader(m_FullscreenVS);
+        pRenderer->SetShader(m_FullscreenPS);
 
-        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
-        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
+        pRenderer->SetVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->SetIndexBuffer(m_FullscreenQuadIB, false);
 
-        pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
-        pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetShaderResource(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetSamplerState(texture, RenderBufferTarget::Pixel, textureSlot);
 
         pRenderer->DrawIndexed(6);
     }
@@ -65,14 +65,14 @@ namespace lr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(m_FullscreenVS);
-        pRenderer->UseShader(pixelShader);
+        pRenderer->SetShader(m_FullscreenVS);
+        pRenderer->SetShader(pixelShader);
 
-        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
-        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
+        pRenderer->SetVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->SetIndexBuffer(m_FullscreenQuadIB, false);
 
-        pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
-        pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetShaderResource(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetSamplerState(texture, RenderBufferTarget::Pixel, textureSlot);
 
         pRenderer->DrawIndexed(6);
     }
@@ -83,14 +83,14 @@ namespace lr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        pRenderer->UseShader(pProgram->Vertex);
-        pRenderer->UseShader(pProgram->Pixel);
+        pRenderer->SetShader(pProgram->Vertex);
+        pRenderer->SetShader(pProgram->Pixel);
 
-        pRenderer->UseVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
-        pRenderer->UseIndexBuffer(m_FullscreenQuadIB, false);
+        pRenderer->SetVertexBuffer(m_FullscreenQuadVB, &m_FullscreenQuadLayout);
+        pRenderer->SetIndexBuffer(m_FullscreenQuadIB, false);
 
-        pRenderer->UseShaderBuffer(texture, RenderBufferTarget::Pixel, textureSlot);
-        pRenderer->UseSampler(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetShaderResource(texture, RenderBufferTarget::Pixel, textureSlot);
+        pRenderer->SetSamplerState(texture, RenderBufferTarget::Pixel, textureSlot);
 
         pRenderer->DrawIndexed(6);
     }

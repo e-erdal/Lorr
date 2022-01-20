@@ -8,8 +8,6 @@
 #include "Engine/Graphics/Common/BaseRenderBuffer.hh"
 #include "Engine/Graphics/Common/InputLayout.hh"
 
-#include <bvh/bvh.hpp>
-
 namespace lr
 {
     struct FileMeshVertex
@@ -48,9 +46,6 @@ namespace lr
             return m_Vertices;
         }
 
-        using Scalar = float;
-        using BVH = bvh::Bvh<Scalar>;
-
         static InputLayout m_Layout;
 
     private:
@@ -61,8 +56,6 @@ namespace lr
 
         eastl::vector<MeshVertex> m_Vertices;
         u32 m_IndexCount = 0;
-
-        BVH *m_pBVH;
     };
 
 }  // namespace lr

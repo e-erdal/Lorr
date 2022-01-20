@@ -5,7 +5,7 @@
         auto alError = alGetError();                                                                                                                                     \
         if (alError != AL_NO_ERROR)                                                                                                                                      \
         {                                                                                                                                                                \
-            LOG_ERROR("OpenAL Error: {}", alGetString(alError));                                                                                                    \
+            LOG_ERROR("OpenAL Error: %s", alGetString(alError));                                                                                                    \
         }                                                                                                                                                                \
     }
 

@@ -32,12 +32,11 @@ namespace lr::System
         Batcher2DBufferData batcherCBufData = { .Matrix = GetApp()->GetActiveScene()->GetEntity("entity://camera2d").GetCameraMatrix() };
 
         pRenderer->MapBuffer(batcherCBuf, &batcherCBufData, sizeof(Batcher2DBufferData));
-        pRenderer->UnmapBuffer(batcherCBuf);
 
         pBatcher->SetCurrentProgram(pBatcherProgram);
         pBatcher->Begin();
 
-        pRenderer->UseConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
+        pRenderer->SetConstantBuffer(batcherCBuf, RenderBufferTarget::Vertex, 0);
 
         m_pRegistry->view<Component::Transform>().each([&](auto entity, Component::Transform &transform) {
             /// Render a rectangle
@@ -62,9 +61,8 @@ namespace lr::System
                 fontRenderBufferData.RangePx = glm::vec4(distanceFactor, 0, 0, 0);
 
                 pRenderer->MapBuffer(fontCBuf, &fontRenderBufferData, sizeof(FontRenderBuffer));
-                pRenderer->UnmapBuffer(fontCBuf);
 
-                pRenderer->UseConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
+                pRenderer->SetConstantBuffer(fontCBuf, RenderBufferTarget::Pixel, 0);
 
                 /// Set shader resources
                 pBatcher->SetCurrentTexture(text.m_Texture);

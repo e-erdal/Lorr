@@ -9,52 +9,66 @@
 #include <d3dcompiler.h>
 #include <d3d11shader.h>
 
-#define FIND_SHADER(type)                                                                                                                                      \
-    std::find_if(pData->Shaders.begin(), pData->Shaders.end(), [](const ShaderInfo &x) {                                                                       \
-        return x.Renderer == lr::IRenderer::CurrentAPI() && x.Type == ShaderType::type;                                                                      \
+#define FIND_SHADER(type)                                                                                                                            \
+    std::find_if(pData->Shaders.begin(), pData->Shaders.end(), [](const ShaderInfo &x) {                                                             \
+        return x.Renderer == lr::IRenderer::CurrentAPI() && x.Type == ShaderType::type;                                                              \
     })
 
 namespace lr
 {
     void BaseShader::ParseToMemory(ShaderData *pOutData, BufferStream &inBuffer)
     {
+        ID3DBlob *pCode = 0;
+        auto Compile = [&pCode, &pOutData](BufferStream &buf, LPCSTR entryPoint, ShaderType type) {
+            constexpr u32 flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY;
+
+            SAFE_RELEASE(pCode);
+            ID3DBlob *pError = 0;
+
+            D3DCompile(buf.GetData(), buf.GetSize(), entryPoint, nullptr, nullptr, entryPoint, D3D::GetLatestFeatureLevelString(type).data(), flags,
+                       0, &pCode, &pError);
+
+            if (pError) LOG_ERROR("Failed to compile shader!\n\n %s", (char *)pError->GetBufferPointer());
+
+            SAFE_RELEASE(pError);
+
+            pOutData->Type = type;
+        };
+
         HRESULT hr;
 
         eastl::string shader((const char *)inBuffer.GetData(), inBuffer.GetSize());
-        ShaderType currentType;
-        if (shader.substr(0, 9) == "//$TYPE v")
+
+        for (u8 i = 0; i < (u8)ShaderType::Count; i++)
         {
-            currentType = ShaderType::Vertex;
-        }
-        else if (shader.substr(0, 9) == "//$TYPE p")
-        {
-            currentType = ShaderType::Pixel;
-        }
-        else if (shader.substr(0, 9) == "//$TYPE c")
-        {
-            currentType = ShaderType::Compute;
+            switch ((ShaderType)i)
+            {
+                case ShaderType::Vertex:
+                {
+                    if (shader.find("VSMain") != -1) Compile(inBuffer, "VSMain", ShaderType::Vertex);
+                    break;
+                }
+
+                case ShaderType::Pixel:
+                {
+                    if (shader.find("PSMain") != -1) Compile(inBuffer, "PSMain", ShaderType::Pixel);
+                    break;
+                }
+
+                case ShaderType::Compute:
+                {
+                    if (shader.find("CSMain") != -1) Compile(inBuffer, "CSMain", ShaderType::Compute);
+                    break;
+                }
+
+                default: break;
+            }
         }
 
-        constexpr u32 flags = D3DCOMPILE_ENABLE_BACKWARDS_COMPATIBILITY | D3DCOMPILE_OPTIMIZATION_LEVEL3;
-        ID3DBlob *pCode = 0;
-        ID3DBlob *pError = 0;
-
-        // clang-format off
-        if ((hr = 
-            D3DCompile(inBuffer.GetData(), inBuffer.GetSize(), "main", nullptr, nullptr, "main", 
-            D3D::GetLatestFeatureLevelString(currentType).data(), flags, 0, &pCode, &pError)) < 0)
-        {
-            LOG_ERROR("Failed to compile shader. -- {} -- {}", (char *)pError->GetBufferPointer(), D3D::GetLatestFeatureLevelString(currentType).data());
-            return;
-        }
-        // clang-format on
-
-        pOutData->Type = currentType;
         pOutData->Renderer = RendererType::D3D11;
         pOutData->Buffer.Reset((u8 *)pCode->GetBufferPointer(), pCode->GetBufferSize());
 
         SAFE_RELEASE(pCode);
-        SAFE_RELEASE(pError);
     }
 
     ShaderHandle Shader::Create(const Identifier &ident, const eastl::string &path, ShaderDesc *pDesc)

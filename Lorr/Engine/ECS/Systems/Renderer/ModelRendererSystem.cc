@@ -17,7 +17,7 @@ namespace lr::System
         // Engine components
         Engine *pEngine = GetEngine();
         BaseRenderer *pRenderer = pEngine->GetRenderer();
-        TextureHandle postProcessTexture = pRenderer->GetTargetTexture("renderer://postprocess");
+        TextureHandle postProcessTexture = pRenderer->GetRenderTargetTexture("renderer://postprocess");
 
         // Renderer resources
         ShaderProgram *modelProgram = pEngine->GetShaderMan()->GetProgram("shader://model");
@@ -28,12 +28,11 @@ namespace lr::System
         glm::mat4 cameraMatrix = GetApp()->GetActiveScene()->GetEntity("entity://camera3d").GetCameraMatrix();
 
         pRenderer->MapBuffer(modelCBuf, &cameraMatrix[0][0], sizeof(glm::mat4));
-        pRenderer->UnmapBuffer(modelCBuf);
 
         m_pRegistry->view<Model>().each([&](auto entity, Model &model) {
-            pRenderer->UseShader(modelProgram->Vertex);
-            pRenderer->UseShader(modelProgram->Pixel);
-            pRenderer->UseConstantBuffer(modelCBuf, RenderBufferTarget::Vertex, 0);
+            pRenderer->SetShader(modelProgram->Vertex);
+            pRenderer->SetShader(modelProgram->Pixel);
+            pRenderer->SetConstantBuffer(modelCBuf, RenderBufferTarget::Vertex, 0);
 
             model.Render();
         });

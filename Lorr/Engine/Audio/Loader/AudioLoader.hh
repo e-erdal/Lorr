@@ -5,7 +5,7 @@
 
 #pragma once
 
-#include "Engine/Stream/BufferStream.hh"
+#include "Engine/Utils/BufferStream.hh"
 #include "Engine/Audio/Audio.hh"
 
 namespace lr

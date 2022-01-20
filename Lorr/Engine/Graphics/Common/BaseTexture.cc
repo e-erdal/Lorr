@@ -17,13 +17,28 @@ BX_PRAGMA_DIAGNOSTIC_POP();
 
 namespace lr
 {
+    constexpr TextureFormat BGFXFormatToLRFormat(bimg::TextureFormat::Enum format)
+    {
+        switch (format)
+        {
+            case bimg::TextureFormat::RGBA8: return TextureFormat::RGBA8;
+            case bimg::TextureFormat::RGBA16: return TextureFormat::RGBA16;
+            case bimg::TextureFormat::RGBA32F: return TextureFormat::RGBA32F;
+            case bimg::TextureFormat::R32F: return TextureFormat::R32F;
+            case bimg::TextureFormat::D32F: return TextureFormat::DEPTH32F;
+            case bimg::TextureFormat::D24S8: return TextureFormat::DEPTH24_STENCIL8;
+
+            default: LOG_ERROR("Couldn't convert BGFX texture format to LR! Implement it! (Type: %u)", (u32)format); return TextureFormat::RGBA8;
+        }
+    }
+
     void BaseTexture::ParseToMemory(TextureData *pOutData, BufferStream &imageBuffer)
     {
         auto *imageContainer = bimg::imageParse(&s_allocator, imageBuffer.GetData(), imageBuffer.GetSize());
 
         pOutData->Width = imageContainer->m_width;
         pOutData->Height = imageContainer->m_height;
-        // pOutData->Format = imageContainer->m_format;
+        pOutData->Format = BGFXFormatToLRFormat(imageContainer->m_format);
         pOutData->DataSize = imageContainer->m_size;
         pOutData->Data = (u8 *)malloc(imageContainer->m_size);
         memcpy(pOutData->Data, imageContainer->m_data, imageContainer->m_size);

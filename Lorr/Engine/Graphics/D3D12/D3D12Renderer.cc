@@ -24,7 +24,7 @@ namespace lr
             return true;
         }
 
-        m_pSwapChain->Init(m_pDevice, m_pFactory, pWindow);
+        // m_pSwapChain->Init(m_pDevice, m_pFactory, pWindow);
         m_pFactory->MakeWindowAssociation((HWND)pWindow->GetHandle(), DXGI_MWA_NO_ALT_ENTER);
 
         SetViewport(width, height, 1.f, 0.0f);
@@ -56,7 +56,8 @@ namespace lr
         IDXGIFactory6 *pFactory6 = nullptr;
         if (SUCCEEDED(m_pFactory->QueryInterface(IID_PPV_ARGS(&pFactory6))))
         {
-            for (u32 adapterIdx = 0; SUCCEEDED(pFactory6->EnumAdapterByGpuPreference(adapterIdx, preference, IID_PPV_ARGS(&m_pAdapter))); adapterIdx++)
+            for (u32 adapterIdx = 0; SUCCEEDED(pFactory6->EnumAdapterByGpuPreference(adapterIdx, preference, IID_PPV_ARGS(&m_pAdapter)));
+                 adapterIdx++)
             {
                 DXGI_ADAPTER_DESC1 adapterDesc = {};
                 m_pAdapter->GetDesc1(&adapterDesc);
@@ -182,7 +183,7 @@ namespace lr
         return true;
     }
 
-    void D3D12Renderer::ChangeResolution(u32 width, u32 height)
+    void D3D12Renderer::Resize(u32 width, u32 height)
     {
     }
 
@@ -204,7 +205,7 @@ namespace lr
         // m_pCommandList->RSSetViewports(1, &vp);
     }
 
-    void D3D12Renderer::SetClearColor()
+    void D3D12Renderer::SetRenderTargetClearColor(const Identifier &ident, const glm::vec4 &color)
     {
     }
 
@@ -212,11 +213,11 @@ namespace lr
     {
     }
 
-    void D3D12Renderer::SetDepthFunc(D3D::DepthFunc func, bool depthEnabled)
+    void D3D12Renderer::SetDepthFunc(DepthFunc func, bool depthEnabled)
     {
     }
 
-    void D3D12Renderer::SetCulling(D3D::Cull cull, bool counterClockwise)
+    void D3D12Renderer::SetCulling(Cull cull, bool counterClockwise)
     {
     }
 
@@ -224,52 +225,56 @@ namespace lr
     {
     }
 
-    void D3D12Renderer::CreateTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture, u32 mipLevels)
+    void D3D12Renderer::SetPrimitiveType(PrimitiveType type)
     {
     }
 
-    void D3D12Renderer::SetCurrentTarget(const Identifier &ident)
+    void D3D12Renderer::CreateRenderTarget(const Identifier &ident, u32 width, u32 height, TextureHandle texture, u32 mipLevels)
     {
     }
 
-    TextureHandle D3D12Renderer::GetTargetTexture(const Identifier &ident)
+    void D3D12Renderer::SetRenderTarget(const Identifier &ident)
+    {
+    }
+
+    TextureHandle D3D12Renderer::GetRenderTargetTexture(const Identifier &ident)
     {
         return nullptr;
     }
 
-    void D3D12Renderer::UseVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset)
+    void D3D12Renderer::SetVertexBuffer(RenderBufferHandle buffer, InputLayout *pLayout, u32 offset)
     {
     }
 
-    void D3D12Renderer::UseIndexBuffer(RenderBufferHandle buffer, bool index32, u32 offset)
+    void D3D12Renderer::SetIndexBuffer(RenderBufferHandle buffer, bool index32, u32 offset)
     {
     }
 
-    void D3D12Renderer::UseConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetConstantBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseShaderBuffer(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetShaderResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseShaderBuffer(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetShaderResource(TextureHandle texture, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseUAV(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetUAVResource(RenderBufferHandle buffer, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseUAV(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetUAVResource(TextureHandle texture, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseSampler(TextureHandle texture, RenderBufferTarget target, u32 slot)
+    void D3D12Renderer::SetSamplerState(TextureHandle texture, RenderBufferTarget target, u32 slot)
     {
     }
 
-    void D3D12Renderer::UseShader(ShaderHandle shader)
+    void D3D12Renderer::SetShader(ShaderHandle shader)
     {
     }
 
@@ -281,11 +286,11 @@ namespace lr
     {
     }
 
-    void D3D12Renderer::Frame(u32 interval)
+    void D3D12Renderer::BeginFrame()
     {
     }
 
-    void D3D12Renderer::HandlePreFrame()
+    void D3D12Renderer::Frame()
     {
     }
 

@@ -1,7 +1,7 @@
 #include "GameApp.hh"
 #include <bitset>
 
-#include "Terrain/TerrainMeshBuilder.hh"
+#include "Engine/Terrain/ChunkManager.hh"
 
 #include "Engine/App/Engine.hh"
 
@@ -20,7 +20,7 @@ TextureHandle texture;
 Font *pFont;
 ShaderProgram *fontShader;
 
-TerrainMeshBuilder terrain;
+lr::ChunkManager chunkMan;
 
 void GameApp::Init()
 {
@@ -42,8 +42,8 @@ void GameApp::Init()
     m_pCurrentScene->Init("scene://default-scene");
 
     // Post-process target
-    pRenderer->CreateTarget("renderer://postprocess", width, height, 0);
-    pRenderer->CreateTarget("renderer://shadowmap", 512, 512, 0);
+    pRenderer->CreateRenderTarget("renderer://postprocess", width, height, 0);
+    pRenderer->CreateRenderTarget("renderer://shadowmap", 512, 512, 0);
 
     //** Init entities **//
     Entity camera3D = m_pCurrentScene->CreateEntity("entity://camera3d");
@@ -52,15 +52,16 @@ void GameApp::Init()
     Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
 
-    terrain.Init();
-    terrain.Generate();
+    chunkMan.Init(1, 1);
 }
 
-void GameApp::Tick(float fDelta)
+void GameApp::Tick(float deltaTime)
 {
     ZoneScoped;
 
-    m_pCurrentScene->Tick(fDelta);
+    m_pCurrentScene->Tick(deltaTime);
+
+    chunkMan.Update(deltaTime);
 }
 
 bool wireframe = false;
@@ -73,15 +74,11 @@ void GameApp::Draw()
     BaseRenderer *pRenderer = GetEngine()->GetRenderer();
     ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
 
-    pRenderer->UseConstantBuffer(pShaderMan->GetRenderBuffer("cbuffer://font"), RenderBufferTarget::Pixel, 0);
-    GetEngine()->GetRenderer2D()->FullscreenQuad(pFont->GetTexture(), pShaderMan->GetProgram("shader://font"));
-
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
 
-    u32 vertex = terrain.GetVertexCount();
-    ImGui::Text("Vertices: %s", fmt::format(std::locale("en_US.UTF-8"), "{:L}", vertex * 4).c_str());
-    ImGui::Text("Indices: %s", fmt::format(std::locale("en_US.UTF-8"), "{:L}", vertex * 6).c_str());
+    ImGui::SliderFloat3("Light Dir", &chunkMan.m_RenderInfo.m_LightDir[0], -1, 1);
+    ImGui::SliderFloat("Ambient Color", &chunkMan.m_RenderInfo.m_AmbientColor, 0, 1);
 
     if (ImGui::Checkbox("Wireframe", &wireframe))
     {
@@ -90,7 +87,7 @@ void GameApp::Draw()
 
     ImGui::End();
 
-    terrain.Draw();
+    chunkMan.Render();
 }
 
 void GameApp::LoadResources()
@@ -109,22 +106,22 @@ void GameApp::LoadResources()
     // Model constant buffer
     genericDynBufferDesc.DataLen = sizeof(ModelRenderBuffer);
     shaderMan->CreateRenderBuffer("cbuffer://model", genericDynBufferDesc);
-    shaderMan->CreateProgram("shader://model", Mesh::m_Layout, "shaders/modelv.lr", "shaders/modelp.lr");
+    shaderMan->CreateProgram("shader://model", Mesh::m_Layout, "shader:model.v", "shader:model.p");
 
     // VertexBatcher constant buffer
     genericDynBufferDesc.DataLen = sizeof(Batcher2DBufferData);
     shaderMan->CreateRenderBuffer("cbuffer://batcher2d", genericDynBufferDesc);
-    shaderMan->CreateProgram("shader://batcher", Renderer2D::m_Batcher2DLayout, "shaders/batchv.lr", "shaders/batchp.lr");
+    shaderMan->CreateProgram("shader://batcher", Renderer2D::m_Batcher2DLayout, "shader:batch.v", "shader:batch.p");
 
     // Font constant buffer
     genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
     shaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
-    fontShader = shaderMan->CreateProgram("shader://font", Renderer2D::m_Batcher2DLayout, "shaders/fontv.lr", "shaders/fontp.lr");
+    fontShader = shaderMan->CreateProgram("shader://font", Renderer2D::m_Batcher2DLayout, "shader:font.v", "shader:font.p");
 
     //* Fonts *//
     FontDesc desc;
     desc.SizePX = 40;
-    pFont = resourceMan->LoadResource<Font>("font://font", "font.lr", &desc);
+    pFont = resourceMan->LoadResource<Font>("font://font", "font:font", &desc);
 }
 
 void GameApp::OnResolutionChanged(u32 width, u32 height)

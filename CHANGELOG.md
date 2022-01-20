@@ -1,5 +1,29 @@
+# v1.5-alpha
+- Code:
+    - Rename interface classes to `BaseMyClass` (from `IMyClass`)
+    - Rename global enums to enum classes.
+    - Hide (some) external library implementations to speedup compile time.
+    - Move to EASTL.
+    - Remove FMT.
+    - Remove spdlog, use loguru.
+- Graphics:
+    - Redesign for Renderer, it's now less abstracted from API functions.
+    - (NOT COMPLETE) Prototype Terrain generation.
+        - Able to use custom Vertex Data types without big changes.
+        - Can be split into multiple chunks.
+        - Has support for Perlin Noise.
+    - Move `SwapChain` implementation to seperate class.
+    - Add support for more texture formats.
+- Scripting:
+    - Add lua scripting.
+- Resources & Resource Compiler:
+    - Less messy way of compiling resources.
+    - Categorize resource loading using a global metafile.
+- Vendor:
+    - Categorized External Library to get less confused.
+
 # v1.2-alpha
-- OOP Entity Component System.
+- Entity Component System.
     - Transform component.
     - Renderable component.
 - Font rendering.

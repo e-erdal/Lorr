@@ -18,8 +18,8 @@
     #undef CreateDirectory
 #endif
 
-#include "Engine/Stream/BufferStream.hh"
-#include "Engine/Stream/FileStream.hh"
+#include "Engine/Utils/BufferStream.hh"
+#include "Engine/Utils/FileStream.hh"
 
 namespace lr::FileSystem
 {
@@ -162,7 +162,7 @@ namespace lr::FileSystem
         char buffer[4096];
         if (IS_ERROR(GetFullPathNameA(svPath.data(), 4096, buffer, nullptr)))
         {
-            LOG_ERROR("Failed to resolve full path of {}", svPath.data());
+            LOG_ERROR("Failed to resolve full path of %s", svPath.data());
             return "";
         }
 
@@ -172,7 +172,7 @@ namespace lr::FileSystem
 
         if (realpath(svPath.data(), buffer) == nullptr)
         {
-            LOG_ERROR("Failed to resolve full path of {}", svPath.data());
+            LOG_ERROR("Failed to resolve full path of %s", svPath.data());
             return "";
         }
 

@@ -22,7 +22,7 @@ namespace lr
 
         HRESULT hr;
 
-        LOG_TRACE("Creating Texture2D <{}>({}, {})...", m_Ident, m_Width, m_Height);
+        LOG_TRACE("Creating Texture2D <%s>(%d, %d)...", m_Ident, m_Width, m_Height);
 
         switch (pDesc->Type)
         {
@@ -38,7 +38,7 @@ namespace lr
                 break;
             case TEXTURE_TYPE_DEPTH:
                 CreateDepthTexture();
-                if (m_Format == TEXTURE_FORMAT_R32T) m_Format = TEXTURE_FORMAT_R32F;
+                if (m_Format ==  TextureFormat::R32T) m_Format = TextureFormat::R32F;
                 CreateShaderResource();
                 CreateSampler();
                 break;
@@ -52,7 +52,7 @@ namespace lr
                 break;
         }
 
-        LOG_TRACE("Created a Texture2D <{}>({}, {})!", m_Ident, m_Width, m_Height);
+        LOG_TRACE("Created a Texture2D <%s>(%d, %d)!", m_Ident, m_Width, m_Height);
     }
 
     void D3D11Texture::Use()

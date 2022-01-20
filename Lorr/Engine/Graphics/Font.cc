@@ -1,5 +1,9 @@
 #include "Font.hh"
 
+#include <msdfgen.h>
+#include <msdfgen-ext.h>
+#include <msdf-atlas-gen/msdf-atlas-gen.h>
+
 namespace lr
 {
     using namespace msdfgen;
@@ -19,10 +23,10 @@ namespace lr
     void Font::Init(const Identifier &ident, FontDesc *pDesc, FontData *pData)
     {
         ZoneScoped;
-        
+
         using namespace msdf_atlas;
 
-        LOG_TRACE("Generating MTSDF atlas, {}<thread:{}>", ident, kThreadCount);
+        LOG_TRACE("Generating MTSDF atlas, %s<thread:%d>", ident, kThreadCount);
 
         pFTHandle = initializeFreetype();
         m_pHandle = loadFontData(pFTHandle, pData->TTFData.GetData(), pData->TTFData.GetSize());
@@ -82,10 +86,11 @@ namespace lr
         data.DataSize = dataSize;
         data.Width = bitmap.width;
         data.Height = bitmap.height;
+        data.Format = TextureFormat::RGBA8;
 
         m_Texture = Texture::Create("font", &desc, &data);
 
-        LOG_TRACE("Created new atlas, {}<{}, {}>", ident, data.Width, data.Height);
+        LOG_TRACE("Created new atlas, %s<%u, %u>", ident, data.Width, data.Height);
 
         //* Load glyph info *//
         for (auto &glyph : glyphs)
@@ -131,7 +136,7 @@ namespace lr
     void Font::AlignAll(const tiny_utf8::string &text, eastl::vector<TextLine> &outLines, float &outPixelRange, glm::vec2 &outSize, size_t maxWidth)
     {
         ZoneScoped;
-        
+
         outPixelRange = m_PixelRangle;
         const msdfgen::FontMetrics fontMetrics = m_pGeometry->getMetrics();
         float fsScale = 1.0 / (fontMetrics.ascenderY - fontMetrics.descenderY);

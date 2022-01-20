@@ -31,7 +31,7 @@ namespace lr
 
             if (FAILED(hr = pDevice->CreateCommandAllocator(type, IID_PPV_ARGS(&list.pAllocator))))
             {
-                LOG_ERROR("Failed to create D3D12 command allocator for frame {}!", i);
+                LOG_ERROR("Failed to create D3D12 command allocator for frame %u!", i);
                 return;
             }
 

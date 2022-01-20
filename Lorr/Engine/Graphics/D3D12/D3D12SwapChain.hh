@@ -5,9 +5,8 @@
 #pragma once
 #ifdef LR_BACKEND_D3D12
 
-#include <bx/ringbuffer.h>
-
-#include "Engine/Core/Window/BaseWindow.hh"
+#include "Engine/Graphics/D3D/D3DType.hh"
+#include "Engine/Core/Window/PlatformWindow.hh"
 
 namespace lr
 {
@@ -16,37 +15,32 @@ namespace lr
     public:
         D3D12SwapChain() = default;
 
-        void Init(ID3D12Device *pDevice, IDXGIFactory4 *pFactory, BaseWindow *pWindow, DXGI_FORMAT bufferingFormat = DXGI_FORMAT_R8G8B8A8_UNORM,
-                  bool tripleBuffering = false);
-
-        void Present(bool vSync);
+        void Init(ID3D12Device *pDevice, IDXGIFactory4 *pFactory, ID3D12CommandQueue *pCommandQueue, PlatformWindow *pWindow, SwapChainFlags flags);
         void Resize(u32 width, u32 height);
+        void Present();
 
-    public:
-        IDXGISwapChain3 *GetHandle()
-        {
-            return m_pSwapChain;
-        }
-
-        u32 GetBackBufferIndex()
-        {
-            return m_BackBufferIndex;
-        }
+        ID3D11Texture2D *GetBackBuffer();
 
     private:
         void RecreateBuffers();
 
     private:
-        ID3D12Device *m_pDevice = nullptr;
-
-        IDXGISwapChain3 *m_pSwapChain = nullptr;
+        IDXGISwapChain3 *m_pHandle = nullptr;
         DXGI_SWAP_CHAIN_DESC1 m_SwapChainDesc;
         DXGI_SWAP_CHAIN_FULLSCREEN_DESC m_SwapChainFSD = {};
 
-        u32 m_BackBufferIndex = 0;
-        ID3D12DescriptorHeap *m_pFrameBufferHeap = nullptr;
-        eastl::array<ID3D12Resource *, 3> m_FrameBuffers;
-        bx::RingBufferControl *m_pRingBuffer;
+        ID3D12Device *m_pDevice = nullptr;
+
+        ID3D12DescriptorHeap *m_pBufferHeap = nullptr;
+        ID3D12Resource *m_Buffers[3];
+
+        /// Ring buffer
+        u32 m_CurrentBufferIndex = 0;
+        u32 m_UsingBufferCount = 0;
+        u32 m_IncrementSize = 0;
+
+        bool m_vSync = false;
+        bool m_Tearing = false;
     };
 
 }  // namespace lr

@@ -28,7 +28,7 @@ namespace lr::PostProcess
         textureDesc.Type = TEXTURE_TYPE_RW;
 
         TextureData textureData;
-        textureData.Format = TEXTURE_FORMAT_RGBA32F;
+        textureData.Format =  TextureFormat::RGBA32F;
         textureData.Width = pWindow->GetWidth();
         textureData.Height = pWindow->GetHeight();
         m_UAVTexture = Texture::Create("postprocess://lensflare-downsample-rw", &textureDesc, &textureData);
@@ -41,20 +41,20 @@ namespace lr::PostProcess
     void LensFlare::Draw()
     {
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
-        TextureHandle postProcView = pRenderer->GetTargetTexture("renderer://postprocess");
+        // TextureHandle postProcView = pRenderer->GetTargetTexture("renderer://postprocess");
 
         //* Downsample Pass ----------------------------------------------------------------------------------------------- *
-        pRenderer->UseShader(m_DownsampleCS);
+        // pRenderer->UseShader(m_DownsampleCS);
         
-        pRenderer->UseUAV(m_UAVTexture, RenderBufferTarget::Compute, 0);
-        pRenderer->UseShaderBuffer(postProcView, RenderBufferTarget::Compute, 0);
-        pRenderer->UseSampler(postProcView, RenderBufferTarget::Compute, 0);
+        // pRenderer->UseUAV(m_UAVTexture, RenderBufferTarget::Compute, 0);
+        // pRenderer->UseShaderBuffer(postProcView, RenderBufferTarget::Compute, 0);
+        // pRenderer->UseSampler(postProcView, RenderBufferTarget::Compute, 0);
 
-        pRenderer->Dispatch(ceil(m_UAVTexture->GetWidth() / 8), ceil(m_UAVTexture->GetHeight() / 8), 1);
-        pRenderer->TransferResourceData(m_UAVTexture, m_CSOutputTexture);
+        // pRenderer->Dispatch(ceil(m_UAVTexture->GetWidth() / 8), ceil(m_UAVTexture->GetHeight() / 8), 1);
+        // pRenderer->TransferResourceData(m_UAVTexture, m_CSOutputTexture);
 
-        pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
-        pRenderer->UseUAV((TextureHandle)0, RenderBufferTarget::Compute, 0);
+        // pRenderer->UseShaderBuffer((TextureHandle)0, RenderBufferTarget::Compute, 0);
+        // pRenderer->UseUAV((TextureHandle)0, RenderBufferTarget::Compute, 0);
         //* --------------------------------------------------------------------------------------------------------------- *
     }
 
