@@ -5,20 +5,21 @@
 #include "Engine/Debug/ImGuiHandler.hh"
 
 #include "Engine/ECS/Components/CameraComponent.hh"
+#include "Engine/Terrain/Terrain.hh"
 
 namespace lr
 {
     static eastl::unordered_map<Key, Direction> kCameraMoveLUT = { { Key::Key_W, Direction::FORWARD }, { Key::Key_S, Direction::BACKWARD },
-                                                                 { Key::Key_A, Direction::LEFT },    { Key::Key_D, Direction::RIGHT },
-                                                                 { Key::Key_Q, Direction::UP },      { Key::Key_E, Direction::DOWN } };
+                                                                   { Key::Key_A, Direction::LEFT },    { Key::Key_D, Direction::RIGHT },
+                                                                   { Key::Key_Q, Direction::UP },      { Key::Key_E, Direction::DOWN } };
 
     void InputManager::OnKeyboardState(ButtonState state, Key key, KeyMod mods)
     {
         ZoneScoped;
 
-        Engine *pEngine = GetEngine();
-        BaseApp *pApp = GetApp();
-        Scene *pActiveScene = pApp->GetActiveScene();
+        if (ImGuiHandler::KeyPress(state, key, mods)) return;
+
+        Scene *pActiveScene = GetApp()->GetActiveScene();
 
         if (pActiveScene)
         {
@@ -35,8 +36,6 @@ namespace lr
                 }
             }
         }
-
-        ImGuiHandler::KeyPress(state, key, mods);
     }
 
     void InputManager::OnMouseState(ButtonState state, MouseButton button, KeyMod mods)
@@ -46,6 +45,12 @@ namespace lr
         m_MouseButtonState[button] = state;
 
         ImGuiHandler::MouseState(state, button, mods, m_MousePos);
+
+        //! THIS IS ONLY FOR TESTING PURPOSES
+        Scene *pActiveScene = GetApp()->GetActiveScene();
+        Terrain &terrain = pActiveScene->GetEntity("entity://terrain").GetComponent<Terrain>();
+
+        if (state == ButtonState::Pressed && button == MouseButton::BTN_2) terrain.PickMouse(m_MousePos.x, m_MousePos.y);
     }
 
     void InputManager::OnMousePosUpdate(const glm::ivec2 &pos, const glm::ivec2 &offset)
@@ -54,9 +59,9 @@ namespace lr
 
         m_MousePos = pos;
 
-        Engine *pEngine = GetEngine();
-        BaseApp *pApp = GetApp();
-        Scene *pActiveScene = pApp->GetActiveScene();
+        if (ImGuiHandler::MousePosition(pos)) return;
+
+        Scene *pActiveScene = GetApp()->GetActiveScene();
 
         if (pActiveScene)
         {
@@ -76,9 +81,15 @@ namespace lr
                 if (dragAvailable)
                 {
                     component.m_Handle.SetDirection(offset.x, offset.y);
+                    return;
                 }
             }
         }
+    }
+
+    void InputManager::OnMouseWheelUpdate(float x, float y)
+    {
+        ImGuiHandler::MouseWheelState(x, y);
     }
 
     void InputManager::OnKeyInput()

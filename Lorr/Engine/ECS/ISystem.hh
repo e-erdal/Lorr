@@ -13,6 +13,7 @@ namespace lr
     public:
         ISystem(EntityRegistry *pRegistry) : m_pRegistry(pRegistry){};
         virtual ~ISystem() = default;
+        virtual void Init() = 0;
         virtual void Tick(float deltaTime) = 0;
         virtual void Draw() = 0;
 

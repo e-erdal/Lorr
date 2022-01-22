@@ -140,9 +140,9 @@ namespace lr
 
         BaseRenderer *pRenderer = GetEngine()->GetRenderer();
 
-        m_Texture->Use();
-        // pRenderer->UseVertexBuffer(m_VertexBuffer, &m_Layout);
-        // pRenderer->UseIndexBuffer(m_IndexBuffer);
+        pRenderer->GetPlaceholder()->Use();
+        pRenderer->SetVertexBuffer(m_VertexBuffer, &m_Layout);
+        pRenderer->SetIndexBuffer(m_IndexBuffer);
 
         pRenderer->DrawIndexed(m_IndexCount);
     }

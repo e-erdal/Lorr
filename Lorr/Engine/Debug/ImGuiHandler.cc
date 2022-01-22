@@ -25,11 +25,11 @@ namespace lr
     static u32 g_VertexBufferSize = 5000;
     static u32 g_IndexBufferSize = 10000;
 
-    void ImGuiHandler::KeyPress(ButtonState state, Key key, KeyMod mods)
+    bool ImGuiHandler::KeyPress(ButtonState state, Key key, KeyMod mods)
     {
         ZoneScoped;
 
-        if (ImGui::GetCurrentContext() == NULL) return;
+        if (ImGui::GetCurrentContext() == NULL) return false;
 
         ImGuiIO &io = ImGui::GetIO();
 
@@ -42,6 +42,8 @@ namespace lr
         {
             io.KeysDown[(int)key] = state == ButtonState::Pressed;
         }
+
+        return io.WantCaptureKeyboard;
     }
 
     void ImGuiHandler::InputChar(u32 character, KeyMod mods)
@@ -55,11 +57,11 @@ namespace lr
         io.AddInputCharacter(character);
     }
 
-    void ImGuiHandler::MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos)
+    bool ImGuiHandler::MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos)
     {
         ZoneScoped;
 
-        if (ImGui::GetCurrentContext() == NULL) return;
+        if (ImGui::GetCurrentContext() == NULL) return false;
 
         ImGuiIO &io = ImGui::GetIO();
 
@@ -75,12 +77,21 @@ namespace lr
             default: break;
         }
 
-        io.MouseDown[mouse] = state == ButtonState::Pressed;
+        io.AddMouseButtonEvent(mouse, state == ButtonState::Pressed || state == ButtonState::DoubleClicked);
 
-        if (button == MouseButton::BTN_4)
-            io.MouseWheel += 1;
-        else if (button == MouseButton::BTN_5)
-            io.MouseWheel -= 1;
+        return io.WantCaptureMouse;
+    }
+
+    bool ImGuiHandler::MouseWheelState(float x, float y)
+    {
+        ZoneScoped;
+
+        if (ImGui::GetCurrentContext() == NULL) return false;
+
+        ImGuiIO &io = ImGui::GetIO();
+        io.AddMouseWheelEvent(x, y);
+
+        return io.WantCaptureMouse;
     }
 
     void ImGuiHandler::UpdateMouse()
@@ -122,31 +133,24 @@ namespace lr
         }
     }
 
-    void ImGui_ImplSurface_UpdateMousePos()
+    bool ImGuiHandler::MousePosition(const glm::vec2 &pos)
     {
         ZoneScoped;
 
-        if (ImGui::GetCurrentContext() == NULL) return;
+        if (ImGui::GetCurrentContext() == NULL) return false;
 
         ImGuiIO &io = ImGui::GetIO();
 
-        ImGuiViewport *main_viewport = ImGui::GetMainViewport();
-        PlatformWindow *pWindow = (PlatformWindow *)io.BackendPlatformUserData;
         InputManager *pInputMan = GetEngine()->GetInputMan();
-
-        IM_ASSERT(pWindow != 0);
-
-        auto pos = pInputMan->GetMousePos();
 
         if (io.WantSetMousePos)
         {
             pInputMan->SetMousePos(glm::vec2(io.MousePos.x, io.MousePos.y));
         }
 
-        io.MousePos = ImVec2(-FLT_MAX, -FLT_MAX);
+        io.AddMousePosEvent(pos.x, pos.y);
         io.MouseHoveredViewport = 0;
-
-        io.MousePos = ImVec2((float)pos.x, (float)pos.y);
+        return io.WantCaptureMouse;
     }
 
     ImGuiHandler::~ImGuiHandler()
@@ -165,8 +169,8 @@ namespace lr
         io.ConfigFlags |= ImGuiConfigFlags_NavEnableKeyboard;  // Enable Keyboard Controls
         io.ConfigFlags |= ImGuiConfigFlags_DockingEnable;      // Enable Docking
         io.IniFilename = 0;
-        m_pResourceHeap->Fonts["segoeui"] = io.Fonts->AddFontFromFileTTF(".raw/fonts/segoeui.ttf", 17);
-        m_pResourceHeap->Fonts["segoeuib"] = io.Fonts->AddFontFromFileTTF(".raw/fonts/segoeuib.ttf", 17);
+        m_pResourceHeap->Fonts["segoeui"] = io.Fonts->AddFontFromFileTTF("imgui/segoeui.ttf", 17);
+        m_pResourceHeap->Fonts["segoeuib"] = io.Fonts->AddFontFromFileTTF("imgui/segoeuib.ttf", 17);
 
         ImGui::StyleColorsDark();
 
@@ -282,9 +286,6 @@ namespace lr
 
         // Setup time step
         io.DeltaTime = timer.elapsed();
-
-        // Update OS mouse position
-        ImGui_ImplSurface_UpdateMousePos();
 
         // Update OS mouse cursor with the cursor requested by imgui
         ImGuiMouseCursor mouse_cursor = io.MouseDrawCursor ? ImGuiMouseCursor_None : ImGui::GetMouseCursor();

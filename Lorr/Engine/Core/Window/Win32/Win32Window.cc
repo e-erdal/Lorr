@@ -175,8 +175,8 @@ namespace lr
                 }
             }
 
-            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0, currentDisplay->ResW,
-                                      currentDisplay->ResH, 0, 0, 0, 0);
+            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), WS_POPUP | WS_VISIBLE | WS_CLIPSIBLINGS | WS_CLIPCHILDREN, 0, 0,
+                                      currentDisplay->ResW, currentDisplay->ResH, 0, 0, 0, 0);
 
             m_IsFullscreen = true;
         }
@@ -198,8 +198,8 @@ namespace lr
 
             AdjustWindowRectEx(&rc, windowFlags, 0, WS_EX_APPWINDOW | WS_EX_WINDOWEDGE);
 
-            m_Handle =
-                CreateWindowEx(0, wc.lpszClassName, title.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top, 0, 0, 0, 0);
+            m_Handle = CreateWindowEx(0, wc.lpszClassName, title.c_str(), windowFlags, windowPosX, windowPosY, rc.right - rc.left, rc.bottom - rc.top,
+                                      0, 0, 0, 0);
         }
 
         ShowWindow(m_Handle, SW_SHOW);
@@ -344,6 +344,18 @@ namespace lr
                 pInputMan->OnMouseState(ButtonState::Released, keys, mods);
                 pInputMan->OnMousePosUpdate(glm::ivec2(LOWORD(lParam), HIWORD(lParam)), {});
 
+                break;
+            }
+
+            case WM_MOUSEWHEEL:
+            {
+                pInputMan->OnMouseWheelUpdate(0.0f, (float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA);
+                break;
+            }
+
+            case WM_MOUSEHWHEEL:
+            {
+                pInputMan->OnMouseWheelUpdate((float)GET_WHEEL_DELTA_WPARAM(wParam) / (float)WHEEL_DELTA, 0.0f);
                 break;
             }
 

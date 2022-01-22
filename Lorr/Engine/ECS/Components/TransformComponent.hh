@@ -10,6 +10,8 @@ namespace lr::Component
 {
     struct Transform
     {
+        Transform(){};
+
         Transform(glm::vec3 pos, glm::vec3 size = {}, float rotation = 0.f) : Position(pos), Size(size)
         {
             Rotation = glm::radians(rotation);

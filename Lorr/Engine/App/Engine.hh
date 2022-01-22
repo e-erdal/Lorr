@@ -21,15 +21,11 @@
 #include "Engine/Managers/ShaderManager.hh"
 #include "Engine/Managers/ResourceManager.hh"
 
-#include <box2d/box2d.h>
-
 namespace lr
 {
     class Engine
     {
     public:
-        ~Engine();
-
         bool Init(ApplicationDesc const &Description);
         void Run();
 
@@ -42,31 +38,28 @@ namespace lr
 
     public:
         // clang-format off
-        PlatformWindow *GetWindow()         const { return m_pWindow; }
-        BaseRenderer *GetRenderer()         const { return m_pRenderer; }
-        Renderer2D *GetRenderer2D()         const { return m_pRenderer2D; }
-        InputManager *GetInputMan()         const { return m_pInputMan; }
-        ResourceManager *GetResourceMan()   const { return m_pResourceMan; }
-        ShaderManager *GetShaderMan()       const { return m_pShaderMan; }
-        AudioSystem *GetAudioSys()          const { return m_pAudioSystem; }
-        b2World *GetPhyWorld()              const { return m_World; }
+        PlatformWindow *GetWindow()          { return &m_Window; }
+        BaseRenderer *GetRenderer()          { return m_pRenderer; }
+        Renderer2D *GetRenderer2D()          { return &m_Renderer2D; }
+        InputManager *GetInputMan()          { return &m_InputMan; }
+        ResourceManager *GetResourceMan()    { return &m_ResourceMan; }
+        ShaderManager *GetShaderMan()        { return &m_ShaderMan; }
+        AudioSystem *GetAudioSys()           { return &m_AudioSystem; }
         // clang-format on
 
     private:
         // Graphics
-        PlatformWindow *m_pWindow = new PlatformWindow;
+        PlatformWindow m_Window;
         BaseRenderer *m_pRenderer = nullptr;
-        Renderer2D *m_pRenderer2D = new Renderer2D;
+        Renderer2D m_Renderer2D;
 
-        ImGuiHandler *m_pImGui = new ImGuiHandler;
+        ImGuiHandler m_ImGui;
 
-        InputManager *m_pInputMan = new InputManager;
-        ResourceManager *m_pResourceMan = new ResourceManager;
-        ShaderManager *m_pShaderMan = new ShaderManager;
+        InputManager m_InputMan;
+        ResourceManager m_ResourceMan;
+        ShaderManager m_ShaderMan;
 
-        AudioSystem *m_pAudioSystem = new AudioSystem;
-
-        b2World *m_World = 0;
+        AudioSystem m_AudioSystem;
     };
 
     inline Engine *GetEngine()

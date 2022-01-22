@@ -16,6 +16,7 @@ namespace lr
         void OnKeyboardState(ButtonState state, Key key, KeyMod mods);
         void OnMouseState(ButtonState state, MouseButton button, KeyMod mods);
         void OnMousePosUpdate(const glm::ivec2 &pos, const glm::ivec2 &offset);
+        void OnMouseWheelUpdate(float x, float y);
 
         /// This should be used when keyboard is active
         void OnKeyInput();

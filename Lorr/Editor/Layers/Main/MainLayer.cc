@@ -38,7 +38,7 @@ void MainLayer::BuildDock(ImGuiID DockID)
 void MainLayer::Update()
 {
     ZoneScoped;
-
+    
     ImGuiViewport *pViewport = ImGui::GetMainViewport();
 
     float frameHeight = ImGui::GetFrameHeight();
@@ -128,11 +128,16 @@ void MainLayer::Update()
         windowClass.DockNodeFlagsOverrideSet |= ImGuiDockNodeFlags_NoWindowMenuButton;
 
         ImGui::SetNextWindowClass(&windowClass);
-        ImGui::Begin(m_EntityWindow.m_Title, nullptr);
         {
-            m_EntityWindow.Update();
+            ImGui::PushStyleVar(ImGuiStyleVar_WindowPadding, ImVec2(0, 0));
+            ImGui::PushStyleVar(ImGuiStyleVar_ChildBorderSize, 0);
+            ImGui::Begin(m_EntityWindow.m_Title, nullptr);
+            {
+                m_EntityWindow.Update();
+            }
+            ImGui::End();
+            ImGui::PopStyleVar(2);
         }
-        ImGui::End();
 
         ImGui::SetNextWindowClass(&windowClass);
         ImGui::Begin(m_ResourceWindow.m_Title, nullptr);

@@ -1,5 +1,8 @@
 //$TYPE v
-cbuffer MVP : register(b0) { matrix prMat; }
+cbuffer MVP : register(b0) { 
+  matrix prMat; 
+  float3 Position;
+}
 
 struct VertexInput {
   float4 Pos      : POSITION;
@@ -18,7 +21,7 @@ struct PixelInput {
 PixelInput VSMain(VertexInput input) {
   PixelInput output;
 
-	output.Pos = mul(input.Pos, prMat);
+	output.Pos = mul(input.Pos + float4(Position, 0.0), prMat);
 	output.Normal = input.Normal;
   output.UV = input.UV;
 	output.Color = input.Color;

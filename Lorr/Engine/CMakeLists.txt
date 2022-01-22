@@ -39,9 +39,9 @@ set(ENGINE_VENDOR
     loguru
     tinyutf8
     tracy
-    box2d
     lua
     LuaBridge
+    embree
 )
 
 set(ENGINE_COMPONENTS

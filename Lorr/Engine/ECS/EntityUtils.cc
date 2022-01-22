@@ -9,6 +9,9 @@
 #include "Components/PhysicsComponent.hh"
 #include "Components/TextComponent.hh"
 
+#include "Engine/Model/Model.hh"
+#include "Engine/Utils/Random.hh"
+
 namespace lr
 {
     Entity &Entity::AttachDynamicBox(float destiny, float friction)
@@ -21,29 +24,29 @@ namespace lr
             return *this;
         }
 
-        auto &c = AddComponent<Component::Physics>();
+        // auto &c = AddComponent<Component::Physics>();
         auto &transform = GetComponent<Component::Transform>();
 
-        //* Init body definitions
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(transform.Position.x / 32, transform.Position.y / 32);
-        bodyDef.angle = transform.Rotation;
+        // //* Init body definitions
+        // b2BodyDef bodyDef;
+        // bodyDef.type = b2_dynamicBody;
+        // bodyDef.position.Set(transform.Position.x / 32, transform.Position.y / 32);
+        // bodyDef.angle = transform.Rotation;
 
-        //* Init body shape
-        b2CircleShape dynamicBox;
-        dynamicBox.m_radius = 5.f;
+        // //* Init body shape
+        // b2CircleShape dynamicBox;
+        // dynamicBox.m_radius = 5.f;
 
-        //* Init fixture definiton
-        b2FixtureDef fixtureDef;
-        fixtureDef.shape = &dynamicBox;
-        fixtureDef.density = destiny;
-        fixtureDef.friction = friction;
+        // //* Init fixture definiton
+        // b2FixtureDef fixtureDef;
+        // fixtureDef.shape = &dynamicBox;
+        // fixtureDef.density = destiny;
+        // fixtureDef.friction = friction;
 
-        //* Register definitions
-        c.pBody = GetEngine()->GetPhyWorld()->CreateBody(&bodyDef);
-        c.pBody->CreateFixture(&fixtureDef);
-        transform.SetOriginCenter();
+        // //* Register definitions
+        // c.pBody = GetEngine()->GetPhyWorld()->CreateBody(&bodyDef);
+        // c.pBody->CreateFixture(&fixtureDef);
+        // transform.SetOriginCenter();
 
         return *this;
     }
@@ -58,22 +61,22 @@ namespace lr
             return *this;
         }
 
-        auto &c = AddComponent<Component::Physics>();
+        // auto &c = AddComponent<Component::Physics>();
         auto &transform = GetComponent<Component::Transform>();
 
         //* Init body definitions
-        b2BodyDef bodyDef;
-        bodyDef.type = b2_dynamicBody;
-        bodyDef.position.Set(transform.Position.x, transform.Position.y);
-        bodyDef.angle = transform.Rotation;
+        // b2BodyDef bodyDef;
+        // bodyDef.type = b2_dynamicBody;
+        // bodyDef.position.Set(transform.Position.x, transform.Position.y);
+        // bodyDef.angle = transform.Rotation;
 
-        //* Init box shape
-        b2PolygonShape staticBox;
-        staticBox.SetAsBox(transform.Size.x, transform.Size.y);
+        // //* Init box shape
+        // b2PolygonShape staticBox;
+        // staticBox.SetAsBox(transform.Size.x, transform.Size.y);
 
-        c.pBody = GetEngine()->GetPhyWorld()->CreateBody(&bodyDef);
-        c.pBody->CreateFixture(&staticBox, destiny);
-        transform.SetOriginCenter();
+        // c.pBody = GetEngine()->GetPhyWorld()->CreateBody(&bodyDef);
+        // c.pBody->CreateFixture(&staticBox, destiny);
+        // transform.SetOriginCenter();
 
         return *this;
     }
@@ -91,6 +94,9 @@ namespace lr
     Entity &Entity::AttachModel(const eastl::string &path)
     {
         ZoneScoped;
+
+        Model &model = this->AddComponent<Model>();
+        model.AddSphere(Random::Float(0.5, 5.0), 8, nullptr);
         
         return *this;
     }

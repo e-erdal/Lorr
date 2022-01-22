@@ -4,6 +4,10 @@
 
 namespace lr::System
 {
+    void CameraControllerSystem::Init()
+    {
+    }
+
     void CameraControllerSystem::Tick(float deltaTime)
     {
         ZoneScoped;

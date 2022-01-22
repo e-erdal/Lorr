@@ -4,6 +4,10 @@
 
 namespace lr::System
 {
+    void TransformSystem::Init()
+    {
+    }
+
     void TransformSystem::Tick(float deltaTime)
     {
         ZoneScoped;

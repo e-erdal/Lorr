@@ -27,7 +27,10 @@ namespace lr
         template<typename T = ISystem>
         void RegisterSystem()
         {
-            m_Systems.push_back(new T(&m_Registry));
+            T * pSystem = new T(&m_Registry);
+            m_Systems.push_back(pSystem);
+
+            pSystem->Init();
         }
 
     public:

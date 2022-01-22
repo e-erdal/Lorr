@@ -4,7 +4,8 @@
 
 namespace lr
 {
-    void Camera3D::Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear, float zFar)
+    void Camera3D::Init(const glm::vec3 &pos, const glm::vec2 &size, const glm::vec3 &direction, const glm::vec3 &up, float fov, float zNear,
+                        float zFar)
     {
         ZoneScoped;
 
@@ -56,7 +57,7 @@ namespace lr
     void Camera3D::Move(Direction direction, bool stop)
     {
         ZoneScoped;
-        
+
         if (!stop)
             m_MovingDirection |= direction;
         else
@@ -77,10 +78,13 @@ namespace lr
         if (m_AngleY > 89.f) m_AngleY = 89.f;
         if (m_AngleY < -89.f) m_AngleY = -89.f;
 
+        float radAnglX = glm::radians(m_AngleX);
+        float radAnglY = glm::radians(m_AngleY);
+
         glm::vec3 front;
-        front.x = cos(glm::radians(m_AngleX)) * cos(glm::radians(m_AngleY));
-        front.y = sin(glm::radians(m_AngleY));
-        front.z = sin(glm::radians(m_AngleX)) * cos(glm::radians(m_AngleY));
+        front.x = cos(radAnglX) * cos(radAnglY);
+        front.y = sin(radAnglY);
+        front.z = sin(radAnglX) * cos(radAnglY);
         m_Direction = glm::normalize(front);
 
         m_Right = glm::normalize(glm::cross(m_Direction, { 0, 1, 0 }));

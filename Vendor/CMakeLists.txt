@@ -1,5 +1,7 @@
 ###############################################################################################
 
+add_subdirectory(Graphics/embree)
+
 option(ALSOFT_DLOPEN  "Check for the dlopen API for loading optional libs"  ON)
 option(ALSOFT_WERROR  "Treat compile warnings as errors"      OFF)
 option(ALSOFT_UTILS "Build utility programs"  OFF)
@@ -47,7 +49,6 @@ add_library(loguru Utility/loguru/loguru.cpp)
 add_subdirectory(Graphics/bimg-cmake)
 add_subdirectory(Graphics/DirectX-Headers)
 add_subdirectory(Graphics/imgui)
-# add_subdirectory(Graphics/meshoptimizer)
 add_subdirectory(Graphics/msdf-atlas-gen)
 
 ###############################################################################################
@@ -61,8 +62,8 @@ add_subdirectory(Scripting/LuaBridge)
 
 ###############################################################################################
 
-option(BOX2D_BUILD_UNIT_TESTS "Build the Box2D unit tests" OFF)
-option(BOX2D_BUILD_TESTBED "Build the Box2D testbed" OFF)
-option(BOX2D_BUILD_DOCS "Build the Box2D documentation" OFF)
-option(BOX2D_USER_SETTINGS "Override Box2D settings with b2UserSettings.h" OFF)
-add_subdirectory(Physics/box2d)
+# option(BOX2D_BUILD_UNIT_TESTS "Build the Box2D unit tests" OFF)
+# option(BOX2D_BUILD_TESTBED "Build the Box2D testbed" OFF)
+# option(BOX2D_BUILD_DOCS "Build the Box2D documentation" OFF)
+# option(BOX2D_USER_SETTINGS "Override Box2D settings with b2UserSettings.h" OFF)
+# add_subdirectory(Physics/box2d)

@@ -67,6 +67,10 @@ void EditorApp::Init()
     SetColor(ImGuiCol_FrameBgHovered, kDefaultBlack);
     SetColor(ImGuiCol_FrameBgActive, kDefaultBlack);
 
+    SetColor(ImGuiCol_Button, kDefaultBlack);
+    SetColor(ImGuiCol_ButtonHovered, kDefaultGrayLower);
+    SetColor(ImGuiCol_ButtonActive, ImVec4(kDefaultGray.x + .08, kDefaultGray.y + .08, kDefaultGray.z + .08, 1.0));
+
     SetColor(ImGuiCol_TitleBg, kDefaultBlack);
     SetColor(ImGuiCol_TitleBgActive, kDefaultBlack);
     SetColor(ImGuiCol_TitleBgCollapsed, kDefaultBlack);

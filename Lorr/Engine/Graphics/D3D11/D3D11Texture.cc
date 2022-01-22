@@ -59,7 +59,7 @@ namespace lr
     {
         ZoneScoped;
 
-        ID3D11DeviceContext *pCtx = D3D11Renderer::Get()->GetDeviceContext();
+        ID3D11DeviceContext *pCtx = DX11Renderer->GetDeviceContext();
 
         pCtx->PSSetShaderResources(0, 1, &m_pShaderResource);
         pCtx->PSSetSamplers(0, 1, &m_pSamplerState);
@@ -272,8 +272,8 @@ namespace lr
         ZoneScoped;
 
         HRESULT hr;
-        ID3D11Device *pDevice = D3D11Renderer::Get()->GetDevice();
-        ID3D11DeviceContext *pContext = D3D11Renderer::Get()->GetDeviceContext();
+        ID3D11Device *pDevice = DX11Renderer->GetDevice();
+        ID3D11DeviceContext *pContext = DX11Renderer->GetDeviceContext();
 
         D3D11_SHADER_RESOURCE_VIEW_DESC srvDesc = {};
         srvDesc.ViewDimension = D3D11_SRV_DIMENSION_TEXTURE2D;
@@ -295,10 +295,10 @@ namespace lr
         ZoneScoped;
 
         HRESULT hr;
-        ID3D11Device *pDevice = D3D11Renderer::Get()->GetDevice();
+        ID3D11Device *pDevice = DX11Renderer->GetDevice();
 
         D3D11_SAMPLER_DESC samplerDesc = {};
-        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+        samplerDesc.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
         samplerDesc.AddressU = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressV = D3D11_TEXTURE_ADDRESS_CLAMP;
         samplerDesc.AddressW = D3D11_TEXTURE_ADDRESS_CLAMP;
@@ -318,7 +318,7 @@ namespace lr
     {
         ZoneScoped;
 
-        ID3D11DeviceContext *pContext = D3D11Renderer::Get()->GetDeviceContext();
+        ID3D11DeviceContext *pContext = DX11Renderer->GetDeviceContext();
         pContext->GenerateMips(m_pShaderResource);
     }
 

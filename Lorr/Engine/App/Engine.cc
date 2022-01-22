@@ -7,18 +7,11 @@
 
 #include "Engine/Scripting/Lua.hh"
 
+#include "Engine/Model/RT/EmbreeAPI.hh"
+
 namespace lr
 {
     BufferStreamMemoyWatcher *g_pBSWatcher;
-
-    Engine::~Engine()
-    {
-        ZoneScoped;
-
-        delete m_pWindow;
-        // delete m_pRenderer;
-        delete m_pImGui;
-    }
 
     bool Engine::Init(ApplicationDesc const &description)
     {
@@ -39,26 +32,25 @@ namespace lr
         }
 
         //* Core features
-        m_pWindow->Init(description.Title, 0, description.Width, description.Height, description.Flags);
+        m_Window.Init(description.Title, 0, description.Width, description.Height, description.Flags);
 
         //* High priority stuff
-        m_pResourceMan->Init();
+        m_ResourceMan.Init();
 
         //* Graphics
-        m_pShaderMan->Init();
-        m_pRenderer->Init(m_pWindow, m_pWindow->GetWidth(), m_pWindow->GetHeight());
-        m_pImGui->Init(this);
-        m_pRenderer2D->Init();
+        m_ShaderMan.Init();
+        m_pRenderer->Init(GetWindow(), m_Window.GetWidth(), m_Window.GetHeight());
+        m_ImGui.Init(this);
+        m_Renderer2D.Init();
 
         //* Audio system
-        m_pAudioSystem->Init();
-
-        //* Physics system
-        b2Vec2 gravity(0.0f, 9.89f);
-        m_World = new b2World(gravity);
+        m_AudioSystem.Init();
 
         /// Scripting ///
         Lua::Init();
+
+        /// RAY TRACING ///
+        RT::Init();
 
         return true;
     }
@@ -68,14 +60,14 @@ namespace lr
         ZoneScoped;
         
         m_pRenderer->BeginFrame();
-        m_pImGui->BeginFrame();
+        m_ImGui.BeginFrame();
     }
 
     void Engine::EndFrame()
     {
         ZoneScoped;
 
-        m_pImGui->EndFrame();
+        m_ImGui.EndFrame();
         m_pRenderer->Frame();
     }
 

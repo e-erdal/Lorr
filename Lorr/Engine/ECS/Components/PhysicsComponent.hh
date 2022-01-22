@@ -11,7 +11,7 @@ namespace lr::Component
 {
     struct Physics
     {
-        b2Body *pBody = 0;
+        // b2Body *pBody = 0;
     };
 
 }  // namespace lr::Component

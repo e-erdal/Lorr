@@ -1,3 +1,12 @@
+# v1.5.1-alpha
+- Graphics:
+    - Update ImGui
+        - Editor TreeNode Placeholder.
+    - Add Ray Tracer. (Model/RT)
+    - Terrain:
+        - Add mouse picking. + Also for multiple chunks.
+- Vendor:
+    - Add Embree.
 # v1.5-alpha
 - Code:
     - Rename interface classes to `BaseMyClass` (from `IMyClass`)

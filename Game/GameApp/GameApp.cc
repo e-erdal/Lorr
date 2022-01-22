@@ -1,7 +1,4 @@
 #include "GameApp.hh"
-#include <bitset>
-
-#include "Engine/Terrain/ChunkManager.hh"
 
 #include "Engine/App/Engine.hh"
 
@@ -14,13 +11,15 @@
 #include "Engine/Graphics/Font.hh"
 #include "Engine/Graphics/Renderer2D.hh"
 
+#include "Engine/Terrain/Terrain.hh"
+
 using namespace lr;
+
+Terrain terrain;
 
 TextureHandle texture;
 Font *pFont;
 ShaderProgram *fontShader;
-
-lr::ChunkManager chunkMan;
 
 void GameApp::Init()
 {
@@ -52,7 +51,10 @@ void GameApp::Init()
     Entity camera2D = m_pCurrentScene->CreateEntity("entity://camera2d");
     camera2D.AttachCamera2D(glm::vec2(0, 0), glm::vec2(width, height));
 
-    chunkMan.Init(1, 1);
+    Entity terrainEntity = m_pCurrentScene->CreateEntity("entity://terrain");
+    terrain = terrainEntity.AddComponent<Terrain>();
+
+    terrain.Init(TerrainType::Detailed, 10, 10);
 }
 
 void GameApp::Tick(float deltaTime)
@@ -61,7 +63,7 @@ void GameApp::Tick(float deltaTime)
 
     m_pCurrentScene->Tick(deltaTime);
 
-    chunkMan.Update(deltaTime);
+    terrain.Update(deltaTime);
 }
 
 bool wireframe = false;
@@ -77,8 +79,10 @@ void GameApp::Draw()
     ImGui::Begin("GameApp", nullptr);
     ImGui::Text("FPS: %.2f", ImGui::GetIO().Framerate);
 
-    ImGui::SliderFloat3("Light Dir", &chunkMan.m_RenderInfo.m_LightDir[0], -1, 1);
-    ImGui::SliderFloat("Ambient Color", &chunkMan.m_RenderInfo.m_AmbientColor, 0, 1);
+    if (ImGui::Button("Create Ray"))
+    {
+        terrain.PickMouse(1280 / 2.0, 720 / 2.0);
+    }
 
     if (ImGui::Checkbox("Wireframe", &wireframe))
     {
@@ -87,41 +91,19 @@ void GameApp::Draw()
 
     ImGui::End();
 
-    chunkMan.Render();
+    terrain.Render();
 }
 
 void GameApp::LoadResources()
 {
     ZoneScoped;
 
-    auto shaderMan = GetEngine()->GetShaderMan();
-    auto resourceMan = GetEngine()->GetResourceMan();
-
-    //* Shaders *//
-    RenderBufferDesc genericDynBufferDesc;
-    genericDynBufferDesc.Type = RenderBufferType::Constant;
-    genericDynBufferDesc.Usage = RenderBufferUsage::Dynamic;
-    genericDynBufferDesc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
-
-    // Model constant buffer
-    genericDynBufferDesc.DataLen = sizeof(ModelRenderBuffer);
-    shaderMan->CreateRenderBuffer("cbuffer://model", genericDynBufferDesc);
-    shaderMan->CreateProgram("shader://model", Mesh::m_Layout, "shader:model.v", "shader:model.p");
-
-    // VertexBatcher constant buffer
-    genericDynBufferDesc.DataLen = sizeof(Batcher2DBufferData);
-    shaderMan->CreateRenderBuffer("cbuffer://batcher2d", genericDynBufferDesc);
-    shaderMan->CreateProgram("shader://batcher", Renderer2D::m_Batcher2DLayout, "shader:batch.v", "shader:batch.p");
-
-    // Font constant buffer
-    genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
-    shaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
-    fontShader = shaderMan->CreateProgram("shader://font", Renderer2D::m_Batcher2DLayout, "shader:font.v", "shader:font.p");
+    ResourceManager *pResourceMan = GetEngine()->GetResourceMan();
 
     //* Fonts *//
     FontDesc desc;
     desc.SizePX = 40;
-    pFont = resourceMan->LoadResource<Font>("font://font", "font:font", &desc);
+    pFont = pResourceMan->LoadResource<Font>("font://font", "font:font", &desc);
 }
 
 void GameApp::OnResolutionChanged(u32 width, u32 height)

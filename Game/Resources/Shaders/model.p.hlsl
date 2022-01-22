@@ -19,5 +19,5 @@ float4 PSMain(PixelInput input) : SV_TARGET {
   float d = max(dot(normalize(input.Normal), lightDir), 0);
   float3 diffuse = d * color;
 
-  return float4(ambient + diffuse, 1.0f);
+  return float4(1.0, 0.0, 0.0, 1.0f);
 }

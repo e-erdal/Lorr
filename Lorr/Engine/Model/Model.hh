@@ -23,6 +23,8 @@ namespace lr
     struct ModelRenderBuffer
     {
         glm::mat4 Matrix;
+        glm::vec3 Position;
+        float __padding;
     };
 
     class Model : public IResource<ModelDesc, ModelData>

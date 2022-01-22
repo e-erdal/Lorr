@@ -32,9 +32,11 @@ namespace lr
         void BeginFrame();
         void EndFrame();
 
-        static void KeyPress(ButtonState state, Key key, KeyMod mods);
+        static bool KeyPress(ButtonState state, Key key, KeyMod mods);
         static void InputChar(u32 character, KeyMod mods);
-        static void MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos);
+        static bool MouseState(ButtonState state, MouseButton button, KeyMod mods, const glm::ivec2 &pos);
+        static bool MouseWheelState(float x, float y);
+        static bool MousePosition(const glm::vec2 &pos);
         static void UpdateMouse();
 
     private:

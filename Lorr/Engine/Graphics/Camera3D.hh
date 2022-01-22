@@ -50,6 +50,11 @@ namespace lr
             return m_Pos;
         }
 
+        const glm::vec3 &GetDirection() const
+        {
+            return m_Direction;
+        }
+
         float GetAspect()
         {
             return m_Aspect;

@@ -10,6 +10,25 @@
 
 namespace lr::System
 {
+    void Renderer2DSystem::Init()
+    {
+        ShaderManager *pShaderMan = GetEngine()->GetShaderMan();
+
+        //* Shaders *//
+        RenderBufferDesc genericDynBufferDesc;
+        genericDynBufferDesc.Type = RenderBufferType::Constant;
+        genericDynBufferDesc.Usage = RenderBufferUsage::Dynamic;
+        genericDynBufferDesc.MemFlags = RenderBufferMemoryFlags::Access_CPUW;
+
+        genericDynBufferDesc.DataLen = sizeof(Batcher2DBufferData);
+        pShaderMan->CreateRenderBuffer("cbuffer://batcher2d", genericDynBufferDesc);
+        pShaderMan->CreateProgram("shader://batcher", Renderer2D::m_Batcher2DLayout, "shader:batch.v", "shader:batch.p");
+
+        genericDynBufferDesc.DataLen = sizeof(FontRenderBuffer);
+        pShaderMan->CreateRenderBuffer("cbuffer://font", genericDynBufferDesc);
+        pShaderMan->CreateProgram("shader://font", Renderer2D::m_Batcher2DLayout, "shader:font.v", "shader:font.p");
+    }
+
     void Renderer2DSystem::Tick(float deltaTime)
     {
     }

@@ -28,7 +28,7 @@ namespace lr
         // RegisterSystem<System::PhysicsSystem>();
         // RegisterSystem<System::TransformSystem>();
         RegisterSystem<System::CameraControllerSystem>();
-        // RegisterSystem<System::ModelRendererSystem>();
+        RegisterSystem<System::ModelRendererSystem>();
         // RegisterSystem<System::Renderer2DSystem>();
     }
 

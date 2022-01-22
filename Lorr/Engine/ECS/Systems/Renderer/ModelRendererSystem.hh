@@ -12,6 +12,7 @@ namespace lr::System
     {
     public:
         ModelRendererSystem(EntityRegistry *pRegistry) : ISystem(pRegistry){};
+        void Init() override;
         void Tick(float deltaTime) override;
         void Draw() override;
     };
